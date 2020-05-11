@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="http://prismlibrary.com" 
+             xmlns:zxing="clr-namespace:ZXing.Net.Mobile.Forms;assembly=ZXing.Net.Mobile.Forms"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="InventoryApp.Views.ScanPage"
+             xmlns:converter="clr-namespace:InventoryApp.ValueConverters"
+             NavigationPage.HasNavigationBar="True"
+             Title="Scan">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converter:InverseBooleanConverter x:Key="inverseBoolean" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
+    <Grid VerticalOptions="FillAndExpand" Padding="0" RowSpacing="0" ColumnSpacing="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+
+        <zxing:ZXingScannerView  Grid.Row="0" Grid.ColumnSpan="3" x:Name="BarcodeScanView" Grid.RowSpan="4"
+                                 ScanResultCommand="{Binding ScanResultCommand}" IsScanning="{Binding IsScanning}" IsAnalyzing="{Binding IsAnalyzing}" Result="{Binding Result, Mode=OneWayToSource}" />
+        <zxing:ZXingDefaultOverlay Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="4"
+                                   x:Name="ScannerOverlay" TopText="Hold your phone up to barcode" BottomText="" ShowFlashButton="False" />
+
+        <Label Grid.Row="0" Grid.Column="0" Text="{Binding IsAnalyzing, StringFormat='Is scanning : {0}'}" TextColor="White"/>
+        <Label Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding Result.Text, StringFormat=' Barcode : {0}', Mode=OneWay}" TextColor="White"/>
+
+        <Grid Grid.Row="2" Grid.ColumnSpan="3" Margin="8" Padding="4" RowSpacing="0" ColumnSpacing="0" BackgroundColor="#eeeeee" Opacity="0.75" IsVisible="{Binding IsAnalyzing, Converter={StaticResource inverseBoolean}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition  Width="*" />
+                <ColumnDefinition  Width="*" />
+                <ColumnDefinition  Width="50" />
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Row="0" Grid.Column="0"  Text="{Binding ScannedInventory.AccessionNumber}" FontAttributes="Bold" Opacity="1"/>
+            <Label Grid.Row="0" Grid.Column="1"  Text="{Binding ScannedInventory.inventory_number_part2}" LineBreakMode="TailTruncation" Opacity="1"/>
+            <Label Grid.Row="0" Grid.Column="2"  Text="{Binding ScannedInventory.quantity_on_hand, StringFormat='{0:F0}'}" />
+
+            <Label Grid.Row="1" Grid.Column="0"  Text="{Binding ScannedInventory.acc_name_cul}" LineBreakMode="TailTruncation" />
+            <Label Grid.Row="1" Grid.Column="1"  Text="{Binding ScannedInventory.acc_name_col}" LineBreakMode="TailTruncation" />
+            <Label Grid.Row="1" Grid.Column="2"  Text="{Binding ScannedInventory.quantity_on_hand_unit_code}" LineBreakMode="TailTruncation" />
+
+            <Label Grid.Row="2" Grid.Column="0"  Grid.ColumnSpan="3" Text="{Binding ScannedInventory.Location}" LineBreakMode="TailTruncation"/>
+        </Grid>
+
+
+        <Button Grid.Row="3" Grid.Column="0" Text="Add to list"  TextColor="White" BackgroundColor="Green" Command="{Binding AcceptCommand}" Margin="4"/>
+        <Button Grid.Row="3" Grid.Column="1" Text="Scan again"  TextColor="White" BackgroundColor="Orange" Command="{Binding ScanAgainCommand}" Margin="4"/>
+        <Button Grid.Row="3" Grid.Column="2" Text="Cancel"  TextColor="White" BackgroundColor="DarkRed" Command="{Binding CloseCommand}" Margin="4"/>
+
+    </Grid>
+</ContentPage>

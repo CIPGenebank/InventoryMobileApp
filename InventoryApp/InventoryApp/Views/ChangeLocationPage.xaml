@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="http://prismlibrary.com"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             Title="{Binding Title}"
+             x:Class="InventoryApp.Views.ChangeLocationPage">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Save" Command="{Binding SaveCommand}" Icon="save.png" />
+    </ContentPage.ToolbarItems>
+
+    <ContentPage.Content>
+        <StackLayout Orientation="Vertical" Padding="16">
+            <Label Text="Location 1"/>
+            <Picker ItemsSource="{Binding ListLocation1}" SelectedItem="{Binding Location1}">
+                <Picker.Behaviors>
+                    <prism:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding ListLocation1ChangedCommand}" />
+                </Picker.Behaviors>
+            </Picker>
+            <Label Text="Location 2"/>
+            <Entry Placeholder="Type location" Text="{Binding Location2Text}"/>
+            <Picker ItemsSource="{Binding ListLocation2}" SelectedItem="{Binding Location2, Mode=TwoWay}">
+                <Picker.Behaviors>
+                    <prism:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding ListLocation2ChangedCommand}" />
+                </Picker.Behaviors>
+            </Picker>
+            <Label Text="Location 3"/>
+            <Entry Placeholder="Type location" Text="{Binding Location3Text}"/>
+            <Picker ItemsSource="{Binding ListLocation3}" SelectedItem="{Binding Location3}">
+                <Picker.Behaviors>
+                    <prism:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding ListLocation3ChangedCommand}" />
+                </Picker.Behaviors>
+            </Picker>
+            <Label Text="Location 4"/>
+            <Entry Placeholder="Type location" Text="{Binding Location4Text}"/>
+            <Picker ItemsSource="{Binding ListLocation4}" SelectedItem="{Binding Location4}">
+                <Picker.Behaviors>
+                    <prism:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding ListLocation4ChangedCommand}" />
+                </Picker.Behaviors>
+            </Picker>
+
+        </StackLayout>
+    </ContentPage.Content>
+
+</ContentPage>

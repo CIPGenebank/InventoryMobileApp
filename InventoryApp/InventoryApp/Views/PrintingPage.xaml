@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="http://prismlibrary.com"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="InventoryApp.Views.PrintingPage">
+
+    <ContentPage.Content>
+        <Grid Padding="24" BackgroundColor="Transparent" >
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="72" />
+            </Grid.RowDefinitions>
+
+            <StackLayout Grid.Row="1" Grid.ColumnSpan="2" Orientation="Vertical" VerticalOptions="End">
+                <Label FontSize="Medium" Text="{Binding Message}"/>
+                <Label Text="Printer"  VerticalOptions="Center"/>
+                <Picker ItemsSource="{Binding PrinterList}" ItemDisplayBinding="{Binding PrinterName}" SelectedItem="{Binding SelectedPrinter}" 
+                        SelectedIndex="{Binding PrinterIndex}"/>
+
+                <Label Text="Number of labels"  VerticalOptions="Center"/>
+                <Entry Text="{Binding Copies}" Keyboard="Numeric" />
+
+                <Label Text="Label Design"  VerticalOptions="Center"/>
+                <Picker ItemsSource="{Binding LabelDesignList}" SelectedItem="{Binding LabelDesign}"/>
+
+                <Label Text="Order By"  VerticalOptions="Center"/>
+                <Picker SelectedItem="{Binding OrderBy}">
+                    <Picker.ItemsSource>
+                        <x:Array Type="{x:Type x:String}">
+                            <x:String></x:String>
+                            <x:String>Accession Number</x:String>
+                            <x:String>Inventory Id</x:String>
+                            <x:String>Lot Id</x:String>
+                            <x:String>Collecting Number</x:String>
+                            <x:String>Accession Name</x:String>
+                        </x:Array>
+                    </Picker.ItemsSource>
+                </Picker>
+
+                <StackLayout Orientation="Horizontal" Margin="0,0,0,10" IsVisible="False">
+                    <Label Text=" Ask me every time" HorizontalOptions="EndAndExpand" VerticalOptions="Center"/>
+                    <Switch IsToggled="True" HorizontalOptions="End"/>
+                </StackLayout>
+            </StackLayout>
+
+
+            <!--<Label Grid.Row="2" Grid.Column="0" Text="Printer"  VerticalOptions="Center"/>
+            <Picker Grid.Row="2"  Grid.Column="1" Title="Select..." ItemsSource="{Binding PrinterList}" SelectedItem="{Binding Printer}"/>
+
+            <Label Grid.Row="3" Grid.Column="0" Text="Number of labels"  VerticalOptions="Center"/>
+            <Entry Grid.Row="3" Grid.Column="1" Text="{Binding LabelsNumber}" Keyboard="Numeric" />
+
+            <Label Grid.Row="4" Grid.Column="0" Text="Label Design"  VerticalOptions="Center"/>
+            <Picker Grid.Row="4" Grid.Column="1" Title="Select ..." ItemsSource="{Binding LabelDesignList}" 
+                    SelectedItem="{Binding LabelDesign}"/>-->
+
+
+            <Button Grid.Row="2" Grid.Column="0" Text="Cancel" TextColor="White" VerticalOptions="Start" BackgroundColor="DarkRed" Command="{Binding CancelCommand}"/>
+            <Button Grid.Row="2" Grid.Column="1" Text="Print" TextColor="White" VerticalOptions="Start" BackgroundColor="Green" Command="{Binding PrintCommand}"/>
+        </Grid>
+
+    </ContentPage.Content>
+
+</ContentPage>

@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="http://prismlibrary.com"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="InventoryApp.Views.LoginPage"
+             NavigationPage.HasNavigationBar="False">
+
+    <!--xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"-->
+    
+    <ContentPage.Content>
+
+        <RelativeLayout>
+            <Image Aspect="AspectFill" Opacity="0.6"
+                RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width}"
+                RelativeLayout.HeightConstraint= "{ConstraintExpression Type=RelativeToParent, Property=Height}">
+                <Image.Source>
+                    <OnIdiom x:TypeArguments="ImageSource">
+                        <OnIdiom.Desktop>Assets\cover_horizontal.jpg</OnIdiom.Desktop>
+                        <OnIdiom.Phone>cover.jpg</OnIdiom.Phone>
+                        <OnIdiom.Tablet>cover.jpg</OnIdiom.Tablet>
+                    </OnIdiom>
+                </Image.Source>
+            </Image>
+            <Grid RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width}"        
+              RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height}">
+                <Grid.RowDefinitions>
+                    <RowDefinition >
+                        <RowDefinition.Height>
+                            <OnIdiom x:TypeArguments="GridLength"  Desktop="1" Tablet="1" Phone="1"/>
+                        </RowDefinition.Height>
+                    </RowDefinition>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="3*" />
+                    <RowDefinition >
+                        <RowDefinition.Height>
+                            <OnIdiom x:TypeArguments="GridLength"  Desktop="1*" Tablet="1*" Phone="16"/>
+                        </RowDefinition.Height>
+                    </RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition>
+                        <ColumnDefinition.Width>
+                            <OnIdiom x:TypeArguments="GridLength"  Desktop="2*" Tablet="40" Phone="16"/>
+                        </ColumnDefinition.Width>
+                    </ColumnDefinition>
+                    <ColumnDefinition>
+                        <ColumnDefinition.Width>
+                            <OnIdiom x:TypeArguments="GridLength"  Desktop="3*" Tablet="*" Phone="*"/>
+                        </ColumnDefinition.Width>
+                    </ColumnDefinition>
+                    <ColumnDefinition>
+                        <ColumnDefinition.Width>
+                            <OnIdiom x:TypeArguments="GridLength"  Desktop="2*" Tablet="40" Phone="16"/>
+                        </ColumnDefinition.Width>
+                    </ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.Resources>
+                    <ResourceDictionary>
+                        <Style TargetType="Entry">
+                            <Setter Property="Margin" Value="20,5" />
+                        </Style>
+                        <Style TargetType="Picker">
+                            <Setter Property="Margin" Value="20,5" />
+                        </Style>
+                    </ResourceDictionary>
+                </Grid.Resources>
+
+                <StackLayout Grid.Row="1" Grid.Column="1" HorizontalOptions="Center" BackgroundColor="Aqua">
+                    <!--<Image Aspect="AspectFit" Source="logo.png" HorizontalOptions="Center"/>-->
+                </StackLayout>
+
+                <StackLayout Grid.Row="2" Grid.Column="1" Orientation="Vertical" Spacing="0" BackgroundColor="#66FFFFFF" VerticalOptions="Fill">
+                    <StackLayout.VerticalOptions>
+                        <OnIdiom x:TypeArguments="LayoutOptions"  Desktop="CenterAndExpand" Tablet="CenterAndExpand" Phone="EndAndExpand"/>
+                    </StackLayout.VerticalOptions>
+
+                    <StackLayout MinimumHeightRequest="100" Padding="10,20,10,20" >
+                        <!--BackgroundColor="#59FFFFFF" 45%-->
+                        <!--BackgroundColor="#66FFFFFF" 40%-->
+                        <!--BackgroundColor="#80FFFFFF" 50%-->
+
+                        <Image Aspect="AspectFit" Source="logo.png" HorizontalOptions="Center" />
+
+                        <Entry Text="{Binding UserName}" Placeholder="Username" TextColor="Gray" />
+                        <Entry Text="{Binding Password}" IsPassword="true" Placeholder="Password" TextColor="Gray"/>
+                        <Picker SelectedItem="{Binding Server}"  TextColor="Gray">
+                            <Picker.ItemsSource>
+                                <x:Array Type="{x:Type x:String}">
+                                    <x:String>genebank.cipotato.org</x:String>
+                                    <x:String>192.168.137.1</x:String>
+                                    <x:String>10.0.2.2</x:String>
+                                    <x:String>localhost</x:String>
+                                </x:Array>
+                            </Picker.ItemsSource>
+                            <Picker.Behaviors>
+                                <prism:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding ServerChangedCommand}" />
+                            </Picker.Behaviors>
+                        </Picker>
+
+                    </StackLayout>
+
+                    <Button Text="Log In" Command="{Binding LoginCommand}" VerticalOptions="Start" 
+                        BackgroundColor="#76B82A" TextColor="White"  >
+                        <Button.HeightRequest>
+                            <OnPlatform x:TypeArguments="x:Double" Android="54" WinPhone="48" />
+                        </Button.HeightRequest>
+                    </Button>
+                    <!--IsEnabled="{Binding IsNotBusy}"-->
+                </StackLayout>
+            </Grid>
+        </RelativeLayout>
+    </ContentPage.Content>
+
+</ContentPage>

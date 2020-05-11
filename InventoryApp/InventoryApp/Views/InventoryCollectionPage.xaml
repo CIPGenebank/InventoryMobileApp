@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             xmlns:prism="http://prismlibrary.com"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="InventoryApp.Views.InventoryCollectionPage">
+
+    <ContentPage.Content>
+        <StackLayout Orientation="Vertical" Spacing="0">
+            <Grid HorizontalOptions="FillAndExpand" Padding="0, 0, 0, 0" RowSpacing="1" ColumnSpacing="1" BackgroundColor="#ffffff">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition  Width="50" />
+                    <ColumnDefinition  Width="*" />
+                    <ColumnDefinition  Width="*" />
+                    <ColumnDefinition  Width="60" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20" />
+                    <RowDefinition Height="20" />
+                    <RowDefinition Height="20" />
+                </Grid.RowDefinitions>
+
+                <StackLayout Grid.Column="0" Grid.RowSpan="3" HorizontalOptions="FillAndExpand" BackgroundColor="#76B82A">
+                    <CheckBox  IsChecked="{Binding IsAllSelected}" HorizontalOptions="CenterAndExpand"  VerticalOptions="CenterAndExpand"/>
+                </StackLayout>
+
+
+                <Label Grid.Column="1" Grid.Row="0" Text=" Acc. Number" FontAttributes="Bold" TextColor="White" BackgroundColor="#76B82A"/>
+                <Label Grid.Column="1" Grid.Row="1" Text=" Acc. Name" FontAttributes="Bold" LineBreakMode="TailTruncation" TextColor="White" BackgroundColor="#76B82A"/>
+                <Label Grid.Column="2" Grid.Row="0" Text=" Inventory Id/Lot Id" FontAttributes="Bold" LineBreakMode="TailTruncation" TextColor="White" BackgroundColor="#76B82A"/>
+                <Label Grid.Column="2" Grid.Row="1" Text=" Col Number" FontAttributes="Bold" LineBreakMode="TailTruncation" TextColor="White" BackgroundColor="#76B82A"/>
+                <Label Grid.Column="3" Grid.Row="0" Text=" Quantity" FontAttributes="Bold" LineBreakMode="TailTruncation" TextColor="White" BackgroundColor="#76B82A"/>
+                <Label Grid.Column="3" Grid.Row="1" Text=" Unit" FontAttributes="Bold" LineBreakMode="TailTruncation" TextColor="White" BackgroundColor="#76B82A"/>
+
+                <Label Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="3" Text=" Location" FontAttributes="Bold" LineBreakMode="TailTruncation" TextColor="White" BackgroundColor="#76B82A"/>
+            </Grid>
+
+            <CollectionView ItemsSource="{Binding InventoryCollection}" BackgroundColor="White" 
+                SelectionMode="Multiple" 
+                >
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="0" Padding="0" RowSpacing="0" ColumnSpacing="0" >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition  Width="50" />
+                                <ColumnDefinition  Width="*" />
+                                <ColumnDefinition  Width="*" />
+                                <ColumnDefinition  Width="60" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition  Height="auto" />
+                                <RowDefinition  Height="auto" />
+                                <RowDefinition  Height="auto" />
+                                <RowDefinition  Height="2" />
+                            </Grid.RowDefinitions>
+
+                            <CheckBox Grid.Column="0" Grid.RowSpan="3" HorizontalOptions="Center" />
+
+                            <Label Grid.Row="0" Grid.Column="1"  Text="{Binding AccessionNumber}" FontAttributes="Bold" />
+                            <Label Grid.Row="0" Grid.Column="2"  Text="{Binding inventory_number_part2}" LineBreakMode="TailTruncation"/>
+                            <Label Grid.Row="0" Grid.Column="3"  Text="{Binding quantity_on_hand, StringFormat='{0:F0}'}" />
+                            <Label Grid.Row="1" Grid.Column="1"  Text="{Binding acc_name_cul}" LineBreakMode="TailTruncation"/>
+                            <Label Grid.Row="1" Grid.Column="2"  Text="{Binding acc_name_col}" LineBreakMode="TailTruncation" />
+                            <Label Grid.Row="1" Grid.Column="3"  Text="{Binding quantity_on_hand_unit_code}" LineBreakMode="TailTruncation"/>
+
+                            <Label Grid.Row="2" Grid.Column="1"  Grid.ColumnSpan="3" Text="{Binding Location}" LineBreakMode="TailTruncation"/>
+
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <StackLayout Orientation="Horizontal" BackgroundColor="Gray"
+                         RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                         RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1, Constant=-150}"
+                         HeightRequest="30">
+                <Label Text="{Binding InventoryList.Count, StringFormat=' Rows : {0}'}" TextColor="White" VerticalOptions="Center"/>
+                <Label Text="{Binding AccessionCount, StringFormat='Accessions : {0}'}" TextColor="White" VerticalOptions="Center"/>
+                <!--<Label Text="{Binding SelectedRowsCount, StringFormat='Selected Rows : {0}'}" TextColor="White" VerticalOptions="Center"/>-->
+            </StackLayout>
+        </StackLayout>
+    </ContentPage.Content>
+
+</ContentPage>

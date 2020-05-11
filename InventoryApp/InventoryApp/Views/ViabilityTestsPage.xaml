@@ -1,0 +1,113 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="http://prismlibrary.com"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             Title="{Binding Title}"
+             x:Class="InventoryApp.Views.ViabilityTestsPage">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="New" Command="{Binding NewCommand}" Icon="ic_new.png"/>
+    </ContentPage.ToolbarItems>
+
+    <ContentPage.Content>
+        <StackLayout Padding="16">
+            <Grid RowSpacing="0" ColumnSpacing="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition  Width="*" />
+                    <ColumnDefinition  Width="*" />
+                    <ColumnDefinition  Width="auto" />
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Column="0" Text="Inventory Id" FontAttributes="Bold" VerticalTextAlignment="Center"/>
+                <Entry Grid.Column="1" Text="{Binding SearchText}" />
+                <Button Grid.Column="2" Text="Search" Command="{Binding SearchCommand}"/>
+                <!--Image="search.png"-->
+            </Grid>
+
+            <Grid ColumnSpacing="0">
+                <Label Grid.Row="0" Grid.Column="0" Text="Last Percent Viable" />
+                <Label Grid.Row="0" Grid.Column="1" Text="{Binding InventoryThumbnail.PercentViable}" />
+                <Label Grid.Row="1" Grid.Column="0" Text="Last Test Date" />
+                <Label Grid.Row="1" Grid.Column="1" Text="{Binding InventoryThumbnail.TestedDate, StringFormat='{0:yyyy/MM/dd}'}" />
+                <Label Grid.Row="2" Grid.Column="0" Text="Taxon" />
+                <Label Grid.Row="2" Grid.Column="1" Text="{Binding InventoryThumbnail.taxonomy_species_code}" />
+            </Grid>
+
+            <StackLayout Spacing="0">
+                <Grid Padding="0, 4, 8, 4" RowSpacing="0" ColumnSpacing="2" BackgroundColor="#76B82A">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition  Width="8" />
+                        <ColumnDefinition  Width="30" />
+                        <ColumnDefinition  Width="90" />
+                        <ColumnDefinition  Width="3*" />
+                        <ColumnDefinition  Width="2*" />
+                        <ColumnDefinition  Width="2*" />
+                        <ColumnDefinition  Width="2*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Label Grid.Column="0" Text=" " FontAttributes="Bold" TextColor="White"/>
+                    <Label Grid.Column="1" Text="ID" FontAttributes="Bold" TextColor="White"/>
+                    <Label Grid.Column="2" Text="Tested Date" FontAttributes="Bold" TextColor="White"/>
+                    <Label Grid.Column="3" Text="Rule Name" FontAttributes="Bold" TextColor="White"/>
+                    <Label Grid.Column="4" Text="Rep. Count" FontAttributes="Bold" TextColor="White" />
+                    <Label Grid.Column="5" Text="Total Seeds" FontAttributes="Bold" TextColor="White" />
+                    <Label Grid.Column="6" Text="% Viable" FontAttributes="Bold" TextColor="White" />
+                </Grid>
+
+                <ListView ItemsSource="{Binding InventoryViabilityList}" SelectedItem="{Binding SelectedInventoryViability}"
+                      VerticalOptions="Start" HeightRequest="150" BackgroundColor="Bisque" HasUnevenRows="False" >
+                    <!--BackgroundColor="Bisque"-->
+
+                    <ListView.Behaviors>
+                        <prism:EventToCommandBehavior EventName="ItemTapped" Command="{Binding ItemTappedCommand}" />
+                    </ListView.Behaviors>
+
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell >
+                                <Grid Padding="0, 4, 8, 4" RowSpacing="0" ColumnSpacing="2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition  Width="8" />
+                                        <ColumnDefinition  Width="30" />
+                                        <ColumnDefinition  Width="90" />
+                                        <ColumnDefinition  Width="3*" />
+                                        <ColumnDefinition  Width="2*" />
+                                        <ColumnDefinition  Width="2*" />
+                                        <ColumnDefinition  Width="2*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Label Grid.Column="0" BackgroundColor="{Binding SelectedColor}"  Text=" " />
+
+                                    <Label Grid.Column="1" Text="{Binding Item.InventoryViabilityId}" />
+                                    <Label Grid.Column="2" Text="{Binding Item.TestedDate, StringFormat='{0:yyyy/MM/dd}'}" FontAttributes="Bold" LineBreakMode="TailTruncation"/>
+                                    <Label Grid.Column="3" Text="{Binding Item.InventoryViabilityRuleName}" />
+                                    <Label Grid.Column="4" Text="{Binding Item.ReplicationCount}" />
+                                    <Label Grid.Column="5" Text="{Binding Item.TotalTestedCount}" />
+                                    <Label Grid.Column="6" Text="{Binding Item.PercentViable}" />
+
+                                </Grid>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
+                <Grid ColumnSpacing="0" BackgroundColor="Bisque" Padding="16,0,16,8">
+                    <Label Grid.Row="0" Grid.Column="0" Text="Viability Rule" />
+                    <Label Grid.Row="0" Grid.Column="1" Text="{Binding SelectedInventoryViabilityRule.Name}" />
+                    <Label Grid.Row="1" Grid.Column="0" Text="Replicates" />
+                    <Label Grid.Row="1" Grid.Column="1" Text="{Binding SelectedInventoryViability.ReplicationCount}" />
+                    <Label Grid.Row="2" Grid.Column="0" Text="Total Seeds" />
+                    <Label Grid.Row="2" Grid.Column="1" Text="{Binding SelectedInventoryViability.TotalTestedCount}" />
+                </Grid>
+            </StackLayout>
+
+            <Grid ColumnSpacing="0" IsVisible="{Binding IsSelected}">
+                <Button Grid.Column="0" Text="Edit" Command="{Binding EditCommand}"/>
+                <Button Grid.Column="1" Text="Viability Data" Command="{Binding EvaluateCommand}"/>
+            </Grid>
+
+        </StackLayout>
+    </ContentPage.Content>
+
+</ContentPage>

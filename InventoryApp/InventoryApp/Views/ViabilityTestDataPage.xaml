@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="http://prismlibrary.com"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             Title="{Binding Title}"
+             x:Class="InventoryApp.Views.ViabilityTestDataPage">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="New" Command="{Binding NewCommand}" Icon="ic_new.png"/>
+        <ToolbarItem Text="Save" Command="{Binding SaveCommand}" Icon="save.png"/>
+    </ContentPage.ToolbarItems>
+
+    <ContentPage.Content>
+        <StackLayout>
+
+            <Grid Padding="8,8,8,8" RowSpacing="0" VerticalOptions="Start" IsVisible="False">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+
+                <Label Grid.Column="0" Text="Evaluation Number" VerticalTextAlignment="Center"/>
+                <Picker Grid.Column="1" ItemsSource="{Binding ReplicationCountList}" SelectedItem="{Binding SelectedReplicationCount}"/>
+            </Grid>
+
+            <ListView ItemsSource="{Binding InventoryViabilityDataList}" SelectedItem="{Binding SelectedInventoryViabilityData}" 
+                      HasUnevenRows="False" HeightRequest="220" BackgroundColor="Bisque" VerticalOptions="Start">
+
+                <ListView.Behaviors>
+                    <prism:EventToCommandBehavior EventName="ItemTapped" Command="{Binding ItemTappedCommand}" />
+                </ListView.Behaviors>
+
+                <ListView.Header>
+                    <Grid Padding="4" RowSpacing="0" BackgroundColor="#76B82A">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition  Width="50" />
+                            <ColumnDefinition  Width="90" />
+                            <ColumnDefinition  Width="*" />
+                            <ColumnDefinition  Width="*" />
+                            <ColumnDefinition  Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Column="0" Text="Eval No" FontAttributes="Bold" TextColor="White" />
+                        <Label Grid.Column="1" Text="Date" FontAttributes="Bold" TextColor="White"/>
+                        <Label Grid.Column="2" Text="Rep Number" FontAttributes="Bold" TextColor="White"/>
+                        <Label Grid.Column="3" Text="Normal Count" FontAttributes="Bold" TextColor="White" />
+                        <Label Grid.Column="4" Text="Abnormal Count" FontAttributes="Bold" TextColor="White" />
+                    </Grid>
+                </ListView.Header>
+
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell >
+                            <Grid Padding="4" RowSpacing="0" >
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition  Width="50" />
+                                    <ColumnDefinition  Width="90" />
+                                    <ColumnDefinition  Width="*" />
+                                    <ColumnDefinition  Width="*" />
+                                    <ColumnDefinition  Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Label Grid.Column="0" Text="{Binding CountNumber}" VerticalTextAlignment="Center"/>
+                                <Label Grid.Column="1" Text="{Binding ShortDate}" VerticalTextAlignment="Center" FontAttributes="Bold"/>
+                                <Label Grid.Column="2" Text="{Binding ReplicationNumber}" VerticalTextAlignment="Center"/>
+                                <Label Grid.Column="3" Text="{Binding NormalCount}" VerticalTextAlignment="Center"/>
+                                <Label Grid.Column="4" Text="{Binding AbnormalCount}" VerticalTextAlignment="Center"/>
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <Grid Padding="8,16,8,8" RowSpacing="0" VerticalOptions="Start">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+
+                <Label Grid.Row="0" Grid.Column="0" Text="Date" VerticalTextAlignment="Center"/>
+                <DatePicker Grid.Row="0" Grid.Column="1" Date="{Binding SelectedInventoryViabilityData.CountDate}"/>
+
+                <Label Grid.Row="1" Grid.Column="0" Text="Replication Number" VerticalTextAlignment="Center"/>
+                <Picker Grid.Row="1" Grid.Column="1" ItemsSource="{Binding ReplicationNumberList}"
+                        SelectedItem="{Binding SelectedInventoryViabilityData.ReplicationNumber}" IsEnabled="False"/>
+
+                <Label Grid.Row="2" Grid.Column="0" Text="Normal Count" VerticalTextAlignment="Center"/>
+                <Entry Grid.Row="2" Grid.Column="1" Text="{Binding SelectedInventoryViabilityData.NormalCount}" Keyboard="Numeric" />
+
+                <Label Grid.Row="3" Grid.Column="0" Text="Abnormal Count" VerticalTextAlignment="Center"/>
+                <Entry Grid.Row="3" Grid.Column="1" Text="{Binding SelectedInventoryViabilityData.AbnormalCount}" Keyboard="Numeric"/>
+
+                <Label Grid.Row="4" Grid.ColumnSpan="2" Text="Note" VerticalTextAlignment="Center"/>
+                <Editor Grid.Row="5" Grid.ColumnSpan="2" HeightRequest="60" Text="{Binding SelectedInventoryViabilityData.Note}"/>
+
+                <Button Grid.Row="6" Grid.ColumnSpan="2"  Text="Post Final Result" Command="{Binding PostFinalResultCommand}"/>
+            </Grid>
+
+        </StackLayout>
+    </ContentPage.Content>
+
+</ContentPage>

@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="http://prismlibrary.com"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="InventoryApp.Views.InventoryPage"
+             xmlns:custom="clr-namespace:InventoryApp.Custom"
+             Title="Inventory">
+    
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <DataTemplate x:Key="textTemplate">
+                <ViewCell>
+                    <StackLayout>
+                        <Label Text="{Binding Caption}"/>
+                        <Entry Text="{Binding Value, Mode=TwoWay}" Keyboard="Text"/>
+                    </StackLayout>
+                </ViewCell>
+            </DataTemplate>
+            <DataTemplate x:Key="numberTemplate">
+                <ViewCell>
+                    <StackLayout>
+                        <Label Text="{Binding Caption}"/>
+                        <Entry Text="{Binding Value, Mode=TwoWay}" Keyboard="Numeric"/>
+                    </StackLayout>
+                </ViewCell>
+            </DataTemplate>
+            <DataTemplate x:Key="datetimeTemplate">
+                <ViewCell>
+                    <StackLayout>
+                        <Label Text="{Binding Caption}" />
+                        <DatePicker Date="{Binding Value, Mode=TwoWay}"/>
+                    </StackLayout>
+                </ViewCell>
+            </DataTemplate>
+            <DataTemplate x:Key="dropdownTemplate">
+                <ViewCell>
+                    <StackLayout>
+                        <Label Text="{Binding Caption}" />
+                        <Picker SelectedItem="{Binding Value, Mode=TwoWay}"/>
+                    </StackLayout>
+                </ViewCell>
+            </DataTemplate>
+            <DataTemplate x:Key="lookupPickerTemplate">
+                <ViewCell>
+                    <StackLayout>
+                        <Label Text="{Binding Caption}" />
+                        <StackLayout HorizontalOptions="FillAndExpand" BackgroundColor="BlanchedAlmond" HeightRequest="40">
+                            <StackLayout.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding BindingContext.OpenLookupPickerCommand, Source={x:Reference listViewAttributes}}" CommandParameter="{Binding .}"/>
+                            </StackLayout.GestureRecognizers>
+                            <Entry IsReadOnly="True" Text="{Binding Value}" BackgroundColor="#eee" InputTransparent="True"/>
+                        </StackLayout>
+                    </StackLayout>
+                </ViewCell>
+            </DataTemplate>
+            <DataTemplate x:Key="checkboxTemplate">
+                <ViewCell>
+                    <StackLayout Orientation="Horizontal">
+                        <Label Text="{Binding Caption,Mode=OneWay}" HorizontalOptions="FillAndExpand" LineBreakMode="TailTruncation"/>
+                        <CheckBox IsChecked="{Binding Value, Mode=TwoWay}" HorizontalOptions="End"/>
+                    </StackLayout>
+                </ViewCell>
+            </DataTemplate>
+            <custom:EntityAttributeDataTemplateSelector x:Key="entityAttributeDataTemplateSelector"
+                TextTemplate="{StaticResource textTemplate}"
+                NumberTemplate="{StaticResource numberTemplate}" 
+                DateTimeTemplate="{StaticResource datetimeTemplate}"
+                DropdownTemplate="{StaticResource dropdownTemplate}"
+                LookupPickerTemplate="{StaticResource lookupPickerTemplate}"
+                CheckboxTemplate="{StaticResource checkboxTemplate}"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Save" Command="{Binding SaveInventoryCommand}"/>
+    </ContentPage.ToolbarItems>
+
+    <ListView x:Name="listViewAttributes" ItemsSource="{Binding InventoryAtributeList}" ItemTemplate="{StaticResource entityAttributeDataTemplateSelector}"
+              HasUnevenRows="True" SelectionMode="None" Margin="8">
+        <!--<ListView.ItemTemplate>
+            <DataTemplate >
+                <ViewCell>
+                    <StackLayout>
+                        <Label Text="{Binding Caption}" />
+                        <StackLayout HorizontalOptions="FillAndExpand" BackgroundColor="BlanchedAlmond" HeightRequest="40">
+                            <StackLayout.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding BindingContext.OpenLookupPickerCommand, Source={x:Reference listViewAttributes}}" CommandParameter="{Binding Value}"/>
+                            </StackLayout.GestureRecognizers>
+                            <Label Text="{Binding Value}"  HeightRequest="30" InputTransparent="True" BackgroundColor="Aqua" HorizontalOptions="Start" />
+                        </StackLayout>
+
+                        <Entry IsReadOnly="True" Text="{Binding Value}" BackgroundColor="Gray" IsEnabled="False">
+                            <Entry.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding OpenLookupPickerCommand}" CommandParameter="{Binding .}"/>
+                            </Entry.GestureRecognizers>
+                        </Entry>
+
+                    </StackLayout>
+                </ViewCell>
+            </DataTemplate>
+        </ListView.ItemTemplate>-->
+    </ListView>
+  
+</ContentPage>

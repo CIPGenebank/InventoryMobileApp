@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="http://prismlibrary.com"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="InventoryApp.Views.LookupPickerPage"
+             Title="LookupPicker"
+             NavigationPage.HasNavigationBar="True">
+
+
+    <StackLayout Spacing="0">
+        <!--<ImageButton Source="search.png" WidthRequest="50" BackgroundColor="Orange" Aspect="AspectFill" Padding="4" HeightRequest="50" 
+                     HorizontalOptions="Start"/>-->
+
+        <Frame Margin="0" Padding="0" BorderColor="#eeeeee" CornerRadius="0"  HorizontalOptions="FillAndExpand" HeightRequest="60">
+            <StackLayout Orientation="Horizontal" Padding="8,0" Spacing="0" VerticalOptions="FillAndExpand">
+                <Entry Text="{Binding SearchText}" HorizontalOptions="FillAndExpand" Placeholder="Search text..." VerticalOptions="Center"
+                       ReturnType="Search" ReturnCommand="{Binding SearchTextCommand}"/>
+                <ImageButton Source="search.png" WidthRequest="36" HeightRequest="36" Padding="4" BackgroundColor="Orange" Aspect="AspectFill" VerticalOptions="Center" CornerRadius="8"/>
+            </StackLayout>
+        </Frame>
+
+        
+        <Label Text="RESULTS"  FontSize="Caption" Margin="8"/>
+        <BoxView BackgroundColor="#aaa" HeightRequest="1" HorizontalOptions="Fill" Margin="0"/>
+
+        <!--ItemsSource="{Binding CodeValueList}"-->
+        <ListView  VerticalOptions="FillAndExpand" >
+            <ListView.ItemsSource>
+                <x:Array Type="{x:Type x:String}">
+                    <x:String>CIP 707070</x:String>
+                    <x:String>CIP 707071</x:String>
+                    <x:String>CIP 707070.12</x:String>
+                    <x:String>CIP 707073.56</x:String>
+                    <x:String>CIP 707070</x:String>
+                    <x:String>CIP 707071</x:String>
+                    <x:String>CIP 707070.12</x:String>
+                    <x:String>CIP 707073.56</x:String>
+                    <x:String>CIP 707070</x:String>
+                    <x:String>CIP 707071</x:String>
+                    <x:String>CIP 707070.12</x:String>
+                    <x:String>CIP 707073.56</x:String>
+                    <x:String>CIP 707070</x:String>
+                    <x:String>CIP 707071</x:String>
+                    <x:String>CIP 707070.12</x:String>
+                    <x:String>CIP 707073.56</x:String>
+                </x:Array>
+            </ListView.ItemsSource>
+        </ListView>
+    </StackLayout>
+</ContentPage>
+    

@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="http://prismlibrary.com"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="InventoryApp.Views.SettingsPage">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Save" Command="{Binding SaveCommand}" />
+    </ContentPage.ToolbarItems>
+    <ContentPage.Content>
+        <ScrollView>
+            <TableView Intent="Data">
+                <TableRoot>
+                    <TableSection Title="Printing">
+                        <ViewCell>
+                            <Grid Padding="16, 0">
+                                <Label Grid.Column="0" Text="Printer"  VerticalOptions="Center"/>
+                                <Picker Grid.Column="1" Title="Select..." ItemsSource="{Binding PrinterList}" SelectedItem="{Binding Printer}"/>
+                            </Grid>
+                        </ViewCell>
+                        <ViewCell>
+                            <Grid Padding="16, 0">
+                                <Label Grid.Column="0" Text="Number of labels"  VerticalOptions="Center"/>
+                                <Entry Grid.Column="1" Text="{Binding LabelsNumber}" Keyboard="Numeric"/>
+                            </Grid>
+                        </ViewCell>
+                        <ViewCell>
+                            <Grid Padding="16, 0">
+                                <Label Grid.Column="0" Text="Label Design"  VerticalOptions="Center"/>
+                                <Picker Grid.Column="1" Title="Select ..." ItemsSource="{Binding LabelDesignList}" SelectedItem="{Binding LabelDesign}"/>
+                            </Grid>
+                        </ViewCell>
+                    </TableSection>
+                    <TableSection Title="Others">
+                        <ViewCell>
+                            <Button Text="Save Inventory details layout" />
+                        </ViewCell>
+                    </TableSection>
+                    <TableSection Title="">
+
+                        <TextCell Text="Icon pack by Icons8" Detail="https://icons8.com" DetailColor="Blue"/>
+                    </TableSection>
+                </TableRoot>
+            </TableView>
+        </ScrollView>
+
+    </ContentPage.Content>
+
+</ContentPage>

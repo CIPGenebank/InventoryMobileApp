@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="http://prismlibrary.com"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="InventoryApp.Views.MovementPage">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Save" Command="{Binding SaveCommand}" Icon="save.png"/>
+    </ContentPage.ToolbarItems>
+
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout Orientation="Vertical" Padding="16">
+                <Label Text="Action Name Code"/>
+                <Picker ItemsSource="{Binding ActionNameCodeList}" ItemDisplayBinding="{Binding Value}" SelectedIndex="{Binding ActionNameCodeIndex}"/>
+                <Label Text="Quantity"/>
+                <Entry Text="{Binding Quantity}" Keyboard="Numeric" IsEnabled="{Binding IsNotCalculated}"/>
+                <StackLayout Orientation="Horizontal">
+                    <Switch IsToggled="{Binding IsCalculated}" ></Switch>
+                    <Label Text="By using weight"></Label>
+                </StackLayout>
+                <StackLayout IsVisible="{Binding IsCalculated}">
+                    <Grid >
+                        <Label Grid.Column="0" Text="100 seeds weight" VerticalOptions="Center"/>
+                        <Entry Grid.Column="1" Text="{Binding SeedsWeight100}" Keyboard="Numeric"/>
+                        <Label Grid.Column="0" Grid.Row="1" Text="Total seeds weight" VerticalOptions="Center"/>
+                        <Entry Grid.Column="1" Grid.Row="1" Text="{Binding SeedsWeight}" Keyboard="Numeric" />
+                        <Button Grid.Column="1" Grid.Row="2" Text="Calculate" Command="{Binding CalculateCommand}" HorizontalOptions="End"/>
+                    </Grid>
+                </StackLayout>
+
+                <Label Text="Quantity unit code"/>
+                <!--<Picker SelectedItem="{Binding Units}" />-->
+                <Entry Text="{Binding QuantityUnitCode}" IsEnabled="False"/>
+                <Label Text="Method - Justification"/>
+                <Picker ItemsSource="{Binding MethodList}" ItemDisplayBinding="{Binding Value}" SelectedIndex="{Binding MethodIndex}"/>
+                <Label Text="Action date"/>
+                <DatePicker Date="{Binding ActionDate}"/>
+                <Label Text="Note"/>
+                <Editor Text="{Binding Note}" HeightRequest="90"/>
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+
+</ContentPage>

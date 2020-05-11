@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="http://prismlibrary.com"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="InventoryApp.Views.SearchAccessionPage">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Find" Command="{Binding FindCommand}" Icon="search.png"/>
+    </ContentPage.ToolbarItems>
+
+    <ContentPage.Content>
+        <StackLayout>
+            <Grid ColumnSpacing="4" Padding="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <SearchBar Grid.Row="0" Grid.ColumnSpan="2"
+                           Placeholder="Search" Text="{Binding SearchText}" SearchCommandParameter="{Binding SearchText}" SearchCommand="{Binding FindCommand}" />
+
+                <Label Grid.Row="1" Grid.Column="0" Text="Search By" VerticalTextAlignment="Center"/>
+                <Picker Grid.Row="1" Grid.Column="1" SelectedItem="{Binding Filter}">
+                    <Picker.ItemsSource>
+                        <x:Array Type="{x:Type x:String}">
+                            <x:String>Accession Id</x:String>
+                            <x:String>Accession Number</x:String>
+                            <x:String>Cultivar Name</x:String>
+                            <x:String>Collecting Number</x:String>
+                        </x:Array>
+                    </Picker.ItemsSource>
+                </Picker>
+
+            </Grid>
+            <ListView ItemsSource="{Binding AccessionThumbnailList}" SelectedItem="{Binding SelectedAccessionThumbnail}">
+                <ListView.Behaviors>
+                    <prism:EventToCommandBehavior EventName="ItemTapped" Command="{Binding ItemTappedCommand}" EventArgsParameterPath="Item" />
+                </ListView.Behaviors>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Grid HorizontalOptions="FillAndExpand" Padding="16, 4, 16, 4" RowSpacing="0" ColumnSpacing="4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition  Width="*" />
+                                    <ColumnDefinition  Width="2*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Label Grid.Column="0" Grid.Row="0" Text="{Binding accession_number}" FontAttributes="Bold" />
+                                <Label Grid.Column="1" Grid.Row="0" Text="{Binding acc_name_col}" LineBreakMode="TailTruncation"/>
+                                <Label Grid.Column="1" Grid.Row="1" Text="{Binding acc_name_cul}" LineBreakMode="TailTruncation"/>
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+    </ContentPage.Content>
+
+</ContentPage>

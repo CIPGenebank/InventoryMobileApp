@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="http://prismlibrary.com"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="InventoryApp.Views.PreviousInventoriesPage">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="New" Command="{Binding NewCommand}" Icon="ic_new.png"/>
+        <ToolbarItem Text="Print" Command="{Binding PrintCommand}" Icon="print.png"/>
+        <ToolbarItem Text="Search" Command="{Binding SearchCommand}" Icon="search.png"/>
+
+        <!--<ToolbarItem Text="Select All" Command="{Binding AllCommand}" Order="Secondary"/>
+        <ToolbarItem Text="Select None" Command="{Binding NoneCommand}" Order="Secondary"/>-->
+        <ToolbarItem Text="Remove" Command="{Binding RemoveCommand}" Order="Secondary"/>
+        <ToolbarItem Text="Increase / Discount" Command="{Binding RegisterTransactionCommand}" Order="Secondary"/>
+        <ToolbarItem Text="Change Location" Command="{Binding ChangeLocationCommand}" Order="Secondary"/>
+        <!--<ToolbarItem Text="Update attribute" Command="{Binding UpdateAttributeBatchCommand}" Order="Secondary"/>-->
+        <!--<ToolbarItem Text="View Details" Command="{Binding ViewDetailsCommand}" Order="Secondary"/>-->
+        <!--<ToolbarItem Text="View All Transactions" Command="{Binding ViewTransactionsCommand}" Order="Secondary"/>-->
+        <!--<ToolbarItem Text="Other Actions" Command="{Binding RegisterActionCommand}" Order="Secondary"/>-->
+
+    </ContentPage.ToolbarItems>
+
+    <ContentPage.Content>
+        <StackLayout Orientation="Vertical" Spacing="0">
+            <Grid HorizontalOptions="FillAndExpand" Padding="0, 0, 0, 0" RowSpacing="1" ColumnSpacing="1" BackgroundColor="#ffffff">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition  Width="54" />
+                    <ColumnDefinition  Width="*" />
+                    <ColumnDefinition  Width="*" />
+                    <ColumnDefinition  Width="60" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20" />
+                    <RowDefinition Height="20" />
+                    <RowDefinition Height="20" />
+                </Grid.RowDefinitions>
+
+                <Switch Grid.Column="0" Grid.RowSpan="3" BackgroundColor="#76B82A" IsToggled="{Binding IsAllSelected}">
+
+                </Switch>
+
+                <Label Grid.Column="1" Grid.Row="0" Text=" Acc. Number" FontAttributes="Bold" TextColor="White" BackgroundColor="#76B82A"/>
+                <Label Grid.Column="1" Grid.Row="1" Text=" Acc. Name" FontAttributes="Bold" LineBreakMode="TailTruncation" TextColor="White" BackgroundColor="#76B82A"/>
+                <Label Grid.Column="2" Grid.Row="0" Text=" Inventory Id / Lot Id" FontAttributes="Bold" LineBreakMode="TailTruncation" TextColor="White" BackgroundColor="#76B82A"/>
+                <Label Grid.Column="2" Grid.Row="1" Text=" Col Number" FontAttributes="Bold" LineBreakMode="TailTruncation" TextColor="White" BackgroundColor="#76B82A"/>
+                <Label Grid.Column="3" Grid.Row="0" Text=" Quantity" FontAttributes="Bold" LineBreakMode="TailTruncation" TextColor="White" BackgroundColor="#76B82A"/>
+                <Label Grid.Column="3" Grid.Row="1" Text=" Unit" FontAttributes="Bold" LineBreakMode="TailTruncation" TextColor="White" BackgroundColor="#76B82A"/>
+
+                <Label Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="3" Text=" Location" FontAttributes="Bold" LineBreakMode="TailTruncation" TextColor="White" BackgroundColor="#76B82A"/>
+            </Grid>
+
+            <RelativeLayout Padding="0" VerticalOptions="FillAndExpand">
+                <ListView ItemsSource="{Binding InventoryList}" SelectedItem="{Binding SelectedInventory}" HasUnevenRows="True"
+                      RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1, Constant=-88}"
+                      RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}" 
+                      x:Name="InventoryList" >
+
+                    <ListView.Behaviors>
+                        <prism:EventToCommandBehavior EventName="ItemTapped" Command="{Binding ItemTappedCommand}" EventArgsParameterPath="Item" />
+                    </ListView.Behaviors>
+
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell >
+                                <StackLayout Orientation="Horizontal" BackgroundColor="{Binding SelectedColor}" Spacing="0">
+                                    <Switch IsToggled="{Binding IsSelected}" WidthRequest="54" />
+
+                                    <Grid HorizontalOptions="FillAndExpand" Padding="4, 4, 4, 4" RowSpacing="0" ColumnSpacing="0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition  Width="0" />
+                                            <ColumnDefinition  Width="*" />
+                                            <ColumnDefinition  Width="*" />
+                                            <ColumnDefinition  Width="50" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <Label Grid.Column="1" Grid.Row="0" Text="{Binding Item.AccessionNumber}" FontAttributes="Bold" />
+                                        <Label Grid.Column="1" Grid.Row="1" Text="{Binding Item.acc_name_cul}" LineBreakMode="TailTruncation"/>
+                                        <Label Grid.Column="2" Grid.Row="0" Text="{Binding Item.inventory_number_part2}" LineBreakMode="TailTruncation"/>
+                                        <Label Grid.Column="2" Grid.Row="1" Text="{Binding Item.acc_name_col}" LineBreakMode="TailTruncation"/>
+                                        <Label Grid.Column="3" Grid.Row="0" Text="{Binding Item.quantity_on_hand, StringFormat='{0:F0}'}" />
+                                        <Label Grid.Column="3" Grid.Row="1" Text="{Binding Item.quantity_on_hand_unit_code}" LineBreakMode="TailTruncation"/>
+
+                                        <Label Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="3" Text="{Binding Item.Location}" LineBreakMode="TailTruncation"/>
+                                    </Grid>
+                                </StackLayout>
+                            </ViewCell>
+                        </DataTemplate>
+
+                    </ListView.ItemTemplate>
+                </ListView>
+                <StackLayout Orientation="Horizontal" BackgroundColor="Gray"
+                         RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                         RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1, Constant=-88}"
+                         HeightRequest="30">
+                    <Label Text="{Binding InventoryList.Count, StringFormat=' Rows : {0}'}" TextColor="White" VerticalOptions="Center"/>
+                    <Label Text="{Binding AccessionCount, StringFormat='Accessions : {0}'}" TextColor="White" VerticalOptions="Center"/>
+                    <!--<Label Text="{Binding SelectedRowsCount, StringFormat='Selected Rows : {0}'}" TextColor="White" VerticalOptions="Center"/>-->
+                </StackLayout>
+            </RelativeLayout>
+        </StackLayout>
+    </ContentPage.Content>
+
+</ContentPage>

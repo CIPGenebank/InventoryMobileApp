@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="http://prismlibrary.com"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="InventoryApp.Views.DashboardPage"
+             Title="Dashboard">
+
+    <ContentPage.Content>
+
+        <StackLayout Orientation="Vertical" Padding="16">
+            <Label Text="Workgroup"/>
+            <Picker ItemsSource="{Binding ListWorkgroup}" ItemDisplayBinding="{Binding title}" SelectedIndex="{Binding CooperatorGroupIndex}">
+                <Picker.Behaviors>
+                    <prism:EventToCommandBehavior EventName="SelectedIndexChanged" 
+                                              Command="{Binding ListWorkGroupChangedCommand}" 
+                                              CommandParameter="{Binding InventoryMaintPolicyId}"/>
+                </Picker.Behaviors>
+            </Picker>
+            <Label Text="Location 1"/>
+            <Picker ItemsSource="{Binding ListLocation1}" SelectedItem="{Binding Location1}">
+                <Picker.Behaviors>
+                    <prism:EventToCommandBehavior EventName="SelectedIndexChanged" 
+                                              Command="{Binding ListLocationChangedCommand}" />
+                </Picker.Behaviors>
+            </Picker>
+            <Grid >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="80"/>
+                    <RowDefinition Height="80"/>
+                </Grid.RowDefinitions>
+
+                <Button Grid.Row="0" Grid.Column="0" BackgroundColor="Olive" TextColor="White" Text="Search inventories"
+                    Command="{Binding NavigateCommand}" CommandParameter="/MainPage/NavigationPage/InventoriesPage/SearchInventoriesPage/BackPage"/>
+                <Button Grid.Row="0" Grid.Column="1" BackgroundColor="Green" TextColor="White" Text="Register new inventory" 
+                    Command="{Binding NavigateCommand}" CommandParameter="/MainPage/NavigationPage/InventoriesPage/NewInventoryPage/BackPage"/>
+                <Button Grid.Row="1" Grid.Column="0" BackgroundColor="Maroon" TextColor="White" Text="Last inventory list"
+                    Command="{Binding NavigateCommand}" CommandParameter="/MainPage/NavigationPage/InventoriesPage/BackPage"/>
+                <!--CommandParameter="/MainPage/NavigationPage/InventoriesPage/BackPage"-->
+                <Button Grid.Row="1" Grid.Column="1" BackgroundColor="Orange" TextColor="White" Text="Viability Test"
+                    Command="{Binding NavigateCommand}" CommandParameter="/MainPage/NavigationPage/ViabilityTestsPage/BackPage"/>
+            </Grid>
+        </StackLayout>
+
+    </ContentPage.Content>
+    
+</ContentPage>

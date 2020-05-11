@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="http://prismlibrary.com"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             Title="{Binding Title}"
+             x:Class="InventoryApp.Views.ViabilityTestPage">
+    
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Save" Command="{Binding SaveCommand}" Order="Primary" Priority="0">
+            <ToolbarItem.Icon>
+                <OnPlatform x:TypeArguments="FileImageSource" Android="save.png" WinPhone="save.png"/>
+            </ToolbarItem.Icon>
+        </ToolbarItem>
+    </ContentPage.ToolbarItems>
+    <ContentPage.Content>
+        <StackLayout Orientation="Vertical" Padding="16">
+
+            <Grid >
+                <Label Grid.Row="0" Grid.Column="0" Text="Inventory Id" VerticalTextAlignment="Center"/>
+                <Entry Grid.Row="0" Grid.Column="1" Text="{Binding InventoryId}" Keyboard="Numeric"/>
+            </Grid>
+            
+            <Grid >
+                <Label Grid.Row="0" Grid.Column="0" Text="Viability Rule" VerticalTextAlignment="Center"/>
+                <Picker Grid.Row="0" Grid.Column="1" ItemsSource="{Binding InventoryViabilityRuleList}" 
+                        SelectedItem="{Binding SelectedInventoryViabilityRule}" ItemDisplayBinding="{Binding Name}" >
+                    <Picker.Behaviors>
+                        <prism:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding SelectedIndexChangedCommand}" />
+                    </Picker.Behaviors>
+                </Picker>
+            </Grid>
+            <Grid >
+                <Label Grid.Row="0" Grid.Column="0" Text= "Substrata"/>
+                <Label Grid.Row="0" Grid.Column="1" Text= "{Binding SelectedInventoryViabilityRule.Substrata}" />
+                <Label Grid.Row="1" Grid.Column="0" Text= "TemperatureRange"/>
+                <Label Grid.Row="1" Grid.Column="1" Text= "{Binding SelectedInventoryViabilityRule.TemperatureRange}" />
+                <Label Grid.Row="2" Grid.Column="0" Text= "Moisture"/>
+                <Label Grid.Row="2" Grid.Column="1" Text= "{Binding SelectedInventoryViabilityRule.Moisture}" />
+                <Label Grid.Row="3" Grid.Column="0" Text= "Prechill"/>
+                <Label Grid.Row="3" Grid.Column="1" Text= "{Binding SelectedInventoryViabilityRule.Prechill}" />
+                <Label Grid.Row="4" Grid.Column="0" Text= "Lighting"/>
+                <Label Grid.Row="4" Grid.Column="1" Text= "{Binding SelectedInventoryViabilityRule.Lighting}" />
+                <Label Grid.Row="5" Grid.Column="0" Text= "Note"/>
+                <Label Grid.Row="5" Grid.Column="1" Text= "{Binding SelectedInventoryViabilityRule.Note}" />
+            </Grid>
+            <Grid >
+                <Label Grid.Row="0" Grid.Column="0" Text="Total Tested Count" VerticalTextAlignment="Center"/>
+                <Entry Grid.Row="0" Grid.Column="1" Text="{Binding TotalTestedCount}" Keyboard="Numeric"/>
+                <Label Grid.Row="1" Grid.Column="0" Text="Replication Count" VerticalTextAlignment="Center"/>
+                <Entry Grid.Row="1" Grid.Column="1" Text="{Binding ReplicationCount}" Keyboard="Numeric"/>
+                <Label Grid.Row="2" Grid.Column="0" Text="Tested Date" VerticalTextAlignment="Center"/>
+                <DatePicker Grid.Row="2" Grid.Column="1" Date="{Binding TestedDate}"/>
+            </Grid>
+
+
+        </StackLayout>
+    </ContentPage.Content>
+    
+</ContentPage>
