@@ -4,12 +4,13 @@
                   xmlns:prism="http://prismlibrary.com" 
                   xmlns:pages="clr-namespace:InventoryApp.Views"
                   prism:ViewModelLocator.AutowireViewModel="True"
-                  x:Class="InventoryApp.Views.MainPage">
+                  x:Class="InventoryApp.Views.MainPage"
+                  MasterBehavior="Popover">
 
     <!--<MasterDetailPage.Master>
         <ContentPage Title="Menu">
             <StackLayout Padding="0">
-                <Button Text="Search" Command="{Binding NavigateCommand}" CommandParameter="NagivationPage/DashboardPage" BackgroundColor="White" />
+                <Button Text="Search" Command="{Binding NavigateCommand}" CommandParameter="NagivationPage/WelcomePage" BackgroundColor="White" />
                 <Button Text="Inventories" Command="{Binding NavigateCommand}" CommandParameter="/LoginPage" BackgroundColor="White" />
                 <Button Text="Login" Command="{Binding NavigateCommand}" CommandParameter="/LoginPage" BackgroundColor="White"/>
             </StackLayout>
@@ -45,20 +46,6 @@
                             <Label Grid.Row="2" Grid.ColumnSpan="3"
                                    Text="{Binding UserName,StringFormat='Hello, {0}'}" TextColor="White" VerticalOptions="Center" FontSize="Medium" Margin="0" Padding="16,0,16,0"/>
 
-                            <StackLayout Grid.Row="3"  Grid.ColumnSpan="3" 
-                                Orientation="Horizontal" Padding="16,0,16,0" Margin="0" Spacing="0">
-                                <!--<Label Text="workgroup : "  VerticalOptions="CenterAndExpand" FontSize="Small" TextColor="White" Margin="0"/>-->
-                                <Picker FontSize="Small" VerticalOptions="End" HorizontalOptions="FillAndExpand" FontAttributes="Bold" HeightRequest="36" TextColor="White">
-                                    <Picker.ItemsSource>
-                                        <x:Array Type="{x:Type x:String}">
-                                            <x:String>Sweetpotato</x:String>
-                                            <x:String>Wild Potato</x:String>
-                                            <x:String>Cultivated Potato</x:String>
-                                            <x:String>DNA</x:String>
-                                        </x:Array>
-                                    </Picker.ItemsSource>
-                                </Picker>
-                            </StackLayout>
                         </Grid>
                         
                         <ListView ItemsSource="{Binding MenuList}" SelectedItem="{Binding SelectedMenuItem}" HeightRequest="100">
@@ -95,7 +82,7 @@
     <MasterDetailPage.Detail>
         <NavigationPage>
             <x:Arguments>
-                <pages:DashboardPage />
+                <pages:WelcomePage />
             </x:Arguments>
         </NavigationPage>
     </MasterDetailPage.Detail>

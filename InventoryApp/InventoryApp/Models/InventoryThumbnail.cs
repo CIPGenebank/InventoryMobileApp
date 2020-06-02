@@ -127,6 +127,7 @@ namespace InventoryApp.Models
         [JsonProperty("accession_number")]
         public string AccessionNumber { get; set; }
 
+        public string inventory_number { get; set; }
     }
 
     public static class InventoryFactory

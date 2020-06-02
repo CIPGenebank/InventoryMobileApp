@@ -11,9 +11,8 @@ using System.Linq;
 
 namespace InventoryApp.ViewModels
 {
-    public class DashboardPageViewModel : ViewModelBase
+    public class WelcomePageViewModel : ViewModelBaseZ
     {
-        IPageDialogService _pageDialogService { get; }
         private readonly RestClient _restClient;
 
         private List<CooperatorGroup> _listWorkgroup;
@@ -28,8 +27,8 @@ namespace InventoryApp.ViewModels
             get { return _listLocation1; }
             set { SetProperty(ref _listLocation1, value); }
         }
-        private string _workgroup;
-        public string Workgroup
+        private CooperatorGroup _workgroup;
+        public CooperatorGroup Workgroup
         {
             get { return _workgroup; }
             set { SetProperty(ref _workgroup, value); }
@@ -40,20 +39,7 @@ namespace InventoryApp.ViewModels
             get { return _location1; }
             set { SetProperty(ref _location1, value); }
         }
-
-        public string InventoryMaintPolicyId
-        {
-            get
-            {
-                if (_cooperatorGroupIndex > -1 && _listWorkgroup != null && _listWorkgroup.Count > _cooperatorGroupIndex)
-                {
-                    return _listWorkgroup[_cooperatorGroupIndex].inventory_maint_policy_id.ToString();
-                }
-                else
-                    return "-1";
-            }
-        }
-
+        
         private int _cooperatorGroupIndex;
         public int CooperatorGroupIndex
         {
@@ -61,9 +47,8 @@ namespace InventoryApp.ViewModels
             set { SetProperty(ref _cooperatorGroupIndex, value); }
         }
 
-        public DashboardPageViewModel(INavigationService navigationService, IPageDialogService pageDialogService) : base(navigationService)
+        public WelcomePageViewModel(INavigationService navigationService, IPageDialogService pageDialogService) : base(navigationService, pageDialogService)
         {
-            _pageDialogService = pageDialogService;
             _restClient = new RestClient();
 
             Title = "Welcome";
@@ -71,16 +56,15 @@ namespace InventoryApp.ViewModels
             NavigateCommand = new DelegateCommand<string>(OnNavigateCommandExecuted);
             LogoutCommand = new DelegateCommand(OnLogoutCommandExecuted);
 
-            ListWorkGroupChangedCommand = new DelegateCommand<string>(OnListWorkGroupChangedCommandExecuted);
-            ListLocationChangedCommand = new DelegateCommand(OnListLocationChangedCommandExecuted);
+            ListWorkGroupChangedCommand = new DelegateCommand(OnListWorkGroupChangedCommand);
+            ListLocationChangedCommand = new DelegateCommand(OnListLocationChangedCommand);
 
-            //_listWorkgroup = CodeValueFactory.GetWorkgroupList();
-            //_listLocation = CodeValueFactory.GetLocationList();
         }
 
         public DelegateCommand LogoutCommand { get; }
         private async void OnLogoutCommandExecuted()
         {
+            Settings.Token = string.Empty;
             await NavigationService.NavigateAsync("/LoginPage");
         }
 
@@ -90,45 +74,53 @@ namespace InventoryApp.ViewModels
             await NavigationService.NavigateAsync(path, animated: true);
         }
 
-        public DelegateCommand<string> ListWorkGroupChangedCommand { get; }
-        private async void OnListWorkGroupChangedCommandExecuted(string cooperatorId)
+        public DelegateCommand ListWorkGroupChangedCommand { get; }
+        private async void OnListWorkGroupChangedCommand()
         {
             try
             {
-                if (CooperatorGroupIndex > -1)
-                {
-                    Settings.CooperatorGroupIndex = CooperatorGroupIndex;
-                    Settings.InventoryMaintPolicyId = int.Parse(InventoryMaintPolicyId);
-
-                    List<Location> locations = await _restClient.GetLocations(InventoryMaintPolicyId);
-                    ListLocation1 = locations.Select(l => l.storage_location_part1).Distinct().ToList();
-                }
+                if (Workgroup != null)
+                    Settings.WorkgroupName = Workgroup.group_name;
             }
             catch (Exception e)
             {
-                await _pageDialogService.DisplayAlertAsync("Error", e.Message, "OK");
+                await PageDialogService.DisplayAlertAsync("Error", e.Message, "OK");
             }
         }
         public DelegateCommand ListLocationChangedCommand { get; }
-        private void OnListLocationChangedCommandExecuted()
+        private async void OnListLocationChangedCommand()
         {
-            if (!string.IsNullOrEmpty(Location1))
-                Settings.Location1 = Location1;
+            try
+            {
+                if (Location1 != null)
+                    Settings.Location1 = Location1;
+            }
+            catch (Exception ex)
+            {
+                await PageDialogService.DisplayAlertAsync("Error", ex.Message, "OK");
+            }
         }
 
         public override async void OnNavigatedTo(INavigationParameters parameters)
         {
             try
             {
+                //Load workgroups
                 if (ListWorkgroup == null)
                 {
                     ListWorkgroup = await _restClient.GetWorkGroups(Settings.CooperatorId);
-                    CooperatorGroupIndex = Settings.CooperatorGroupIndex;
+                    Workgroup = ListWorkgroup.FirstOrDefault(g => g.group_name.Equals(Settings.WorkgroupName));
+                }
+                //Load Location 1
+                if (ListLocation1 == null)
+                {
+                    ListLocation1 = await _restClient.GetAllLocation1List();
+                    Location1 = Settings.Location1;
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                await _pageDialogService.DisplayAlertAsync("Error", e.Message, "OK");
+                await PageDialogService.DisplayAlertAsync("Error", ex.Message, "OK");
             }
         }
     }

@@ -12,21 +12,27 @@
         <!--<ImageButton Source="search.png" WidthRequest="50" BackgroundColor="Orange" Aspect="AspectFill" Padding="4" HeightRequest="50" 
                      HorizontalOptions="Start"/>-->
 
-        <Frame Margin="0" Padding="0" BorderColor="#eeeeee" CornerRadius="0"  HorizontalOptions="FillAndExpand" HeightRequest="60">
+        <Frame Margin="0" Padding="0" BorderColor="#eeeeee" CornerRadius="0"  HorizontalOptions="FillAndExpand" HeightRequest="60" IsVisible="{Binding IsSearchBarVisible}">
             <StackLayout Orientation="Horizontal" Padding="8,0" Spacing="0" VerticalOptions="FillAndExpand">
                 <Entry Text="{Binding SearchText}" HorizontalOptions="FillAndExpand" Placeholder="Search text..." VerticalOptions="Center"
                        ReturnType="Search" ReturnCommand="{Binding SearchTextCommand}"/>
-                <ImageButton Source="search.png" WidthRequest="36" HeightRequest="36" Padding="4" BackgroundColor="Orange" Aspect="AspectFill" VerticalOptions="Center" CornerRadius="8"/>
+                <ImageButton Source="search.png" WidthRequest="36" HeightRequest="36" Padding="4" Command="{Binding SearchTextCommand}"
+                       BackgroundColor="#76b82a" Aspect="AspectFill" VerticalOptions="Center" CornerRadius="8"/>
             </StackLayout>
         </Frame>
 
         
-        <Label Text="RESULTS"  FontSize="Caption" Margin="8"/>
+        <Label Text="RESULTS"  FontSize="Caption" Margin="8" />
         <BoxView BackgroundColor="#aaa" HeightRequest="1" HorizontalOptions="Fill" Margin="0"/>
 
-        <!--ItemsSource="{Binding CodeValueList}"-->
-        <ListView  VerticalOptions="FillAndExpand" >
-            <ListView.ItemsSource>
+
+        <ListView  VerticalOptions="FillAndExpand" ItemsSource="{Binding LookupList}" >
+            <ListView.Behaviors>
+                <prism:EventToCommandBehavior EventName="ItemTapped" 
+                                      Command="{Binding ItemTappedCommand}"
+                                      EventArgsParameterPath="Item" />
+            </ListView.Behaviors>
+            <!--<ListView.ItemsSource>
                 <x:Array Type="{x:Type x:String}">
                     <x:String>CIP 707070</x:String>
                     <x:String>CIP 707071</x:String>
@@ -45,7 +51,7 @@
                     <x:String>CIP 707070.12</x:String>
                     <x:String>CIP 707073.56</x:String>
                 </x:Array>
-            </ListView.ItemsSource>
+            </ListView.ItemsSource>-->
         </ListView>
     </StackLayout>
 </ContentPage>

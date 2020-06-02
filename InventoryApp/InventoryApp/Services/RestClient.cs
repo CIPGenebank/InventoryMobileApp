@@ -1,10 +1,13 @@
-﻿using InventoryApp.Helpers;
+﻿using ImTools;
+using InventoryApp.Helpers;
+using InventoryApp.Interfaces;
 using InventoryApp.Models;
 using InventoryApp.Models.Database;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,17 +16,19 @@ namespace InventoryApp.Services
     public class RestClient
     {
         // Android Emulator 10.0.2.2
-        private const string LoginEndPoint = "http://{0}/gringlobal/WCFService.svc/login";
-        private const string SearchEndPoint = "http://{0}/gringlobal/WCFService.svc/search/{1}";
+        private const string LoginEndPoint = "http://{0}/GringlobalService/WCFService.svc/login";
+        private const string SearchEndPoint = "http://{0}/GringlobalService/WCFService.svc/search/{1}";
 
-        private const string InventoryEndPoint = "http://{0}/gringlobal/WCFService.svc/rest/inventory/{1}";
-        private const string InventoryCreateEndPoint = "http://{0}/gringlobal/WCFService.svc/rest/inventory";
+        private const string InventoryEndPoint = "http://{0}/GringlobalService/WCFService.svc/rest/inventory/{1}";
+        private const string InventoryCreateEndPoint = "http://{0}/GringlobalService/WCFService.svc/rest/inventory";
 
-        private const string InventoryActionEndPoint = "http://{0}/gringlobal/WCFService.svc/rest/inventory_action";
+        private const string InventoryActionEndPoint = "http://{0}/GringlobalService/WCFService.svc/rest/inventory_action";
 
-        private const string GetDataEndPoint = "http://{0}/GrinGlobal/WCFService.svc/getdata/{1}?parameters={2}";
+        private const string GetDataEndPoint = "http://{0}/GringlobalService/WCFService.svc/getdata/{1}?parameters={2}";
 
-        private const string PrinterEndPoint = "http://{0}/GrinGlobal/WCFService.svc/printer/{1}";
+        private const string PrinterEndPoint = "http://{0}/GringlobalService/WCFService.svc/printer/{1}";
+
+        private const string RestUrlRUD = "http://{0}/GringlobalService/WCFService.svc/rest/{1}/{2}";
 
         private readonly HttpClient _httpClient = new HttpClient();
 
@@ -64,7 +69,8 @@ namespace InventoryApp.Services
             _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
 
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync(string.Format(SearchEndPoint, Settings.Server, resolver) + "?dataview=get_mob_inventory", content);
+            string URL = string.Format(SearchEndPoint, Settings.Server, resolver) + "?dataview=get_mob_inventory";
+            var response = await _httpClient.PostAsync(URL, content);
 
             string resultContent = response.Content.ReadAsStringAsync().Result;
 
@@ -94,7 +100,8 @@ namespace InventoryApp.Services
                 _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
 
                 StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-                var response = await _httpClient.PostAsync(string.Format(SearchEndPoint, Settings.Server, resolver) + "?dataview=get_accession_thumbnail", content);
+            string URL = string.Format(SearchEndPoint, Settings.Server, resolver) + "?dataview=get_accession_thumbnail";
+            var response = await _httpClient.PostAsync(URL, content);
 
                 string resultContent = response.Content.ReadAsStringAsync().Result;
 
@@ -174,7 +181,7 @@ namespace InventoryApp.Services
                 _httpClient.DefaultRequestHeaders.Clear();
                 _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
 
-                string URL = string.Format(GetDataEndPoint, Settings.Server, "get_cip_cooperator_groups", System.Net.WebUtility.UrlEncode(":cooperatorid=" + cooperatorId));
+                string URL = string.Format(GetDataEndPoint, Settings.Server, "get_workgroup_by_cooperator", System.Net.WebUtility.UrlEncode(":cooperatorid=" + cooperatorId));
                 var response = await _httpClient.GetAsync(URL);
 
                 string resultContent = response.Content.ReadAsStringAsync().Result;
@@ -197,7 +204,8 @@ namespace InventoryApp.Services
                 _httpClient.DefaultRequestHeaders.Clear();
                 _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
 
-                string URL = string.Format(GetDataEndPoint, Settings.Server, "get_cip_locations", System.Net.WebUtility.UrlEncode(":inventorymaintpolicyid=" + inventoryMaintPolicyId));
+                //System.Net.WebUtility.UrlEncode(":inventorymaintpolicyid=" + inventoryMaintPolicyId)
+                string URL = string.Format(GetDataEndPoint, Settings.Server, "get_inventory_storage_location_part1");
                 var response = await _httpClient.GetAsync(URL);
 
                 string resultContent = response.Content.ReadAsStringAsync().Result;
@@ -212,8 +220,37 @@ namespace InventoryApp.Services
 
                 return result;
             }
-            
-            public async Task<string> UpdateInventory(InventoryThumbnail inventory)
+
+        public async Task<List<string>> GetAllLocation1List()
+        {
+            List<string> result = new List<string>();
+
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+
+            //System.Net.WebUtility.UrlEncode(":inventorymaintpolicyid=" + inventoryMaintPolicyId)
+            string URL = string.Format(GetDataEndPoint, Settings.Server, "get_inventory_storage_location_part1", "");
+            var response = await _httpClient.GetAsync(URL);
+
+            string resultContent = response.Content.ReadAsStringAsync().Result;
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                foreach (var item in Newtonsoft.Json.Linq.JArray.Parse(resultContent))
+                {
+                    result.Add(item["storage_location_part1"].ToString());
+                } 
+                //result = JsonConvert.DeserializeObject<List<Location>>(resultContent); storage_location_part1
+            }
+            else
+            {
+                throw new Exception(resultContent);
+            }
+
+            return result;
+        }
+
+
+        public async Task<string> UpdateInventory(InventoryThumbnail inventory)
             {
                 string result = string.Empty;
 
@@ -236,8 +273,40 @@ namespace InventoryApp.Services
                 }
                 return result;
             }
-            
-            public async Task<string> Print(int printerId, string label)
+
+        public async Task<string> UpdateInventory(Inventory inventory)
+        {
+            string result = string.Empty;
+
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+
+            var data = JsonConvert.SerializeObject(JsonConvert.SerializeObject(inventory));
+            StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PutAsync(string.Format(RestUrlRUD, Settings.Server, "inventory", inventory.inventory_id), content);
+
+            string resultContent = response.Content.ReadAsStringAsync().Result;
+
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                result = resultContent;
+            }
+            else
+            {
+                try
+                {
+                    throw new Exception(JsonConvert.DeserializeObject<string>(resultContent));
+                }
+                catch
+                {
+                    throw new Exception(resultContent);
+                }
+            }
+
+            return result;
+        }
+
+        public async Task<string> Print(int printerId, string label)
             {
                 string result = string.Empty;
 
@@ -261,6 +330,141 @@ namespace InventoryApp.Services
                 return result;
             }
 
+        public async Task<List<ILookup>> GetAccessionLookUpListByAccessionNumber(string accessionNumber)
+        {
+            List<ILookup> result = new List<ILookup>();
+
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+
+            string URL = string.Format(GetDataEndPoint, Settings.Server, "get_accession_lookup_by_accession_number", System.Net.WebUtility.UrlEncode(":accessionnumber=" + accessionNumber));
+            var response = await _httpClient.GetAsync(URL);
+
+            string resultContent = response.Content.ReadAsStringAsync().Result;
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                foreach (AccessionLookup item in JsonConvert.DeserializeObject<List<AccessionLookup>>(resultContent))
+                {
+                    result.Add((ILookup)item);
+                }
+            }
+            else
+            {
+                throw new Exception(resultContent);
+            }
+
+            return result;
+        }
+
+        public async Task<List<ILookup>> GetInventoryMaintPolicyLookupByMaintenanceName(string maintenanceName)
+        {
+            List<ILookup> result = new List<ILookup>();
+
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+
+            string URL = string.Format(GetDataEndPoint, Settings.Server, "get_inventory_maint_policy_lookup_by_maintenance_name", System.Net.WebUtility.UrlEncode(":maintenancename=" + maintenanceName));
+            var response = await _httpClient.GetAsync(URL);
+
+            string resultContent = response.Content.ReadAsStringAsync().Result;
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                foreach (AccessionLookup item in JsonConvert.DeserializeObject<List<AccessionLookup>>(resultContent))
+                {
+                    result.Add((ILookup)item);
+                }
+            }
+            else
+            {
+                throw new Exception(resultContent);
+            }
+
+            return result;
+        }
+
+        public async Task<string> GetCodeValueDisplayName(string groupName, string value)
+        {
+            string result = string.Empty;
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+
+            string URL = string.Format(GetDataEndPoint, Settings.Server, "get_code_value_display_member", System.Net.WebUtility.UrlEncode(":groupname=" + groupName + ";:value=" + value));
+            var response = await _httpClient.GetAsync(URL);
+
+            string resultContent = response.Content.ReadAsStringAsync().Result;
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                var array = JsonConvert.DeserializeObject<List<CodeValueLookup>>(resultContent);
+                if (array.Count > 0)
+                {
+                    result = array[0].DisplayMember;
+                }
+                else
+                    result = "Not found";
+            }
+            else
+            {
+                throw new Exception(resultContent);
+            }
+
+            return result;
+        }
+
+        public async Task<string> GetLookupByValueMember(string lookupName, int valueMember)
+        {
+            string result = null;
+
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+
+            string URL = string.Format(GetDataEndPoint, Settings.Server, "get_" + lookupName + "_by_value_member", System.Net.WebUtility.UrlEncode(":valuemember=" + valueMember));
+            var response = await _httpClient.GetAsync(URL);
+
+            string resultContent = response.Content.ReadAsStringAsync().Result;
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                var array = JsonConvert.DeserializeObject<List<AccessionLookup>>(resultContent);
+                if (array.Count > 0)
+                {
+                    result = array[0].DisplayMember;
+                }
+                else
+                    result = "Not found";
+            }
+            else
+            {
+                throw new Exception(resultContent);
+            }
+
+            return result;
+        }
+
+        public async Task<List<ILookup>> GetCodeValueByGroupName(string groupName)
+        {
+            //get_code_value_by_groupname
+            List<ILookup> result = new List<ILookup>();
+
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+
+            string URL = string.Format(GetDataEndPoint, Settings.Server, "get_code_value_by_groupname", System.Net.WebUtility.UrlEncode(":groupname=" + groupName));
+            var response = await _httpClient.GetAsync(URL);
+
+            string resultContent = response.Content.ReadAsStringAsync().Result;
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                foreach (CodeValueLookup item in JsonConvert.DeserializeObject<List<CodeValueLookup>>(resultContent))
+                {
+                    result.Add((ILookup)item);
+                }
+            }
+            else
+            {
+                throw new Exception(resultContent);
+            }
+
+            return result;
+        }
     }
 
     class Credential

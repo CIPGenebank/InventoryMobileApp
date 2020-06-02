@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,7 +7,9 @@ namespace InventoryApp.Models
 {
     public class CodeValue
     {
+        [JsonProperty("value_member")]
         public string Code { get; set; }
+        [JsonProperty("display_member")]
         public string Value { get; set; }
 
         public CodeValue(string code, string value)

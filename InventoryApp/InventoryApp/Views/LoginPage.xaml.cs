@@ -1,4 +1,5 @@
-﻿using Xamarin.Forms;
+﻿using Xamarin.Essentials;
+using Xamarin.Forms;
 
 namespace InventoryApp.Views
 {
@@ -7,6 +8,8 @@ namespace InventoryApp.Views
         public LoginPage()
         {
             InitializeComponent();
+
+            lblVersion.Text = $"Version {VersionTracking.CurrentVersion}";
         }
     }
 }

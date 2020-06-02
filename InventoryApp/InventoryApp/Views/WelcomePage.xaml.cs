@@ -2,9 +2,9 @@
 
 namespace InventoryApp.Views
 {
-    public partial class DashboardPage : ContentPage
+    public partial class WelcomePage : ContentPage
     {
-        public DashboardPage()
+        public WelcomePage()
         {
             InitializeComponent();
         }

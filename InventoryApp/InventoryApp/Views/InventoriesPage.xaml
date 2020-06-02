@@ -10,9 +10,9 @@
              Title="Inventories">
 
     <ContentPage.Resources>
-        <Color x:Key="GridHeaderBackgroundColorPrevious">#76B82A</Color>
-        <Color x:Key="GridHeaderBackgroundColor">#333</Color>
-        <Color x:Key="AccentColor">#   </Color>
+        <Color x:Key="GridHeaderBackgroundColorPrevious">White</Color> <!--#76B82A-->
+        <Color x:Key="GridHeaderBackgroundColor">#aaa</Color>
+        <Color x:Key="AccentColor">Black</Color> <!--#FF4081-->
 
         <ResourceDictionary>
             <local:IsSelectedToColorConverter x:Key="isSelectedToColor" />
@@ -99,11 +99,11 @@
                                     </Grid.ColumnDefinitions>
 
                                     <Label Grid.Row="0" Grid.Column="1"  Text="{Binding Item.AccessionNumber}" FontAttributes="Bold" />
-                                    <Label Grid.Row="0" Grid.Column="2"  Text="{Binding Item.inventory_number_part2}" LineBreakMode="TailTruncation" />
+                                    <Label Grid.Row="0" Grid.Column="2"  Text="{Binding Item.inventory_number}" LineBreakMode="TailTruncation" />
                                     <Label Grid.Row="0" Grid.Column="3"  Text="{Binding Item.quantity_on_hand, StringFormat='{0:F0}'}" />
 
-                                    <Label Grid.Row="1" Grid.Column="1"  Text="{Binding Item.acc_name_cul}" LineBreakMode="TailTruncation" />
-                                    <Label Grid.Row="1" Grid.Column="2"  Text="{Binding Item.acc_name_col}" LineBreakMode="TailTruncation" />
+                                    <Label Grid.Row="1" Grid.Column="1"  Text="{Binding Item.plant_name1}" LineBreakMode="TailTruncation" />
+                                    <Label Grid.Row="1" Grid.Column="2"  Text="{Binding Item.plant_name2}" LineBreakMode="TailTruncation" />
                                     <Label Grid.Row="1" Grid.Column="3"  Text="{Binding Item.quantity_on_hand_unit_code}" LineBreakMode="TailTruncation" />
 
                                     <Label Grid.Row="2" Grid.Column="1"  Grid.ColumnSpan="3" Text="{Binding Item.Location}" LineBreakMode="TailTruncation"/>

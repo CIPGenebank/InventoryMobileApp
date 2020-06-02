@@ -18,11 +18,11 @@ namespace InventoryApp.Helpers
         readonly HttpClient _httpClient;
         public List<InventoryViability> InventoryViabilityItems { get; private set; }
 
-        private const string SearchEndPoint = "http://{0}/gringlobal/WCFService.svc/search/{1}?dataview={2}";
-        private const string RestUrlC = "http://{0}/gringlobal/WCFService.svc/rest/{1}";
-        private const string RestUrlRUD = "http://{0}/gringlobal/WCFService.svc/rest/{1}/{2}";
-        private const string InventoryViabilityListUrl = "http://{0}/GrinGlobal/WCFService.svc/getdata/get_inventory_viability_list";
-        private const string GetDataURL = "http://{0}/grinGlobal/WCFService.svc/getdata/{1}";
+        private const string SearchEndPoint = "http://{0}/GringlobalService/WCFService.svc/search/{1}?dataview={2}";
+        private const string RestUrlC = "http://{0}/GringlobalService/WCFService.svc/rest/{1}";
+        private const string RestUrlRUD = "http://{0}/GringlobalService/WCFService.svc/rest/{1}/{2}";
+        private const string InventoryViabilityListUrl = "http://{0}/GringlobalService/WCFService.svc/getdata/get_inventory_viability_list";
+        private const string GetDataURL = "http://{0}/GringlobalService/WCFService.svc/getdata/{1}";
 
         public RestService()
         {
@@ -290,6 +290,9 @@ namespace InventoryApp.Helpers
         {
             string result = string.Empty;
 
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+
             var data = JsonConvert.SerializeObject(JsonConvert.SerializeObject(item));
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
             var response = await _httpClient.PutAsync(string.Format(RestUrlRUD, Settings.Server, "inventory", item.inventory_id), content);
@@ -307,6 +310,36 @@ namespace InventoryApp.Helpers
 
             return result;
         }
+
+        public async Task<List<CodeValueLookup>> GetCodeValueLookupList(DateTime modifiedDate)
+        {
+            List<CodeValueLookup> result = null;
+
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+
+            string URL = @"http://{0}/GringlobalService/WCFService.svc/getdata/{1}?parameters={2}";
+            URL = string.Format(URL, Settings.Server, "mob_code_value_lookup", ":createddate;:modifieddate");
+            //URL = @"http://192.168.137.1/GringlobalService/WCFService.svc/getdata/mob_code_value_lookup?parameters=:createddate;:modifieddate";
+            //URL = @"http://192.168.137.1/GringlobalService/WCFService.svc/getdata/mob_code_value_by_groupname?parameters=:groupname=ACCESSION_NAME_TYPE";
+            var response = await _httpClient.GetAsync(URL);
+
+            string resultContent = response.Content.ReadAsStringAsync().Result;
+
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                result = JsonConvert.DeserializeObject<List<CodeValueLookup>>(resultContent);
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+            {
+                result = null;
+            }
+            else
+            {
+                throw new Exception(resultContent);
+            }
+            return result;
+        }
     }
 
     public interface RestApi<T, in Tkey> where T : class
@@ -317,7 +350,7 @@ namespace InventoryApp.Helpers
     public class RestClass<T, Tkey> where T : class
     {
         readonly HttpClient _client;
-        private const string InventoryViabilityListUrl = "http://{0}/GrinGlobal/WCFService.svc/getdata/get_inventory_viability_list";
+        private const string InventoryViabilityListUrl = "http://{0}/GrinGlobalService/WCFService.svc/getdata/get_inventory_viability_list";
 
         public RestClass(HttpClient client)
         {

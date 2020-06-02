@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Frame xmlns="http://xamarin.com/schemas/2014/forms"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       xmlns:prism="http://prismlibrary.com"
+       prism:DialogLayout.RelativeWidthRequest="0.75"
+        xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        x:Class="InventoryApp.Dialogs.EditServerListDialog"
+      BackgroundColor="White" CornerRadius="0" HasShadow="False">
+    <Grid >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!--<BoxView Color="Black" />-->
+        <Label Text="{Binding Title}" d:Text="Edit Server List"
+           Style="{DynamicResource TitleStyle}"
+           Margin="20,5"
+           TextColor="Black" />
+        <Label Text="{Binding Message}" d:Text="Server name"
+           Margin="20,0,20,0"
+           Grid.Row="1" />
+        
+        <Entry Grid.Row="2" Text="{Binding Server}" 
+               Margin="20,0,20,10"/>
+
+        <StackLayout Grid.Row="3" Orientation="Horizontal">
+            <Button Text="Cancel"
+                HorizontalOptions="FillAndExpand"
+                Command="{Binding CancelCommand}" />
+            <Button Text="Add"
+                HorizontalOptions="FillAndExpand"
+                Command="{Binding SubmitCommand}"/>
+        </StackLayout>
+    </Grid>
+</Frame>

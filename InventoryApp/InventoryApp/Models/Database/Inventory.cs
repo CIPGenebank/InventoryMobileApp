@@ -42,22 +42,22 @@ namespace InventoryApp.Models.Database
         public string is_available { get; set; }
         //public string web_availability_note { get; set; }
         public string availability_status_code { get; set; }
-        /*
+        //<!--
         public string availability_status_note { get; set; }
         public string availability_start_date { get; set; }
         public string availability_end_date { get; set; }
-        */
+        //-->
         public decimal? quantity_on_hand { get; set; }
         public string quantity_on_hand_unit_code { get; set; }
-        /*
-        public char is_auto_deducted { get; set; }
+        //<!--
+        public string is_auto_deducted { get; set; }
         public string distribution_default_form_code { get; set; }
         public string distribution_default_quantity { get; set; }
         public string distribution_unit_code { get; set; }
         public decimal? distribution_critical_quantity { get; set; }
         public decimal? regeneration_critical_quantity { get; set; }
         public string pathogen_status_code { get; set; }
-        */
+        //-->
         public int accession_id { get; set; }
         public int? parent_inventory_id { get; set; }
         public int? backup_inventory_id { get; set; }
@@ -66,12 +66,12 @@ namespace InventoryApp.Models.Database
         */
         public decimal? hundred_seed_weight { get; set; }
         public string pollination_method_code { get; set; }
-        /*
+        //<!--
         public string pollination_vector_code { get; set; }
         public int? preservation_method_id { get; set; }
         public int? regeneration_method_id { get; set; }
         public string plant_sex_code { get; set; }
-        */
+        //-->
         public DateTime? propagation_date { get; set; }
         public string propagation_date_code { get; set; }
         public string note { get; set; }
@@ -83,9 +83,10 @@ namespace InventoryApp.Models.Database
         public DateTime owned_date { get; set; }
         public int owned { get; set; }
         */
-
+        
         public string acc_name_col { get; set; }
         public string acc_name_cul { get; set; }
         public string taxonomy_species_code { get; set; }
+        
     }
 }

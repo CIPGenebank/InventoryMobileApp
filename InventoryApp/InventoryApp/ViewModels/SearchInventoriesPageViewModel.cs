@@ -365,9 +365,9 @@ namespace InventoryApp.ViewModels
                 }
                 if (CooperatorGroupIndex > -1)
                 {
-                    query += string.Format(" and @inventory.inventory_maint_policy_id = {0}", ListWorkGroups[CooperatorGroupIndex].inventory_maint_policy_id);
+                    //query += string.Format(" and @inventory.inventory_maint_policy_id = {0}", ListWorkGroups[CooperatorGroupIndex].inventory_maint_policy_id);
                 }
-                query += " and @inventory.form_type_code != '**'";
+                query += " and @inventory.form_type_code <> '**'";
 
                 List<InventoryThumbnail> result;
                 if (searchText != string.Empty)
@@ -385,7 +385,7 @@ namespace InventoryApp.ViewModels
                         await _pageDialogService.DisplayAlertAsync("Message", string.Format("Found {0} matches in the database.", result.Count), "OK");
 
                     var navigationParams = new NavigationParameters();
-                    navigationParams.Add("inventoryList", result);
+                    navigationParams.Add("InventoryThumbnailList", result);
                     await NavigationService.GoBackAsync(navigationParams);
                 }
                 else
@@ -414,7 +414,7 @@ namespace InventoryApp.ViewModels
                 if (ListWorkGroups == null)
                 {
                     ListWorkGroups = await _restClient.GetWorkGroups(Settings.CooperatorId);
-                    CooperatorGroupIndex = ListWorkGroups.FindIndex(l => l.inventory_maint_policy_id == Settings.InventoryMaintPolicyId);
+                    //CooperatorGroupIndex = ListWorkGroups.FindIndex(l => l.inventory_maint_policy_id == Settings.InventoryMaintPolicyId);
                 }
 
                 if (parameters.ContainsKey("title"))

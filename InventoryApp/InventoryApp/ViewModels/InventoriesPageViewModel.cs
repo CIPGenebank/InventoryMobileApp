@@ -14,10 +14,9 @@ using Xamarin.Forms;
 
 namespace InventoryApp.ViewModels
 {
-    public class InventoriesPageViewModel : ViewModelBase
+    public class InventoriesPageViewModel : ViewModelBaseZ
     {
-        IPageDialogService PageDialogService { get; }
-
+        #region Properties
         private ObservableCollection<InventoryThumbnail> _inventoryCollection;
         public ObservableCollection<InventoryThumbnail> InventoryCollection
         {
@@ -70,43 +69,41 @@ namespace InventoryApp.ViewModels
             get { return _selectedRowsCount; }
             set { SetProperty(ref _selectedRowsCount, value); }
         }
-
+        #endregion
         public InventoriesPageViewModel(INavigationService navigationService, IPageDialogService pageDialogService, IEventAggregator eventAggregator)
-            : base(navigationService)
+            : base(navigationService, pageDialogService)
         {
             Title = "Inventories";
 
-            _inventoryCollection = new ObservableCollection<InventoryThumbnail>(InventoryFactory.GetInventories());
-            //_inventoryList = new ObservableCollection<WrappedSelection<InventoryThumbnail>>();
+            //_inventoryCollection = new ObservableCollection<InventoryThumbnail>(InventoryFactory.GetInventories());
             _inventoryList = new ObservableCollection<WrappedSelection<InventoryThumbnail>>() ;
+
+            /*
             foreach (var inventory in InventoryFactory.GetInventories())
             {
                 _inventoryList.Add(new WrappedSelection<InventoryThumbnail>() { Item = inventory, IsSelected = false });
-            }
-            PageDialogService = pageDialogService;
+            }*/
 
-            //SearchCommand = new DelegateCommand(OnSearchCommandExecuted);
             ItemTappedCommand = new DelegateCommand<Object>(OnItemTappedCommandExecuted);
-            //NewCommand = new DelegateCommand(OnNewCommandExecuted);
 
-            //AllCommand = new DelegateCommand(OnSelectAllCommandExecuted);
-            //NoneCommand = new DelegateCommand(OnSelectNoneCommandExecuted);
-            //PrintCommand = new DelegateCommand(OnPrintCommandExecuted);
+            NewCommand = new DelegateCommand(OnNewCommandExecuted);
+            ScanCommand = new DelegateCommand(OnScanCommand);
+            SearchCommand = new DelegateCommand(OnSearchCommandExecuted);
+            
+            PrintCommand = new DelegateCommand(OnPrintCommandExecuted);
             RemoveCommand = new DelegateCommand(OnRemoveCommandExecuted);
-            ScanCommand = new DelegateCommand(OnScanCommandExecuted);
-            //RegisterTransactionCommand = new DelegateCommand(OnRegisterTransactionCommandExecuted);
+            
+            RegisterTransactionCommand = new DelegateCommand(OnRegisterTransactionCommandExecuted);
             //UpdateAttributeBatchCommand = new DelegateCommand(OnUpdateAttributeBatchCommandExecuted);
 
-            //ViewDetailsCommand = new DelegateCommand(OnViewDetailsCommandExecuted);
-            //ChangeLocationCommand = new DelegateCommand(OnChangeLocationCommandExecuted);
+            ChangeLocationCommand = new DelegateCommand(OnChangeLocationCommandExecuted);
 
             //ItemToggledCommand = new DelegateCommand(OnItemToggledCommandCommandExecuted);
 
-            SelectItemCommand = new DelegateCommand<Object>(OnSelectItemCommandExecuted);
+            SelectItemCommand = new DelegateCommand<Object>(OnSelectItemCommand);
 
             SelectedRowsCount = InventoryList.Count(i => i.IsSelected == true);
             AccessionCount = InventoryList.Select(i => i.Item.accession_id).Distinct().Count();
-
 
             eventAggregator.GetEvent<AddInventoryToListEvent>().Subscribe(OnAddItemToList);
         }
@@ -125,13 +122,19 @@ namespace InventoryApp.ViewModels
             }
         }
         #endregion
+
+        public DelegateCommand NewCommand { get; }
+        private async void OnNewCommandExecuted()
+        {
+            await NavigationService.NavigateAsync("InventoryPage");
+        }
         public DelegateCommand ScanCommand { get; }
-        private async void OnScanCommandExecuted()
+        private async void OnScanCommand()
         {
             await NavigationService.NavigateAsync("ScanPage");
         }
         public DelegateCommand<Object> SelectItemCommand { get; }
-        private async void OnSelectItemCommandExecuted(Object param)
+        private async void OnSelectItemCommand(Object param)
         {
             try
             {
@@ -153,7 +156,11 @@ namespace InventoryApp.ViewModels
         }
 
         public DelegateCommand SearchCommand { get; }
-        public DelegateCommand NewCommand { get; }
+        private async void OnSearchCommandExecuted()
+        {
+            await NavigationService.NavigateAsync("SearchInventoriesPage");
+        }
+
         public DelegateCommand<Object> ItemTappedCommand { get; }
         public DelegateCommand AllCommand { get; }
         public DelegateCommand NoneCommand { get; }
@@ -180,32 +187,11 @@ namespace InventoryApp.ViewModels
             await NavigationService.NavigateAsync("ChangeLocationPage", navigationParams);
         }
 
-        private async void OnViewDetailsCommandExecuted()
-        {
-            var wrappedInventory = _inventoryList.FirstOrDefault(item => item.IsSelected = true);
-            if (wrappedInventory != null)
-            {
-                var navigationParams = new NavigationParameters();
-                navigationParams.Add("inventory", wrappedInventory.Item);
-                await NavigationService.NavigateAsync("InventoryPage", navigationParams);
-            }
-        }
-
-        private async void OnSearchCommandExecuted()
-        {
-            await NavigationService.NavigateAsync("SearchInventoriesPage");
-        }
-
-        private async void OnNewCommandExecuted()
-        {
-            await NavigationService.NavigateAsync("NewInventoryPage");
-        }
-
         private async void OnItemTappedCommandExecuted(Object param)
         {
             var navigationParams = new NavigationParameters
             {
-                { "inventory", (InventoryThumbnail)param }
+                { "InventoryThumbnail", (InventoryThumbnail)param }
             };
             await NavigationService.NavigateAsync("InventoryPage", navigationParams);
         }
@@ -283,6 +269,46 @@ namespace InventoryApp.ViewModels
                         InventoryList.Insert(index, new WrappedSelection<InventoryThumbnail> { Item = tempInventory, IsSelected = false });
                         */
                     }
+                }
+
+                if (parameters.ContainsKey("InventoryThumbnail")) 
+                {
+                    InventoryThumbnail tempInventory = (InventoryThumbnail)parameters["InventoryThumbnail"];
+                    WrappedSelection<InventoryThumbnail> inventoryThumbnailItem = _inventoryList.FirstOrDefault(item => item.Item.inventory_id == tempInventory.inventory_id);
+                    if (inventoryThumbnailItem == null)
+                    {
+                        InventoryList.Add(new WrappedSelection<InventoryThumbnail> { Item = tempInventory, IsSelected = false });
+                    }
+                    else
+                    {
+                        inventoryThumbnailItem.Item = tempInventory;
+                    }
+
+                    AccessionCount = InventoryList.Select(i => i.Item.AccessionNumber).Distinct().Count();
+                }
+
+                if (parameters.ContainsKey("InventoryThumbnailList"))
+                {
+                    List<InventoryThumbnail> inventoryList = (List<InventoryThumbnail>)parameters["InventoryThumbnailList"];
+
+                    foreach (var inventoryThumbnail in inventoryList)
+                    {
+                        var wrappedInventory = InventoryList.FirstOrDefault(x => x.Item.inventory_id == inventoryThumbnail.inventory_id);
+                        if (wrappedInventory == null)
+                        {
+                            WrappedSelection<InventoryThumbnail> temp = new WrappedSelection<InventoryThumbnail>() { Item = inventoryThumbnail, IsSelected = false };
+                            InventoryList.Add(temp);
+                        }
+                        else
+                        {
+                            wrappedInventory.Item = inventoryThumbnail;
+                            /*int index = _inventoryList.IndexOf(wrappedInventory);
+                            InventoryList.Remove(wrappedInventory);
+                            InventoryList.Insert(index, new WrappedSelection<InventoryThumbnail> { Item = inventoryThumbnail, IsSelected = wrappedInventory.IsSelected });*/
+                        }
+                    }
+
+                    AccessionCount = InventoryList.Select(i => i.Item.AccessionNumber).Distinct().Count();
                 }
             }
             catch (Exception ex)

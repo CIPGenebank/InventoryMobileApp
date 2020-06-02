@@ -23,16 +23,22 @@ namespace InventoryApp
         {
             InitializeComponent();
 
+            Xamarin.Essentials.VersionTracking.Track();
+
             await NavigationService.NavigateAsync("NavigationPage/LoginPage");
             //await NavigationService.NavigateAsync("MainPage/NavigationPage/InventoriesPage");
         }
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
+            containerRegistry.RegisterSingleton<Interfaces.IRestService, InventoryApp.Helpers.RestService>();
+            containerRegistry.RegisterSingleton<Interfaces.IDataStoreService, InventoryApp.Helpers.DataStoreService>();
+            containerRegistry.RegisterDialog<Dialogs.EditServerListDialog, Dialogs.EditServerListDialogViewModel>();
+
             containerRegistry.RegisterForNavigation<NavigationPage>();
             containerRegistry.RegisterForNavigation<LoginPage, LoginPageViewModel>();
             containerRegistry.RegisterForNavigation<MainPage, MainPageViewModel>();
-            containerRegistry.RegisterForNavigation<DashboardPage, DashboardPageViewModel>();
+            containerRegistry.RegisterForNavigation<WelcomePage, WelcomePageViewModel>();
             containerRegistry.RegisterForNavigation<InventoriesPage, InventoriesPageViewModel>();
             containerRegistry.RegisterForNavigation<InventoryCollectionPage, InventoriesPageViewModel>();
             containerRegistry.RegisterForNavigation<ScanPage, ScanPageViewModel>();

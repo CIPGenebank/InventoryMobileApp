@@ -1,0 +1,1 @@
+MainPackage=D:\Repos\InventoryApp\InventoryApp\InventoryApp.UWP\bin\x86\Release\InventoryApp.UWP_1.0.9.0_x86.appx

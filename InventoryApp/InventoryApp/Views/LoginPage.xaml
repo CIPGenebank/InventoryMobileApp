@@ -9,7 +9,7 @@
     <!--xmlns:d="http://xamarin.com/schemas/2014/forms/design"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"-->
-    
+
     <ContentPage.Content>
 
         <RelativeLayout>
@@ -18,7 +18,7 @@
                 RelativeLayout.HeightConstraint= "{ConstraintExpression Type=RelativeToParent, Property=Height}">
                 <Image.Source>
                     <OnIdiom x:TypeArguments="ImageSource">
-                        <OnIdiom.Desktop>Assets\cover_horizontal.jpg</OnIdiom.Desktop>
+                        <OnIdiom.Desktop>Assets\background.png</OnIdiom.Desktop>
                         <OnIdiom.Phone>cover.jpg</OnIdiom.Phone>
                         <OnIdiom.Tablet>cover.jpg</OnIdiom.Tablet>
                     </OnIdiom>
@@ -29,41 +29,43 @@
                 <Grid.RowDefinitions>
                     <RowDefinition >
                         <RowDefinition.Height>
-                            <OnIdiom x:TypeArguments="GridLength"  Desktop="1" Tablet="1" Phone="1"/>
+                            <OnIdiom x:TypeArguments="GridLength"  Desktop="1*" Tablet="1*" Phone="1*"/>
                         </RowDefinition.Height>
                     </RowDefinition>
                     <RowDefinition Height="auto" />
                     <RowDefinition Height="3*" />
                     <RowDefinition >
                         <RowDefinition.Height>
-                            <OnIdiom x:TypeArguments="GridLength"  Desktop="1*" Tablet="1*" Phone="16"/>
+                            <OnIdiom x:TypeArguments="GridLength"  Desktop="1*" Tablet="16" Phone="16"/>
                         </RowDefinition.Height>
                     </RowDefinition>
+                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
+
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition>
                         <ColumnDefinition.Width>
-                            <OnIdiom x:TypeArguments="GridLength"  Desktop="2*" Tablet="40" Phone="16"/>
+                            <OnIdiom x:TypeArguments="GridLength"  Desktop="*" Tablet="40" Phone="16"/>
                         </ColumnDefinition.Width>
                     </ColumnDefinition>
                     <ColumnDefinition>
                         <ColumnDefinition.Width>
-                            <OnIdiom x:TypeArguments="GridLength"  Desktop="3*" Tablet="*" Phone="*"/>
+                            <OnIdiom x:TypeArguments="GridLength"  Desktop="450" Tablet="*" Phone="*"/>
                         </ColumnDefinition.Width>
                     </ColumnDefinition>
                     <ColumnDefinition>
                         <ColumnDefinition.Width>
-                            <OnIdiom x:TypeArguments="GridLength"  Desktop="2*" Tablet="40" Phone="16"/>
+                            <OnIdiom x:TypeArguments="GridLength"  Desktop="*" Tablet="40" Phone="16"/>
                         </ColumnDefinition.Width>
                     </ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 <Grid.Resources>
                     <ResourceDictionary>
                         <Style TargetType="Entry">
-                            <Setter Property="Margin" Value="20,5" />
+                            <Setter Property="Margin" Value="0" />
                         </Style>
                         <Style TargetType="Picker">
-                            <Setter Property="Margin" Value="20,5" />
+                            <Setter Property="Margin" Value="0" />
                         </Style>
                     </ResourceDictionary>
                 </Grid.Resources>
@@ -72,44 +74,108 @@
                     <!--<Image Aspect="AspectFit" Source="logo.png" HorizontalOptions="Center"/>-->
                 </StackLayout>
 
-                <StackLayout Grid.Row="2" Grid.Column="1" Orientation="Vertical" Spacing="0" BackgroundColor="#66FFFFFF" VerticalOptions="Fill">
-                    <StackLayout.VerticalOptions>
-                        <OnIdiom x:TypeArguments="LayoutOptions"  Desktop="CenterAndExpand" Tablet="CenterAndExpand" Phone="EndAndExpand"/>
-                    </StackLayout.VerticalOptions>
-
-                    <StackLayout MinimumHeightRequest="100" Padding="10,20,10,20" >
+                <Frame Grid.Row="2" Grid.Column="1" CornerRadius="8">
+                    <Frame.VerticalOptions>
+                        <OnIdiom x:TypeArguments="LayoutOptions" Desktop="CenterAndExpand" Tablet="CenterAndExpand" Phone="EndAndExpand"/>
+                    </Frame.VerticalOptions>
+                    <StackLayout BackgroundColor="White" VerticalOptions="Fill" Opacity="0.9">
                         <!--BackgroundColor="#59FFFFFF" 45%-->
                         <!--BackgroundColor="#66FFFFFF" 40%-->
                         <!--BackgroundColor="#80FFFFFF" 50%-->
+                        <StackLayout.Padding>
+                            <OnIdiom x:TypeArguments="Thickness" Default="8" Desktop="32" />
+                        </StackLayout.Padding>
 
                         <Image Aspect="AspectFit" Source="logo.png" HorizontalOptions="Center" />
 
-                        <Entry Text="{Binding UserName}" Placeholder="Username" TextColor="Gray" />
-                        <Entry Text="{Binding Password}" IsPassword="true" Placeholder="Password" TextColor="Gray"/>
-                        <Picker SelectedItem="{Binding Server}"  TextColor="Gray">
-                            <Picker.ItemsSource>
-                                <x:Array Type="{x:Type x:String}">
-                                    <x:String>genebank.cipotato.org</x:String>
-                                    <x:String>192.168.137.1</x:String>
-                                    <x:String>10.0.2.2</x:String>
-                                    <x:String>localhost</x:String>
-                                </x:Array>
-                            </Picker.ItemsSource>
-                            <Picker.Behaviors>
-                                <prism:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding ServerChangedCommand}" />
-                            </Picker.Behaviors>
-                        </Picker>
+                        <StackLayout Orientation="Horizontal">
+                            <Label Text="Username" VerticalOptions="CenterAndExpand" WidthRequest="70">
+                                <Label.IsVisible>
+                                    <OnIdiom x:TypeArguments="x:Boolean" Default="False" Desktop="True"/>
+                                </Label.IsVisible>
+                            </Label>
+                            <Entry Text="{Binding UserName}" TextColor="Gray" HorizontalOptions="FillAndExpand">
+                                <Entry.Placeholder>
+                                    <OnIdiom x:TypeArguments="x:String" Default="Username" Desktop=""/>
+                                </Entry.Placeholder>
+                            </Entry>
+                        </StackLayout>
+                        <StackLayout Orientation="Horizontal">
+                            <Label Text="Password" VerticalOptions="CenterAndExpand" WidthRequest="70">
+                                <Label.IsVisible>
+                                    <OnIdiom x:TypeArguments="x:Boolean" Default="False" Desktop="True"/>
+                                </Label.IsVisible>
+                            </Label>
+                            <Entry Text="{Binding Password}" IsPassword="true" HorizontalOptions="FillAndExpand">
+                                <Entry.Placeholder>
+                                    <OnIdiom x:TypeArguments="x:String" Default="Password" Desktop=""/>
+                                </Entry.Placeholder>
+                            </Entry>
+                        </StackLayout>
+                        <StackLayout Orientation="Horizontal">
+                            <Label Text="Connect To" VerticalOptions="CenterAndExpand" WidthRequest="70">
+                                <Label.IsVisible>
+                                    <OnIdiom x:TypeArguments="x:Boolean" Default="False" Desktop="True"/>
+                                </Label.IsVisible>
+                            </Label>
+                            <Picker ItemsSource="{Binding ServerList}" SelectedItem="{Binding Server}" HorizontalOptions="FillAndExpand">
+                                <!--<Picker.Behaviors>
+                                    <prism:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding ServerChangedCommand}" />
+                                </Picker.Behaviors>-->
+                            </Picker>
+                            <Button Text="Add" Command="{Binding AddServerCommand}" VerticalOptions="Center" HorizontalOptions="End" CornerRadius="8"/>
+                        </StackLayout>
+                        <StackLayout Orientation="Horizontal">
+                            <Label Text="Lang" VerticalOptions="CenterAndExpand" WidthRequest="70">
+                                <Label.IsVisible>
+                                    <OnIdiom x:TypeArguments="x:Boolean" Default="False" Desktop="True"/>
+                                </Label.IsVisible>
+                            </Label>
+                            <Picker SelectedItem="{Binding Lang}" ItemsSource="{Binding LangList}"  ItemDisplayBinding="{Binding Value}" HorizontalOptions="FillAndExpand">
+                                <Picker.Behaviors>
+                                    <prism:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding LangChangedCommand}" />
+                                </Picker.Behaviors>
+                            </Picker>
+                        </StackLayout>
 
+                        <Button  Grid.ColumnSpan="2" Text="Log In" Command="{Binding LoginCommand}" BackgroundColor="#76B82A" TextColor="White" CornerRadius="8" Margin="0,16,0,0">
+                            <Button.HeightRequest>
+                                <OnPlatform x:TypeArguments="x:Double" Android="54" WinPhone="48" />
+                            </Button.HeightRequest>
+                        </Button>
+                        
+                        <!--<Grid >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition >
+                                    <ColumnDefinition.Width>
+                                        <OnIdiom x:TypeArguments="GridLength"  Desktop="auto" Default="auto"/>
+                                    </ColumnDefinition.Width>
+                                </ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                                <Label Grid.Row="0" Grid.Column="0" Text="Username" VerticalOptions="CenterAndExpand" />
+                            <Entry Grid.Row="0" Grid.Column="1" Text="{Binding UserName}" Placeholder="Username" TextColor="Gray" />
+                            <Label Grid.Row="1" Grid.Column="0" Text="Password" VerticalOptions="CenterAndExpand" />
+                            <Entry Grid.Row="1" Grid.Column="1" Text="{Binding Password}" IsPassword="true" Placeholder="Password" TextColor="Gray"/>
+                            <Label Grid.Row="2" Grid.Column="0" Text="Server" VerticalOptions="CenterAndExpand" />
+                            <StackLayout Grid.Row="2" Grid.Column="1" Orientation="Horizontal" >
+                                <Picker ItemsSource="{Binding ServerList}" SelectedItem="{Binding Server}"  TextColor="Gray" HorizontalOptions="FillAndExpand">
+                                    <Picker.Behaviors>
+                                        <prism:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding ServerChangedCommand}" />
+                                    </Picker.Behaviors>
+                                </Picker>
+                                <Button Text="Add" Command="{Binding AddServerCommand}" VerticalOptions="Center" HorizontalOptions="End" CornerRadius="8"/>
+                            </StackLayout>
+                            <Label Grid.Row="3" Grid.Column="0" Text="Lang" VerticalOptions="CenterAndExpand" />
+                            <Picker Grid.Row="3" Grid.Column="1" SelectedItem="{Binding Lang}" ItemsSource="{Binding LangList}"  ItemDisplayBinding="{Binding Value}" HorizontalOptions="FillAndExpand">
+                                <Picker.Behaviors>
+                                    <prism:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding LangChangedCommand}" />
+                                </Picker.Behaviors>
+                            </Picker>
+                        </Grid>-->
+                        
                     </StackLayout>
-
-                    <Button Text="Log In" Command="{Binding LoginCommand}" VerticalOptions="Start" 
-                        BackgroundColor="#76B82A" TextColor="White"  >
-                        <Button.HeightRequest>
-                            <OnPlatform x:TypeArguments="x:Double" Android="54" WinPhone="48" />
-                        </Button.HeightRequest>
-                    </Button>
-                    <!--IsEnabled="{Binding IsNotBusy}"-->
-                </StackLayout>
+                </Frame>
+                <Label x:Name="lblVersion" Grid.Row="4" Grid.ColumnSpan="3" Text="version" HorizontalTextAlignment="Center" BackgroundColor="White"/>
             </Grid>
         </RelativeLayout>
     </ContentPage.Content>

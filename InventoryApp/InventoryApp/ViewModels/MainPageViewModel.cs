@@ -34,12 +34,13 @@ namespace InventoryApp.ViewModels
         public MainPageViewModel(INavigationService navigationService, IPageDialogService pageDialogService)
             : base(navigationService)
         {
-            _menuList = new List<MenuItem> { new MenuItem { Text = "Inventory list", Path="NavigationPage/InventoriesPage" },
-                new MenuItem { Text = "Inventories(previous)", Path = "NavigationPage/PreviousInventoriesPage"},
-                new MenuItem { Text = "Dataviews", Path = "NavigationPage/DashboardPage"},
+            _menuList = new List<MenuItem> { new MenuItem { Text = "Welcome", Path = "NavigationPage/WelcomePage"} ,
+                new MenuItem { Text = "Inventory list", Path="NavigationPage/InventoriesPage" },
+                //new MenuItem { Text = "Inventories(previous)", Path = "NavigationPage/PreviousInventoriesPage"},
+                /*new MenuItem { Text = "Dataviews", Path = "NavigationPage/WelcomePage"},*/
                 new MenuItem { Text = "Viability Tests", Path = "NavigationPage/ViabilityTestsPage" },
                 new MenuItem { Text = "Settings", Path = "NavigationPage/SettingsPage" },
-                new MenuItem { Text = "Dashboard", Path = "NavigationPage/DashboardPage"} //Home
+                new MenuItem { Text = "About", Path = "NavigationPage/About" }
             };
 
             NavigateCommand = new DelegateCommand<string>(OnNavigateCommandExecuted);

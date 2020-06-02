@@ -8,6 +8,22 @@ namespace InventoryApp.Helpers
     public static class Settings
     {
         private static readonly string StringDefault = string.Empty;
+
+        public static string WorkgroupName
+        {
+            get { return Preferences.Get("workgroup_name_key", StringDefault); }
+            set { Preferences.Set("workgroup_name_key", value); }
+        }
+        public static string ServerList
+        {
+            get { return Preferences.Get("server_list_key", StringDefault); }
+            set { Preferences.Set("server_list_key", value); }
+        }
+        public static int Lang
+        {
+            get { return Preferences.Get("lang_id_key", -1); }
+            set { Preferences.Set("lang_id_key", value); }
+        }
         public static string Username
         {
             get { return Preferences. Get("user_name_key", StringDefault); }
@@ -40,8 +56,8 @@ namespace InventoryApp.Helpers
 
         public static string Server
         {
-            get { return Preferences.Get("Server", "genebank.cipotato.org"); }
-            set { Preferences.Set("Server", value); }
+            get { return Preferences.Get("server_key", StringDefault); }
+            set { Preferences.Set("server_key", value); }
         }
         public static int InventoryMaintPolicyId
         {

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace InventoryApp.Interfaces
 {
-    interface IRestService
+    public interface IRestService
     {
         #region InventoryViability
 
@@ -24,7 +24,7 @@ namespace InventoryApp.Interfaces
         Task<List<InventoryViability>> SearchInventoryViabilityAsync(string query, string dataview, string resolver);
         Task<List<InventoryViabilityRule>> SearchInventoryViabilityRuleAsync(string query, string dataview, string resolver);
 
-        #region InventoryViability
+        #region InventoryViabilityData
         Task<List<InventoryViabilityData>> SearchInventoryViabilityDataAsync(string query, string dataview, string resolver);
         Task<string> CreateInventoryViabilityDataAsync(InventoryViabilityData item);
         Task<string> UpdateInventoryViabilityDataAsync(InventoryViabilityData item);
@@ -32,5 +32,13 @@ namespace InventoryApp.Interfaces
 
         Task<string> GetNewInventoryID();
         Task<string> UpdateInventoryAsync(Inventory item);
+
+        #region Utils
+
+        Task<List<CodeValueLookup>> GetCodeValueLookupList(DateTime modifiedDate);
+        /*Task<List<CooperatorGroup>> GetWorkGroups(int cooperatorId);
+        Task<List<string>> GetAllLocation1List();*/
+
+        #endregion
     }
 }
