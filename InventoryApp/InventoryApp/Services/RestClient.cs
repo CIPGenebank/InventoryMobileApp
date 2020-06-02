@@ -10,6 +10,8 @@ using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using Xamarin.Forms;
+using ZXing;
 
 namespace InventoryApp.Services
 {
@@ -235,6 +237,7 @@ namespace InventoryApp.Services
             string resultContent = response.Content.ReadAsStringAsync().Result;
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
+                result.Add("");
                 foreach (var item in Newtonsoft.Json.Linq.JArray.Parse(resultContent))
                 {
                     result.Add(item["storage_location_part1"].ToString());
@@ -249,6 +252,31 @@ namespace InventoryApp.Services
             return result;
         }
 
+        public async Task<Dictionary<string, string>> GetAppResources(string formName, int sysLangId)
+        {
+            Dictionary<string, string> result = new Dictionary<string, string>();
+
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+
+            string URL = string.Format(GetDataEndPoint, Settings.Server, "get_mob_app_resource_lookup_by_form_name", ":formname="+formName+";:syslangid="+sysLangId);
+            var response = await _httpClient.GetAsync(URL);
+
+            string resultContent = response.Content.ReadAsStringAsync().Result;
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                foreach (var item in Newtonsoft.Json.Linq.JArray.Parse(resultContent))
+                {
+                    result.Add((string)item["value_member"], (string)item["display_member"]);
+                }
+            }
+            else
+            {
+                throw new Exception(resultContent);
+            }
+
+            return result;
+        }
 
         public async Task<string> UpdateInventory(InventoryThumbnail inventory)
             {

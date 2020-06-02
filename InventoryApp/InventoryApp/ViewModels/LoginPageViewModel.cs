@@ -10,9 +10,10 @@ using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using ZXing.PDF417;
+using Xamarin.Essentials;
 
 namespace InventoryApp.ViewModels
 {
@@ -21,6 +22,7 @@ namespace InventoryApp.ViewModels
         IPageDialogService PageDialogService { get; }
         IDialogService DialogService { get; }
         private readonly RestClient _restClient;
+        private Dictionary<string, string> _appResource;
 
         private string _username = string.Empty;
         public string UserName
@@ -42,15 +44,15 @@ namespace InventoryApp.ViewModels
             get { return _server; }
             set { SetProperty(ref _server, value); }
         }
-        private List<KeyValuePair<int,string>> _langList;
-        public List<KeyValuePair<int, string>> LangList
+        private List<CodeValueLookup> _langList;
+        public List<CodeValueLookup> LangList
         {
             get { return _langList; }
             set { SetProperty(ref _langList, value); }
         }
 
-        private KeyValuePair<int,string> _lang;
-        public KeyValuePair<int,string> Lang
+        private CodeValueLookup _lang;
+        public CodeValueLookup Lang
         {
             get { return _lang; }
             set { SetProperty(ref _lang, value); }
@@ -62,6 +64,47 @@ namespace InventoryApp.ViewModels
             get { return _serverList; }
             set { SetProperty(ref _serverList, value); }
         }
+
+        #region lang
+        private string _labelUsername;
+        public string LabelUsername
+        {
+            get { return _labelUsername; }
+            set { SetProperty(ref _labelUsername, value); }
+        }
+
+        private string _labelPassword;
+        public string LabelPassword
+        {
+            get { return _labelPassword; }
+            set { SetProperty(ref _labelPassword, value); }
+        }
+        private string _labelServer;
+        public string LabelServer
+        {
+            get { return _labelServer; }
+            set { SetProperty(ref _labelServer, value); }
+        }
+        private string _labelLang;
+        public string LabelLang
+        {
+            get { return _labelLang; }
+            set { SetProperty(ref _labelLang, value); }
+        }
+        private string _labelVersion;
+        public string LabelVersion
+        {
+            get { return _labelVersion; }
+            set { SetProperty(ref _labelVersion, value); }
+        }
+        private string _buttonLogIn;
+        public string ButtonLogIn
+        {
+            get { return _buttonLogIn; }
+            set { SetProperty(ref _buttonLogIn, value); }
+        }
+        #endregion
+
         public LoginPageViewModel(INavigationService navigationService, IPageDialogService pageDialogService, IDialogService dialogService)
             : base(navigationService)
         {
@@ -86,14 +129,8 @@ namespace InventoryApp.ViewModels
                 _serverList = new ObservableCollection<string>(Settings.ServerList.Split(new char[] { ',' }).ToList<string>());
             }
 
-            _langList = new Dictionary<int, string> { { 1, "English" }, { 2, "Español" } }.ToList();
-
             _username = Settings.Username;
             _server = Settings.Server;
-            if (Settings.Lang > 0) 
-            {
-                Lang = _langList.FirstOrDefault(l => l.Key == Settings.Lang);
-            }
             
         }
 
@@ -139,8 +176,18 @@ namespace InventoryApp.ViewModels
         private async void OnLangChangedCommandAsync() {
             try
             {
-                if (Lang.Key != Settings.Lang)
-                    Settings.Lang = Lang.Key;
+                if (int.Parse(Lang.value_member) != Settings.Lang)
+                {
+                    Settings.Lang = int.Parse(Lang.value_member);
+
+                    _appResource = await _restClient.GetAppResources("LoginPage", Settings.Lang);
+                    LabelUsername = _appResource[nameof(LabelUsername)];
+                    LabelPassword = _appResource[nameof(LabelPassword)];
+                    LabelServer = _appResource[nameof(LabelServer)];
+                    LabelLang = _appResource[nameof(LabelLang)];
+                    LabelVersion = string.Format(_appResource[nameof(LabelVersion)], VersionTracking.CurrentVersion);
+                    ButtonLogIn = _appResource[nameof(ButtonLogIn)];
+                }
             }
             catch (Exception ex)
             {
@@ -191,6 +238,50 @@ namespace InventoryApp.ViewModels
             finally 
             {
                 IsBusy = false;
+            }
+        }
+
+        public override async void OnNavigatedTo(INavigationParameters parameters)
+        {
+            base.OnNavigatedTo(parameters);
+            try
+            {
+                if (LangList == null)
+                {
+                    LangList = new List<CodeValueLookup>()
+                    {
+                        new CodeValueLookup{ value_member = "1", display_member = "English"},
+                        new CodeValueLookup{ value_member = "2", display_member = "Español"},
+                        new CodeValueLookup{ value_member = "3", display_member = "Français"},
+                        new CodeValueLookup{ value_member = "4", display_member = @"العربية"},
+                        new CodeValueLookup{ value_member = "5", display_member = @"Русский"},
+                        new CodeValueLookup{ value_member = "6", display_member = @"Português"},
+                        new CodeValueLookup{ value_member = "7", display_member = @"Český"},
+                        new CodeValueLookup{ value_member = "9", display_member = "ENG"}
+                    };
+                }
+                if (Lang == null)
+                {
+                    if (Settings.Lang > 0)
+                        Lang = _langList.FirstOrDefault(l => l.value_member.Equals(Settings.Lang.ToString()));
+                    else
+                        Lang = LangList[0];
+                }
+
+                if (_appResource == null)
+                {
+                    _appResource = await _restClient.GetAppResources("LoginPage", Settings.Lang);
+                    LabelUsername = _appResource[nameof(LabelUsername)];
+                    LabelPassword = _appResource[nameof(LabelPassword)];
+                    LabelServer = _appResource[nameof(LabelServer)];
+                    LabelLang = _appResource[nameof(LabelLang)];
+                    LabelVersion = string.Format( _appResource[nameof(LabelVersion)], VersionTracking.CurrentVersion);
+                    ButtonLogIn = _appResource[nameof(ButtonLogIn)];
+                }
+            }
+            catch (Exception ex)
+            {
+                await PageDialogService.DisplayAlertAsync("Error", ex.Message, "OK");
             }
         }
     }

@@ -19,11 +19,11 @@ namespace InventoryApp.ViewModels
         private ObservableCollection<InventoryThumbnail> _inventories;
         private readonly RestClient _restClient;
 
-        private List<CooperatorGroup> _listWorkGroups;
-        public List<CooperatorGroup> ListWorkGroups
+        private List<CooperatorGroup> _listWorkGroup;
+        public List<CooperatorGroup> ListWorkgroup
         {
-            get { return _listWorkGroups; }
-            set { SetProperty(ref _listWorkGroups, value); }
+            get { return _listWorkGroup; }
+            set { SetProperty(ref _listWorkGroup, value); }
         }
         private List<string> _listFilters;
         public List<string> ListFilters
@@ -59,11 +59,11 @@ namespace InventoryApp.ViewModels
             set { SetProperty(ref _location1, value); }
         }
 
-        private int _cooperatorGroupIndex;
-        public int CooperatorGroupIndex
+        private CooperatorGroup _workgroup;
+        public CooperatorGroup Workgroup
         {
-            get { return _cooperatorGroupIndex; }
-            set { SetProperty(ref _cooperatorGroupIndex, value); }
+            get { return _workgroup; }
+            set { SetProperty(ref _workgroup, value); }
         }
 
         private string _listId;
@@ -152,15 +152,11 @@ namespace InventoryApp.ViewModels
         {
             try
             {
-                if (CooperatorGroupIndex > -1)
-                {
-                    Settings.CooperatorGroupIndex = CooperatorGroupIndex;
+                //List<Location> locations = await _restClient.GetLocations(Settings.InventoryMaintPolicyId.ToString());
+                //ListLocation1 = locations.Select(l => l.storage_location_part1).Distinct().ToList();
 
-                    List<Location> locations = await _restClient.GetLocations(Settings.InventoryMaintPolicyId.ToString());
-                    ListLocation1 = locations.Select(l => l.storage_location_part1).Distinct().ToList();
-
-                    //Location1 = Settings.Location1;
-                }
+                //Location1 = Settings.Location1;
+                
             }
             catch (Exception e)
             {
@@ -363,14 +359,14 @@ namespace InventoryApp.ViewModels
                 {
                     query += string.Format(" and @inventory.storage_location_part1 = '{0}'", Location1);
                 }
-                if (CooperatorGroupIndex > -1)
+                if (Workgroup != null)
                 {
                     //query += string.Format(" and @inventory.inventory_maint_policy_id = {0}", ListWorkGroups[CooperatorGroupIndex].inventory_maint_policy_id);
                 }
                 query += " and @inventory.form_type_code <> '**'";
 
                 List<InventoryThumbnail> result;
-                if (searchText != string.Empty)
+                if (!string.IsNullOrEmpty(searchText))
                 {
                     result = await _restClient.Search(string.Format(query, searchText), "", "inventory");
                 }
@@ -411,10 +407,17 @@ namespace InventoryApp.ViewModels
         {
             try
             {
-                if (ListWorkGroups == null)
+                //Load workgroups
+                if (ListWorkgroup == null)
                 {
-                    ListWorkGroups = await _restClient.GetWorkGroups(Settings.CooperatorId);
-                    //CooperatorGroupIndex = ListWorkGroups.FindIndex(l => l.inventory_maint_policy_id == Settings.InventoryMaintPolicyId);
+                    ListWorkgroup = await _restClient.GetWorkGroups(Settings.CooperatorId);
+                    Workgroup = ListWorkgroup.FirstOrDefault(g => g.group_name.Equals(Settings.WorkgroupName));
+                }
+                //Load Location 1
+                if (ListLocation1 == null)
+                {
+                    ListLocation1 = await _restClient.GetAllLocation1List();
+                    Location1 = Settings.Location1;
                 }
 
                 if (parameters.ContainsKey("title"))

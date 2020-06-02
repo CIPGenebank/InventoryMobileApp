@@ -9,7 +9,7 @@ namespace InventoryApp.Views
         {
             InitializeComponent();
 
-            lblVersion.Text = $"Version {VersionTracking.CurrentVersion}";
+            //lblVersion.Text = $"Version {VersionTracking.CurrentVersion}";
         }
     }
 }

@@ -89,7 +89,7 @@
                         <Image Aspect="AspectFit" Source="logo.png" HorizontalOptions="Center" />
 
                         <StackLayout Orientation="Horizontal">
-                            <Label Text="Username" VerticalOptions="CenterAndExpand" WidthRequest="70">
+                            <Label Text="{Binding LabelUsername, Mode=OneWay}" VerticalOptions="CenterAndExpand" WidthRequest="70">
                                 <Label.IsVisible>
                                     <OnIdiom x:TypeArguments="x:Boolean" Default="False" Desktop="True"/>
                                 </Label.IsVisible>
@@ -101,7 +101,7 @@
                             </Entry>
                         </StackLayout>
                         <StackLayout Orientation="Horizontal">
-                            <Label Text="Password" VerticalOptions="CenterAndExpand" WidthRequest="70">
+                            <Label Text="{Binding LabelPassword, Mode=OneWay}" VerticalOptions="CenterAndExpand" WidthRequest="70">
                                 <Label.IsVisible>
                                     <OnIdiom x:TypeArguments="x:Boolean" Default="False" Desktop="True"/>
                                 </Label.IsVisible>
@@ -113,7 +113,7 @@
                             </Entry>
                         </StackLayout>
                         <StackLayout Orientation="Horizontal">
-                            <Label Text="Connect To" VerticalOptions="CenterAndExpand" WidthRequest="70">
+                            <Label Text="{Binding LabelServer, Mode=OneWay}" VerticalOptions="CenterAndExpand" WidthRequest="70">
                                 <Label.IsVisible>
                                     <OnIdiom x:TypeArguments="x:Boolean" Default="False" Desktop="True"/>
                                 </Label.IsVisible>
@@ -123,22 +123,22 @@
                                     <prism:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding ServerChangedCommand}" />
                                 </Picker.Behaviors>-->
                             </Picker>
-                            <Button Text="Add" Command="{Binding AddServerCommand}" VerticalOptions="Center" HorizontalOptions="End" CornerRadius="8"/>
+                            <Button Text="+" Command="{Binding AddServerCommand}" VerticalOptions="Center" HorizontalOptions="End" CornerRadius="8"/>
                         </StackLayout>
                         <StackLayout Orientation="Horizontal">
-                            <Label Text="Lang" VerticalOptions="CenterAndExpand" WidthRequest="70">
+                            <Label Text="{Binding LabelLang, Mode=OneWay}" VerticalOptions="CenterAndExpand" WidthRequest="70">
                                 <Label.IsVisible>
                                     <OnIdiom x:TypeArguments="x:Boolean" Default="False" Desktop="True"/>
                                 </Label.IsVisible>
                             </Label>
-                            <Picker SelectedItem="{Binding Lang}" ItemsSource="{Binding LangList}"  ItemDisplayBinding="{Binding Value}" HorizontalOptions="FillAndExpand">
+                            <Picker SelectedItem="{Binding Lang}" ItemsSource="{Binding LangList}"  ItemDisplayBinding="{Binding display_member}" HorizontalOptions="FillAndExpand">
                                 <Picker.Behaviors>
                                     <prism:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding LangChangedCommand}" />
                                 </Picker.Behaviors>
                             </Picker>
                         </StackLayout>
 
-                        <Button  Grid.ColumnSpan="2" Text="Log In" Command="{Binding LoginCommand}" BackgroundColor="#76B82A" TextColor="White" CornerRadius="8" Margin="0,16,0,0">
+                        <Button  Grid.ColumnSpan="2" Text="{Binding ButtonLogIn, Mode=OneWay}" Command="{Binding LoginCommand}" BackgroundColor="#76B82A" TextColor="White" CornerRadius="8" Margin="0,16,0,0">
                             <Button.HeightRequest>
                                 <OnPlatform x:TypeArguments="x:Double" Android="54" WinPhone="48" />
                             </Button.HeightRequest>
@@ -175,7 +175,7 @@
                         
                     </StackLayout>
                 </Frame>
-                <Label x:Name="lblVersion" Grid.Row="4" Grid.ColumnSpan="3" Text="version" HorizontalTextAlignment="Center" BackgroundColor="White"/>
+                <Label Grid.Row="4" Grid.ColumnSpan="3" Text="{Binding LabelVersion, Mode=OneWay}" HorizontalTextAlignment="Center" BackgroundColor="White"/>
             </Grid>
         </RelativeLayout>
     </ContentPage.Content>

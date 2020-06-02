@@ -34,8 +34,8 @@
             </Grid>
             <Grid VerticalOptions="Start">
                 <Label Grid.Column="0" Text="WorkGroup" VerticalTextAlignment="Center"/>
-                <Picker Grid.Column="1" ItemsSource="{Binding ListWorkGroups}" ItemDisplayBinding="{Binding title}"
-                        SelectedIndex="{Binding CooperatorGroupIndex}" >
+                <Picker Grid.Column="1" ItemsSource="{Binding ListWorkgroup}" ItemDisplayBinding="{Binding group_name}"
+                        SelectedItem="{Binding Workgroup}" >
                     <Picker.Behaviors>
                         <prism:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding ListWorkGroupChangedCommand}" />
                     </Picker.Behaviors>
