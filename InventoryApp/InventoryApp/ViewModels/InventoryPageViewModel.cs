@@ -126,31 +126,46 @@ namespace InventoryApp.ViewModels
                         var prop = props.FirstOrDefault(x => x.Name.Equals(att.Name));
                         if (prop != null)
                         {
-                            //check if Value is null
-                            if (att.Value == null)
+                            if (att.ControlType.Equals("TEXTPICKER") )
                             {
-                                prop.SetValue(NewInventory, null);
+                                string value;
+                                if (att.IsPicker)
+                                {
+                                    value = att.Value == null ? null : (string)att.Value;
+                                }
+                                else {
+                                    value = att.SecondValue; 
+                                }
+                                prop.SetValue(NewInventory, value);
                             }
                             else
                             {
-                                if (att.Value.GetType() == typeof(string)) //If value is empty and attribute type is different from string, assign null or 0?
+                                //check if Value is null
+                                if (att.Value == null)
                                 {
-                                    TypeConverter converter = TypeDescriptor.GetConverter(att.Type);
-                                    converter = TypeDescriptor.GetConverter(att.Type);
-                                    var newValue = converter.ConvertFrom(att.Value);
-                                    prop.SetValue(NewInventory, newValue);
+                                    prop.SetValue(NewInventory, null);
                                 }
-                                else 
+                                else
                                 {
-                                    if (att.ControlType.Equals("CHECKBOX") && att.Value.GetType() == typeof(bool))
+                                    if (att.Value.GetType() == typeof(string)) //If value is empty and attribute type is different from string, assign null or 0?
                                     {
-                                        if((bool)att.Value)
-                                            prop.SetValue(NewInventory, "Y");
-                                        else
-                                            prop.SetValue(NewInventory, "N");
+                                        TypeConverter converter = TypeDescriptor.GetConverter(att.Type);
+                                        converter = TypeDescriptor.GetConverter(att.Type);
+                                        var newValue = converter.ConvertFrom(att.Value);
+                                        prop.SetValue(NewInventory, newValue);
                                     }
                                     else
-                                        prop.SetValue(NewInventory, att.Value);
+                                    {
+                                        if (att.ControlType.Equals("CHECKBOX") && att.Value.GetType() == typeof(bool))
+                                        {
+                                            if ((bool)att.Value)
+                                                prop.SetValue(NewInventory, "Y");
+                                            else
+                                                prop.SetValue(NewInventory, "N");
+                                        }
+                                        else
+                                            prop.SetValue(NewInventory, att.Value);
+                                    }
                                 }
                             }
                         }   
@@ -235,6 +250,16 @@ namespace InventoryApp.ViewModels
                             }
                         }
                     }
+
+                    var attLocation1 = _inventoryAttributeArray.FirstOrDefault(att => att.Name.Equals("storage_location_part1"));
+                    attLocation1.ControlType = "TEXTPICKER";
+                    attLocation1.ListValues = await _restClient.GetAllLocation1List();
+                    attLocation1.IsPicker = true;
+                    var attLocation2 = _inventoryAttributeArray.FirstOrDefault(att => att.Name.Equals("storage_location_part2"));
+                    attLocation2.ControlType = "TEXTPICKER";
+                    attLocation2.ListValues = await _restClient.GetAllLocation2List();
+                    attLocation2.IsPicker = true;
+
                     InventoryAtributeList = new ObservableCollection<EntityAttribute>(_inventoryAttributeArray.ToList());
                 }
 
@@ -291,6 +316,15 @@ namespace InventoryApp.ViewModels
                             att.Value = prop.GetValue(NewInventory, null);
                         }
                     }
+                    var attLocation1 = _inventoryAttributeArray.FirstOrDefault(att => att.Name.Equals("storage_location_part1"));
+                    attLocation1.ControlType = "TEXTPICKER";
+                    attLocation1.ListValues = await _restClient.GetAllLocation1List();
+                    attLocation1.IsPicker = true;
+                    var attLocation2 = _inventoryAttributeArray.FirstOrDefault(att => att.Name.Equals("storage_location_part2"));
+                    attLocation2.ControlType = "TEXTPICKER";
+                    attLocation2.ListValues = await _restClient.GetAllLocation2List();
+                    attLocation2.IsPicker = true;
+
                     InventoryAtributeList = new ObservableCollection<EntityAttribute>(_inventoryAttributeArray.ToList());
                 }
             }

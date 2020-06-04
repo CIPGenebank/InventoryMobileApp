@@ -12,6 +12,7 @@ namespace InventoryApp.Custom
         public DataTemplate DropdownTemplate { get; set; }
         public DataTemplate LookupPickerTemplate { get; set; }
         public DataTemplate CheckboxTemplate { get; set; }
+        public DataTemplate CustomTextPickerTemplate { get; set; }
         protected override DataTemplate OnSelectTemplate(object item, BindableObject container)
         {
             EntityAttribute ea = (EntityAttribute)item;
@@ -31,6 +32,8 @@ namespace InventoryApp.Custom
                     return LookupPickerTemplate;
                 case "CHECKBOX":
                     return CheckboxTemplate;
+                case "TEXTPICKER":
+                    return CustomTextPickerTemplate;
                 default:
                     return TextTemplate;
             }

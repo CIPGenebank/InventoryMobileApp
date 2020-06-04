@@ -29,5 +29,14 @@ namespace InventoryApp.Models
             get { return _displayValue; }
             set { SetProperty(ref _displayValue, value); }
         }
+
+        public List<string> ListValues { get; set; }
+        private bool _IsPicker;
+        public bool IsPicker
+        {
+            get { return _IsPicker; }
+            set { SetProperty(ref _IsPicker, value); }
+        }
+        public string SecondValue { get; set; }
     }
 }

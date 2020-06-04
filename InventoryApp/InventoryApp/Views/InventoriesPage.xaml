@@ -51,10 +51,10 @@
                     <CheckBox  IsChecked="{Binding IsAllSelected}" HorizontalOptions="CenterAndExpand"  VerticalOptions="CenterAndExpand"/>
                 </StackLayout>
 
-                <Label Grid.Column="1" Grid.Row="0" Text=" Acc. Number" FontAttributes="Bold" TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}"/>
-                <Label Grid.Column="1" Grid.Row="1" Text=" Acc. Name" FontAttributes="Bold" LineBreakMode="TailTruncation" TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}"/>
-                <Label Grid.Column="2" Grid.Row="0" Text=" Inventory Id/Lot Id" FontAttributes="Bold" LineBreakMode="TailTruncation" TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}"/>
-                <Label Grid.Column="2" Grid.Row="1" Text=" Col Number" FontAttributes="Bold" LineBreakMode="TailTruncation" TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}"/>
+                <Label Grid.Column="1" Grid.Row="0" Text=" Acc. number" FontAttributes="Bold" TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}"/>
+                <Label Grid.Column="1" Grid.Row="1" Text=" Acc. name" FontAttributes="Bold" LineBreakMode="TailTruncation" TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}"/>
+                <Label Grid.Column="2" Grid.Row="0" Text=" Inventory number" FontAttributes="Bold" LineBreakMode="TailTruncation" TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}"/>
+                <Label Grid.Column="2" Grid.Row="1" Text=" Col number" FontAttributes="Bold" LineBreakMode="TailTruncation" TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}"/>
                 <Label Grid.Column="3" Grid.Row="0" Text=" Quantity" FontAttributes="Bold" LineBreakMode="TailTruncation" TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}"/>
                 <Label Grid.Column="3" Grid.Row="1" Text=" Unit" FontAttributes="Bold" LineBreakMode="TailTruncation" TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}"/>
 

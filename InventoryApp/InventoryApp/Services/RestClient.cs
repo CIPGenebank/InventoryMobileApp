@@ -251,6 +251,33 @@ namespace InventoryApp.Services
 
             return result;
         }
+        public async Task<List<string>> GetAllLocation2List()
+        {
+            List<string> result = new List<string>();
+
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+
+            //System.Net.WebUtility.UrlEncode(":inventorymaintpolicyid=" + inventoryMaintPolicyId)
+            string URL = string.Format(GetDataEndPoint, Settings.Server, "get_inventory_storage_location_part2", "");
+            var response = await _httpClient.GetAsync(URL);
+
+            string resultContent = response.Content.ReadAsStringAsync().Result;
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                result.Add("");
+                foreach (var item in Newtonsoft.Json.Linq.JArray.Parse(resultContent))
+                {
+                    result.Add(item["storage_location_part2"].ToString());
+                }
+            }
+            else
+            {
+                throw new Exception(resultContent);
+            }
+
+            return result;
+        }
 
         public async Task<Dictionary<string, string>> GetAppResources(string formName, int sysLangId)
         {

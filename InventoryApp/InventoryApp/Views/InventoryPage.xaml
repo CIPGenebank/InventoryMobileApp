@@ -4,11 +4,13 @@
              xmlns:prism="http://prismlibrary.com"
              prism:ViewModelLocator.AutowireViewModel="True"
              x:Class="InventoryApp.Views.InventoryPage"
+             xmlns:converter="clr-namespace:InventoryApp.ValueConverters"
              xmlns:custom="clr-namespace:InventoryApp.Custom"
              Title="Inventory">
     
     <ContentPage.Resources>
         <ResourceDictionary>
+            <converter:InverseBooleanConverter x:Key="inverseBoolean" />
             <DataTemplate x:Key="textTemplate">
                 <ViewCell>
                     <StackLayout>
@@ -71,13 +73,26 @@
                     </StackLayout>
                 </ViewCell>
             </DataTemplate>
+            <DataTemplate x:Key="customTextPickerTemplate">
+                <ViewCell>
+                    <StackLayout>
+                        <Label Text="{Binding Caption}"/>
+                        <StackLayout Orientation="Horizontal">
+                            <Entry Text="{Binding SecondValue}" Keyboard="Text" HorizontalOptions="FillAndExpand" IsVisible="{Binding IsPicker, Converter={StaticResource inverseBoolean}}"/>
+                            <Picker ItemsSource="{Binding ListValues}" SelectedItem="{Binding Value}" HorizontalOptions="FillAndExpand" IsVisible="{Binding IsPicker}"/>
+                            <Switch IsToggled="{Binding IsPicker}" HorizontalOptions="End" WidthRequest="50"/>
+                        </StackLayout>
+                    </StackLayout>
+                </ViewCell>
+            </DataTemplate>
             <custom:EntityAttributeDataTemplateSelector x:Key="entityAttributeDataTemplateSelector"
                 TextTemplate="{StaticResource textTemplate}"
                 NumberTemplate="{StaticResource numberTemplate}" 
                 DateTimeTemplate="{StaticResource datetimeTemplate}"
                 DropdownTemplate="{StaticResource dropdownTemplate}"
                 LookupPickerTemplate="{StaticResource lookupPickerTemplate}"
-                CheckboxTemplate="{StaticResource checkboxTemplate}"/>
+                CheckboxTemplate="{StaticResource checkboxTemplate}"
+                CustomTextPickerTemplate="{StaticResource customTextPickerTemplate}"/>
         </ResourceDictionary>
     </ContentPage.Resources>
 
