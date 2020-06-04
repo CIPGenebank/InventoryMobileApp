@@ -354,6 +354,9 @@ namespace InventoryApp.ViewModels
                     case "Taxon Code":
                         query = "@taxonomy_species.alternate_name = '{0}'";
                         break;
+                    case "Order request - Local number":
+                        query = "@order_request.local_number='{0}'";
+                        break;
                 }
                 if (!string.IsNullOrEmpty(Location1))
                 {

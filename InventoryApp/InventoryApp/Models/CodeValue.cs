@@ -46,7 +46,7 @@ namespace InventoryApp.Models
         public static List<string> GetSearchInventoryFilters()
         {
             return new List<string> { "Accession Number", "Accession Name", "Inventory Id / Lot Id"
-                , "Collecting number","Storage location level 2", "Storage location level 3", "Note", "Taxon Code"
+                , "Collecting number","Storage location level 2", "Storage location level 3", "Note", "Order request - Local number"
                 /* "Distribution Request",*/ /*"List Name",*/ 
                 /*"Accession ID", "Inventory Number",*/ };
         }
