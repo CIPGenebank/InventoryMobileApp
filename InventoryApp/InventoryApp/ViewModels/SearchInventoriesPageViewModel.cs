@@ -359,9 +359,9 @@ namespace InventoryApp.ViewModels
                 {
                     query += string.Format(" and @inventory.storage_location_part1 = '{0}'", Location1);
                 }
-                if (Workgroup != null)
+                if (Workgroup != null && Workgroup.group_owned_by.HasValue)
                 {
-                    //query += string.Format(" and @inventory.inventory_maint_policy_id = {0}", ListWorkGroups[CooperatorGroupIndex].inventory_maint_policy_id);
+                    query += string.Format(" and @inventory.owned_by = {0}", Workgroup.group_owned_by.Value);
                 }
                 query += " and @inventory.form_type_code <> '**'";
 

@@ -192,7 +192,7 @@ namespace InventoryApp.ViewModels
             {
                 if (_location == null)
                 {
-                    _location = await _restClient.GetLocations(Settings.InventoryMaintPolicyId.ToString());
+                    _location = await _restClient.GetLocations(Settings.WorkgroupCooperatorId.ToString());
                 }
 
                 if (ListLocation1 == null)

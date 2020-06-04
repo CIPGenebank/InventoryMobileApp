@@ -45,7 +45,7 @@ namespace InventoryApp.ViewModels
             Inventory = new Inventory()
             {
                 inventory_id = -1,
-                inventory_maint_policy_id = Settings.InventoryMaintPolicyId,
+                inventory_maint_policy_id = Settings.WorkgroupCooperatorId,
                 parent_inventory_id = null,
                 backup_inventory_id = null,
 

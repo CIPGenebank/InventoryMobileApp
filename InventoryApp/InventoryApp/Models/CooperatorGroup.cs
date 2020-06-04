@@ -10,5 +10,6 @@ namespace InventoryApp.Models
         public string group_tag { get; set; }
         public int sys_group_id { get; set; }
         public string group_name { get; set; }
+        public int? group_owned_by { get; set; }
     }
 }

@@ -59,10 +59,10 @@ namespace InventoryApp.Helpers
             get { return Preferences.Get("server_key", StringDefault); }
             set { Preferences.Set("server_key", value); }
         }
-        public static int InventoryMaintPolicyId
+        public static int WorkgroupCooperatorId
         {
-            get { return Preferences.Get("InventoryMaintPolicyId", -1); }
-            set { Preferences.Set("InventoryMaintPolicyId", value); }
+            get { return Preferences.Get("WorkgroupCooperatorId", -1); }
+            set { Preferences.Set("WorkgroupCooperatorId", value); }
         }
 
         public static string Filter
