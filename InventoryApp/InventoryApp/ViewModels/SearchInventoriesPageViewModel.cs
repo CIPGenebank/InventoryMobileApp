@@ -322,10 +322,10 @@ namespace InventoryApp.ViewModels
                         }
                         break;
                     case "Storage location level 2":
-                        query = "@inventory.storage_location_part2 = '{0}'";
+                        query = "@inventory.storage_location_part2 like '%{0}%'";
                         break;
                     case "Storage location level 3":
-                        query = "@inventory.storage_location_part3 = '{0}'";
+                        query = "@inventory.storage_location_part3 like '%{0}%'";
                         break;
                     case "Accession Name":
                         query = string.Format("@accession_inv_name.category_code = 'CULTIVAR' and @accession_inv_name.plant_name = '{0}'", searchText);
@@ -362,10 +362,10 @@ namespace InventoryApp.ViewModels
                         query = "@taxonomy_species.alternate_name = '{0}'";
                         break;
                     case "Order request - Order Id":
-                        query = "@order_request.order_request_id='{0}'";
+                        query = "@order_request.order_request_id = '{0}'";
                         break;
                     case "Order request - Local number":
-                        query = "@order_request.local_number='{0}'";
+                        query = "@order_request.local_number = '%{0}%'";
                         break;
                 }
                 if (!string.IsNullOrEmpty(Location1))

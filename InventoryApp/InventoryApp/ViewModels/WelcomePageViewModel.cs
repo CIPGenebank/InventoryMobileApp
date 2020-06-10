@@ -110,7 +110,13 @@ namespace InventoryApp.ViewModels
                 {
                     ListWorkgroup = await _restClient.GetWorkGroups(Settings.CooperatorId);
                     Workgroup = ListWorkgroup.FirstOrDefault(g => g.group_name.Equals(Settings.WorkgroupName));
-                    Settings.WorkgroupCooperatorId = Workgroup.group_owned_by.HasValue? Workgroup.group_owned_by.Value : -1;
+                    if (Workgroup == null)
+                    {
+                        Settings.WorkgroupName = string.Empty;
+                        Settings.WorkgroupCooperatorId = -1;
+                    }
+                    else
+                        Settings.WorkgroupCooperatorId = Workgroup.group_owned_by.HasValue ? Workgroup.group_owned_by.Value : -1;
                 }
                 //Load Location 1
                 if (ListLocation1 == null)
