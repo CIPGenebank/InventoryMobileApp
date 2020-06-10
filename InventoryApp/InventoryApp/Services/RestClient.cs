@@ -207,7 +207,7 @@ namespace InventoryApp.Services
                 _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
 
                 //System.Net.WebUtility.UrlEncode(":inventorymaintpolicyid=" + inventoryMaintPolicyId)
-                string URL = string.Format(GetDataEndPoint, Settings.Server, "get_inventory_storage_location_part1");
+                string URL = string.Format(GetDataEndPoint, Settings.Server, "get_locations_by_workgroup", "");
                 var response = await _httpClient.GetAsync(URL);
 
                 string resultContent = response.Content.ReadAsStringAsync().Result;
@@ -384,6 +384,30 @@ namespace InventoryApp.Services
                 }
                 return result;
             }
+
+        //
+        public async Task<List<Lookup>> GetMethodLookupList()
+        {
+            List<Lookup> result = new List<Lookup>();
+
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+
+            string URL = string.Format(GetDataEndPoint, Settings.Server, "get_mob_method_lookup", "");
+            var response = await _httpClient.GetAsync(URL);
+
+            string resultContent = response.Content.ReadAsStringAsync().Result;
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                result = JsonConvert.DeserializeObject<List<Lookup>>(resultContent);
+            }
+            else
+            {
+                throw new Exception(resultContent);
+            }
+
+            return result;
+        }
 
         public async Task<List<ILookup>> GetAccessionLookUpListByAccessionNumber(string accessionNumber)
         {

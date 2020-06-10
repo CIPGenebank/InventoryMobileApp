@@ -121,6 +121,12 @@ namespace InventoryApp.ViewModels
         //            return false;
         //    }
         //}
+        private int _maxResults;
+        public int MaxResults
+        {
+            get { return _maxResults; }
+            set { SetProperty(ref _maxResults, value); }
+        }
 
         public SearchInventoriesPageViewModel(INavigationService navigationService, IPageDialogService pageDialogService) : base(navigationService)
         {
@@ -145,6 +151,7 @@ namespace InventoryApp.ViewModels
             ItemTappedCommand = new DelegateCommand(OnItemTappedCommandExecuted);
 
             _uniqueList = new ObservableCollection<string>();
+            MaxResults = 200;
         }
 
         public DelegateCommand ListWorkGroupChangedCommand { get; }
@@ -353,6 +360,9 @@ namespace InventoryApp.ViewModels
                         break;
                     case "Taxon Code":
                         query = "@taxonomy_species.alternate_name = '{0}'";
+                        break;
+                    case "Order request - Order Id":
+                        query = "@order_request.order_request_id='{0}'";
                         break;
                     case "Order request - Local number":
                         query = "@order_request.local_number='{0}'";

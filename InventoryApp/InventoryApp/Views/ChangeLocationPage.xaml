@@ -3,8 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:prism="http://prismlibrary.com"
              prism:ViewModelLocator.AutowireViewModel="True"
+             xmlns:converter="clr-namespace:InventoryApp.ValueConverters"
              Title="{Binding Title}"
              x:Class="InventoryApp.Views.ChangeLocationPage">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converter:InverseBooleanConverter x:Key="inverseBoolean" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Save" Command="{Binding SaveCommand}" Icon="save.png" />
@@ -12,34 +19,59 @@
 
     <ContentPage.Content>
         <StackLayout Orientation="Vertical" Padding="16">
-            <Label Text="Location 1"/>
-            <Picker ItemsSource="{Binding ListLocation1}" SelectedItem="{Binding Location1}">
-                <Picker.Behaviors>
-                    <prism:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding ListLocation1ChangedCommand}" />
-                </Picker.Behaviors>
-            </Picker>
-            <Label Text="Location 2"/>
-            <Entry Placeholder="Type location" Text="{Binding Location2Text}"/>
-            <Picker ItemsSource="{Binding ListLocation2}" SelectedItem="{Binding Location2, Mode=TwoWay}">
-                <Picker.Behaviors>
-                    <prism:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding ListLocation2ChangedCommand}" />
-                </Picker.Behaviors>
-            </Picker>
-            <Label Text="Location 3"/>
-            <Entry Placeholder="Type location" Text="{Binding Location3Text}"/>
-            <Picker ItemsSource="{Binding ListLocation3}" SelectedItem="{Binding Location3}">
-                <Picker.Behaviors>
-                    <prism:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding ListLocation3ChangedCommand}" />
-                </Picker.Behaviors>
-            </Picker>
-            <Label Text="Location 4"/>
-            <Entry Placeholder="Type location" Text="{Binding Location4Text}"/>
-            <Picker ItemsSource="{Binding ListLocation4}" SelectedItem="{Binding Location4}">
-                <Picker.Behaviors>
-                    <prism:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding ListLocation4ChangedCommand}" />
-                </Picker.Behaviors>
-            </Picker>
+            <StackLayout>
+                <Label Text="Location 1"/>
+                <StackLayout Orientation="Horizontal">
+                    <Entry Text="{Binding Location1Text}" Keyboard="Text" HorizontalOptions="FillAndExpand" IsVisible="{Binding IsPicker1, Converter={StaticResource inverseBoolean}}" />
+                    <Picker ItemsSource="{Binding ListLocation1}" SelectedItem="{Binding Location1}" HorizontalOptions="FillAndExpand" IsVisible="{Binding IsPicker1}">
+                        <Picker.Behaviors>
+                            <prism:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding ListLocation1ChangedCommand}" />
+                        </Picker.Behaviors>
+                    </Picker>
+                    <Switch IsToggled="{Binding IsPicker1}" HorizontalOptions="End" WidthRequest="50"/>
+                </StackLayout>
+            </StackLayout>
 
+
+            <StackLayout>
+                <Label Text="Location 2"/>
+                <StackLayout Orientation="Horizontal">
+                    <Entry Text="{Binding Location2Text}" Keyboard="Text" HorizontalOptions="FillAndExpand" IsVisible="{Binding IsPicker2, Converter={StaticResource inverseBoolean}}"/>
+                    <Picker ItemsSource="{Binding ListLocation2}" SelectedItem="{Binding Location2}" HorizontalOptions="FillAndExpand" IsVisible="{Binding IsPicker2}">
+                        <Picker.Behaviors>
+                            <prism:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding ListLocation2ChangedCommand}" />
+                        </Picker.Behaviors>
+                    </Picker>
+                    <Switch IsToggled="{Binding IsPicker2}" HorizontalOptions="End" WidthRequest="50"/>
+                </StackLayout>
+            </StackLayout>
+
+            <StackLayout>
+                <Label Text="Location 3"/>
+                <StackLayout Orientation="Horizontal">
+                    <Entry Text="{Binding Location3Text}" Keyboard="Text" HorizontalOptions="FillAndExpand" IsVisible="{Binding IsPicker3, Converter={StaticResource inverseBoolean}}"/>
+                    <Picker ItemsSource="{Binding ListLocation3}" SelectedItem="{Binding Location3}" HorizontalOptions="FillAndExpand" IsVisible="{Binding IsPicker3}">
+                        <Picker.Behaviors>
+                            <prism:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding ListLocation3ChangedCommand}" />
+                        </Picker.Behaviors>
+                    </Picker>
+                    <Switch IsToggled="{Binding IsPicker3}" HorizontalOptions="End" WidthRequest="50"/>
+                </StackLayout>
+            </StackLayout>
+            
+            <StackLayout>
+                <Label Text="Location 4"/>
+                <StackLayout Orientation="Horizontal">
+                    <Entry Text="{Binding Location4Text}" Keyboard="Text" HorizontalOptions="FillAndExpand" IsVisible="{Binding IsPicker4, Converter={StaticResource inverseBoolean}}"/>
+                    <Picker ItemsSource="{Binding ListLocation4}" SelectedItem="{Binding Location4}" HorizontalOptions="FillAndExpand" IsVisible="{Binding IsPicker4}">
+                        <Picker.Behaviors>
+                            <prism:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding ListLocation4ChangedCommand}" />
+                        </Picker.Behaviors>
+                    </Picker>
+                    <Switch IsToggled="{Binding IsPicker4}" HorizontalOptions="End" WidthRequest="50"/>
+                </StackLayout>
+            </StackLayout>
+            
         </StackLayout>
     </ContentPage.Content>
 

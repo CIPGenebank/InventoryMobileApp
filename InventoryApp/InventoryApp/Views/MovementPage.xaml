@@ -34,7 +34,7 @@
                 <!--<Picker SelectedItem="{Binding Units}" />-->
                 <Entry Text="{Binding QuantityUnitCode}" IsEnabled="False"/>
                 <Label Text="Method - Justification"/>
-                <Picker ItemsSource="{Binding MethodList}" ItemDisplayBinding="{Binding Value}" SelectedIndex="{Binding MethodIndex}"/>
+                <Picker ItemsSource="{Binding MethodList}" ItemDisplayBinding="{Binding display_member}" SelectedIndex="{Binding MethodIndex}"/>
                 <Label Text="Action date"/>
                 <DatePicker Date="{Binding ActionDate}"/>
                 <Label Text="Note"/>

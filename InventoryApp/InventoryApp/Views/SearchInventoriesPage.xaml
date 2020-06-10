@@ -46,6 +46,11 @@
                 <Picker Grid.Column="1" ItemsSource="{Binding ListLocation1}" SelectedItem="{Binding Location1}"/>
             </Grid>
 
+            <Grid VerticalOptions="Start">
+                <Label Grid.Column="0" Text="Max results" VerticalTextAlignment="Center"/>
+                <Entry Grid.Column="1" Text="{Binding MaxResults}" IsEnabled="False"/>
+            </Grid>
+            
             <ListView ItemsSource="{Binding UniqueList}" SelectedItem="{Binding SelectedItem}" VerticalOptions="FillAndExpand" IsVisible="{Binding IsMultiline}">
                 <ListView.Behaviors>
                     <prism:EventToCommandBehavior EventName="ItemTapped" Command="{Binding ItemTappedCommand}" />

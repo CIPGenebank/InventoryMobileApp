@@ -11,8 +11,8 @@
 
     <ContentPage.Resources>
         <Color x:Key="GridHeaderBackgroundColorPrevious">White</Color> <!--#76B82A-->
-        <Color x:Key="GridHeaderBackgroundColor">#aaa</Color>
-        <Color x:Key="AccentColor">Black</Color> <!--#FF4081-->
+        <Color x:Key="GridHeaderBackgroundColor">#000</Color> <!-- #aaa -->
+        <Color x:Key="AccentColor">White</Color> <!--#FF4081-->
 
         <ResourceDictionary>
             <local:IsSelectedToColorConverter x:Key="isSelectedToColor" />

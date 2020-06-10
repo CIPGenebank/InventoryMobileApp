@@ -39,10 +39,14 @@ namespace InventoryApp.ViewModels
         {
             get { return CodeValueFactory.ActionNameCodeList; }
         }
-        public List<CodeValue> MethodList
+
+        private List<Lookup> _methodList;
+        public List<Lookup> MethodList
         {
-            get { return CodeValueFactory.MethodList; }
+            get { return _methodList; }
+            set { SetProperty(ref _methodList, value); }
         }
+
         private int _actionNameCodeIndex;
         public int ActionNameCodeIndex
         {
@@ -121,12 +125,13 @@ namespace InventoryApp.ViewModels
                         quantity = quantity,
                         quantity_unit_code = QuantityUnitCode,
                         action_date = ActionDate,
-                        method_id = int.Parse(MethodList[MethodIndex].Code),
+                        method_id = MethodList[MethodIndex].value_member,
                         note = Note
                     };
                     await _restClient.CreateInventoryAction(ia);
 
                     inventory.quantity_on_hand += quantity;
+                    await _restClient.UpdateInventory(inventory);
                 }
                 catch (Exception ex)
                 {
@@ -160,6 +165,11 @@ namespace InventoryApp.ViewModels
         {
             try
             {
+                if (MethodList == null) 
+                {
+                    MethodList = await _restClient.GetMethodLookupList();
+                }
+
                 if (parameters.ContainsKey("inventoryList"))
                 {
                     _inventoryList = (List<InventoryThumbnail>)parameters["inventoryList"];

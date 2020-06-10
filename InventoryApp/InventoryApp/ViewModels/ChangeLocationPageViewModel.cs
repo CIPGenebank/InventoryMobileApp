@@ -1,4 +1,5 @@
-﻿using InventoryApp.Helpers;
+﻿using ImTools;
+using InventoryApp.Helpers;
 using InventoryApp.Models;
 using InventoryApp.Services;
 using Prism.Commands;
@@ -8,6 +9,7 @@ using Prism.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 
 namespace InventoryApp.ViewModels
 {
@@ -66,6 +68,13 @@ namespace InventoryApp.ViewModels
             set { SetProperty(ref _location4, value); }
         }
 
+        private string _location1Text;
+        public string Location1Text
+        {
+            get { return _location1Text; }
+            set { SetProperty(ref _location1Text, value); }
+        }
+
         private string _location2Text;
         public string Location2Text
         {
@@ -87,6 +96,33 @@ namespace InventoryApp.ViewModels
             set { SetProperty(ref _location4Text, value); }
         }
 
+        private bool _isPicker1;
+        public bool IsPicker1
+        {
+            get { return _isPicker1; }
+            set { SetProperty(ref _isPicker1, value); }
+        }
+
+        private bool _isPicker2;
+        public bool IsPicker2
+        {
+            get { return _isPicker2; }
+            set { SetProperty(ref _isPicker2, value); }
+        }
+
+        private bool _isPicker3;
+        public bool IsPicker3
+        {
+            get { return _isPicker3; }
+            set { SetProperty(ref _isPicker3, value); }
+        }
+
+        private bool _isPicker4;
+        public bool IsPicker4
+        {
+            get { return _isPicker4; }
+            set { SetProperty(ref _isPicker4, value); }
+        }
         #endregion
 
         IPageDialogService _pageDialogService { get; }
@@ -104,8 +140,13 @@ namespace InventoryApp.ViewModels
 
             SaveCommand = new DelegateCommand(OnSaveCommandExecuted);
 
-            ListLocation1ChangedCommand = new DelegateCommand(OnListLocation1ChangedCommandExecuted);
-            ListLocation2ChangedCommand = new DelegateCommand(OnListLocation2ChangedCommandExecuted);
+            IsPicker1 = true;
+            IsPicker2 = true;
+            IsPicker3 = true;
+            IsPicker4 = false;
+
+            //ListLocation1ChangedCommand = new DelegateCommand(OnListLocation1ChangedCommandExecuted);
+            //ListLocation2ChangedCommand = new DelegateCommand(OnListLocation2ChangedCommandExecuted);
         }
 
         public DelegateCommand SaveCommand { get; }
@@ -117,19 +158,22 @@ namespace InventoryApp.ViewModels
             {
                 try
                 {
-                    inventory.storage_location_part1 = Location1;
+                    if (!IsPicker1)
+                        inventory.storage_location_part1 = Location1Text;
+                    else
+                        inventory.storage_location_part1 = Location1;
 
-                    if (!string.IsNullOrEmpty(Location2Text))
+                    if (!IsPicker2)
                         inventory.storage_location_part2 = Location2Text;
                     else
                         inventory.storage_location_part2 = Location2;
 
-                    if (!string.IsNullOrEmpty(Location3Text))
+                    if (!IsPicker3)
                         inventory.storage_location_part3 = Location3Text;
                     else
                         inventory.storage_location_part3 = Location3;
 
-                    if (!string.IsNullOrEmpty(Location4Text))
+                    if (!IsPicker4)
                         inventory.storage_location_part4 = Location4Text;
                     else
                         inventory.storage_location_part4 = Location4;
@@ -141,8 +185,12 @@ namespace InventoryApp.ViewModels
                     await _pageDialogService.DisplayAlertAsync("Error", ex.Message, "OK");
                 }
             }
+
+            var list = string.Join(",", _inventoryList.Select(i => i.inventory_id));
+            _inventoryList = await _restClient.Search("@inventory.inventory_id in (" + list + ")", "get_mob_inventory", "inventory");
+            
             var navigationParams = new NavigationParameters();
-            navigationParams.Add("inventoryList", _inventoryList);
+            navigationParams.Add("InventoryThumbnailList", _inventoryList);
             await NavigationService.GoBackAsync(navigationParams);
 
             //var answer = await _pageDialogService.DisplayAlertAsync("Changes saved", "Do you want to go back to Inventories List Page", "YES", "NO");
@@ -192,12 +240,15 @@ namespace InventoryApp.ViewModels
             {
                 if (_location == null)
                 {
-                    _location = await _restClient.GetLocations(Settings.WorkgroupCooperatorId.ToString());
+                    _location = await _restClient.GetLocations(Settings.CooperatorGroupIndex.ToString());
                 }
 
                 if (ListLocation1 == null)
                 {
                     ListLocation1 = _location.Select(l => l.storage_location_part1).Distinct().ToList();
+                    ListLocation2 = _location.Select(l => l.storage_location_part2).Distinct().ToList();
+                    ListLocation3 = _location.Select(l => l.storage_location_part3).Distinct().ToList();
+                    ListLocation4 = _location.Select(l => l.storage_location_part4).Distinct().ToList();
                     Location1 = Settings.Location1;
                 }
 

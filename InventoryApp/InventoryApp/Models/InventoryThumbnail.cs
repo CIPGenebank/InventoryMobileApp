@@ -52,7 +52,12 @@ namespace InventoryApp.Models
             get { return _storage_location_part2; }
             set { SetProperty(ref _storage_location_part2, value); RaisePropertyChanged(nameof(Location)); }
         }
-        public string storage_location_part3 { get; set; }
+        private string _storage_location_part3;
+        public string storage_location_part3
+        {
+            get { return _storage_location_part3; }
+            set { SetProperty(ref _storage_location_part3, value); }
+        }
         public string storage_location_part4 { get; set; }
         /*
         public string latitude { get; set; }
