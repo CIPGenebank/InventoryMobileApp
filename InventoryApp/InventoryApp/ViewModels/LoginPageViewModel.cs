@@ -1,4 +1,5 @@
-﻿using ImTools;
+﻿using DryIoc;
+using ImTools;
 using InventoryApp.Helpers;
 using InventoryApp.Models;
 using InventoryApp.Services;
@@ -131,7 +132,7 @@ namespace InventoryApp.ViewModels
 
             _username = Settings.Username;
             _server = Settings.Server;
-            
+            Settings.Token = string.Empty;
         }
 
         public DelegateCommand AddServerCommand { get; }
@@ -180,13 +181,15 @@ namespace InventoryApp.ViewModels
                 {
                     Settings.Lang = int.Parse(Lang.value_member);
 
+                    _appResource = null;
                     _appResource = await _restClient.GetAppResources("LoginPage", Settings.Lang);
-                    LabelUsername = _appResource[nameof(LabelUsername)];
-                    LabelPassword = _appResource[nameof(LabelPassword)];
-                    LabelServer = _appResource[nameof(LabelServer)];
-                    LabelLang = _appResource[nameof(LabelLang)];
-                    LabelVersion = string.Format(_appResource[nameof(LabelVersion)], VersionTracking.CurrentVersion);
-                    ButtonLogIn = _appResource[nameof(ButtonLogIn)];
+
+                    LabelUsername = GetLangLabel(nameof(LabelUsername));
+                    LabelPassword = GetLangLabel(nameof(LabelPassword));
+                    LabelServer = GetLangLabel(nameof(LabelServer));
+                    LabelLang = GetLangLabel(nameof(LabelLang));
+                    LabelVersion = string.Format(GetLangLabel(nameof(LabelVersion)), VersionTracking.CurrentVersion);
+                    ButtonLogIn = GetLangLabel(nameof(ButtonLogIn));
                 }
             }
             catch (Exception ex)
@@ -251,13 +254,13 @@ namespace InventoryApp.ViewModels
                     LangList = new List<CodeValueLookup>()
                     {
                         new CodeValueLookup{ value_member = "1", display_member = "English"},
-                        new CodeValueLookup{ value_member = "2", display_member = "Español"},
+                        new CodeValueLookup{ value_member = "2", display_member = "Español"}/*,
                         new CodeValueLookup{ value_member = "3", display_member = "Français"},
                         new CodeValueLookup{ value_member = "4", display_member = @"العربية"},
                         new CodeValueLookup{ value_member = "5", display_member = @"Русский"},
                         new CodeValueLookup{ value_member = "6", display_member = @"Português"},
                         new CodeValueLookup{ value_member = "7", display_member = @"Český"},
-                        new CodeValueLookup{ value_member = "9", display_member = "ENG"}
+                        new CodeValueLookup{ value_member = "9", display_member = "ENG"}*/
                     };
                 }
                 if (Lang == null)
@@ -265,24 +268,60 @@ namespace InventoryApp.ViewModels
                     if (Settings.Lang > 0)
                         Lang = _langList.FirstOrDefault(l => l.value_member.Equals(Settings.Lang.ToString()));
                     else
+                    {
                         Lang = LangList[0];
+                        Settings.Lang = Lang.sys_lang_id;
+                    }
                 }
 
                 if (_appResource == null)
                 {
                     _appResource = await _restClient.GetAppResources("LoginPage", Settings.Lang);
-                    LabelUsername = _appResource[nameof(LabelUsername)];
-                    LabelPassword = _appResource[nameof(LabelPassword)];
-                    LabelServer = _appResource[nameof(LabelServer)];
-                    LabelLang = _appResource[nameof(LabelLang)];
-                    LabelVersion = string.Format( _appResource[nameof(LabelVersion)], VersionTracking.CurrentVersion);
-                    ButtonLogIn = _appResource[nameof(ButtonLogIn)];
+                    
+                    LabelUsername = GetLangLabel(nameof(LabelUsername));
+                    LabelPassword = GetLangLabel(nameof(LabelPassword));
+                    LabelServer = GetLangLabel(nameof(LabelServer));
+                    LabelLang = GetLangLabel(nameof(LabelLang));
+                    LabelVersion = string.Format(GetLangLabel(nameof(LabelVersion)), VersionTracking.CurrentVersion);
+                    ButtonLogIn = GetLangLabel(nameof(ButtonLogIn));
                 }
             }
             catch (Exception ex)
             {
                 await PageDialogService.DisplayAlertAsync("Error", ex.Message, "OK");
             }
+        }
+
+        private string GetLangLabel(string key)
+        {
+            string value = string.Empty;
+            if (_appResource == null || _appResource.Count == 0)
+            {
+                _appResource = new Dictionary<string, string>();
+                if (Settings.Lang == 1)
+                {
+                    _appResource.Add(nameof(LabelUsername), "Username");
+                    _appResource.Add(nameof(LabelPassword), "Password");
+                    _appResource.Add(nameof(LabelServer), "Connect To");
+                    _appResource.Add(nameof(LabelLang), "Lang");
+                    _appResource.Add(nameof(LabelVersion), "Version {0}");
+                    _appResource.Add(nameof(ButtonLogIn), "Log In");
+                }
+                else
+                {
+                    _appResource.Add(nameof(LabelUsername), "Usuario");
+                    _appResource.Add(nameof(LabelPassword), "Contraseña");
+                    _appResource.Add(nameof(LabelServer), "Conectar a");
+                    _appResource.Add(nameof(LabelLang), "Idioma");
+                    _appResource.Add(nameof(LabelVersion), "Versión {0}");
+                    _appResource.Add(nameof(ButtonLogIn), "Ingresar");
+                }
+            }
+            if (_appResource.ContainsKey(key))
+            {
+                value = _appResource[key];
+            }
+            return value;
         }
     }
 }

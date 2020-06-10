@@ -285,23 +285,24 @@ namespace InventoryApp.Services
 
             _httpClient.DefaultRequestHeaders.Clear();
             _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
-
-            string URL = string.Format(GetDataEndPoint, Settings.Server, "get_mob_app_resource_lookup_by_form_name", ":formname="+formName+";:syslangid="+sysLangId);
-            var response = await _httpClient.GetAsync(URL);
-
-            string resultContent = response.Content.ReadAsStringAsync().Result;
-            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            if (!string.IsNullOrEmpty(Settings.Token) && !string.IsNullOrEmpty(Settings.Server))
             {
-                foreach (var item in Newtonsoft.Json.Linq.JArray.Parse(resultContent))
+                string URL = string.Format(GetDataEndPoint, Settings.Server, "get_mob_app_resource_lookup_by_form_name", ":formname=" + formName + ";:syslangid=" + sysLangId);
+                var response = await _httpClient.GetAsync(URL);
+
+                string resultContent = response.Content.ReadAsStringAsync().Result;
+                if (response != null && response.StatusCode == System.Net.HttpStatusCode.OK)
                 {
-                    result.Add((string)item["value_member"], (string)item["display_member"]);
+                    foreach (var item in Newtonsoft.Json.Linq.JArray.Parse(resultContent))
+                    {
+                        result.Add((string)item["value_member"], (string)item["display_member"]);
+                    }
+                }
+                else
+                {
+                    throw new Exception(resultContent);
                 }
             }
-            else
-            {
-                throw new Exception(resultContent);
-            }
-
             return result;
         }
 
