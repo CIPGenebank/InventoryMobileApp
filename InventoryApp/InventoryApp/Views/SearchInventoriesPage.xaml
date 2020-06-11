@@ -28,9 +28,18 @@
             </StackLayout>
             <Label TextColor="Red" Text="{Binding Count, StringFormat='Count: {0}'}" IsVisible="{Binding IsMultiline}"></Label>
 
+            <Grid >
+                <Label Grid.Column="0" Text="Search operator" VerticalTextAlignment="Center"/>
+                <Picker Grid.Column="1" ItemsSource="{Binding SearchOperatorList}" ItemDisplayBinding="{Binding display_member}" SelectedItem="{Binding SearchOperator}">
+                </Picker>
+            </Grid>
             <Grid VerticalOptions="Start">
                 <Label Grid.Column="0" Text="Search By" VerticalTextAlignment="Center"/>
-                <Picker Grid.Column="1" ItemsSource="{Binding ListFilters}" SelectedItem="{Binding Filter}"/>
+                <Picker Grid.Column="1" ItemsSource="{Binding ListFilters}" ItemDisplayBinding="{Binding filter_name}" SelectedItem="{Binding Filter}">
+                    <Picker.Behaviors>
+                        <prism:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding FilterListChangedCommand}" />
+                    </Picker.Behaviors>
+                </Picker>
             </Grid>
             <Grid VerticalOptions="Start">
                 <Label Grid.Column="0" Text="WorkGroup" VerticalTextAlignment="Center"/>

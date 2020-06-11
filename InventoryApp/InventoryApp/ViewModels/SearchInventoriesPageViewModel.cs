@@ -1,4 +1,5 @@
-﻿using InventoryApp.Helpers;
+﻿using ImTools;
+using InventoryApp.Helpers;
 using InventoryApp.Models;
 using InventoryApp.Services;
 using Prism.Commands;
@@ -9,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace InventoryApp.ViewModels
 {
@@ -25,8 +27,8 @@ namespace InventoryApp.ViewModels
             get { return _listWorkGroup; }
             set { SetProperty(ref _listWorkGroup, value); }
         }
-        private List<string> _listFilters;
-        public List<string> ListFilters
+        private List<SearchFilter> _listFilters;
+        public List<SearchFilter> ListFilters
         {
             get { return _listFilters; }
             set { SetProperty(ref _listFilters, value); }
@@ -45,8 +47,8 @@ namespace InventoryApp.ViewModels
             set { SetProperty(ref _searchText, value); }
         }
 
-        private string _filter;
-        public string Filter
+        private SearchFilter _filter;
+        public SearchFilter Filter
         {
             get { return _filter; }
             set { SetProperty(ref _filter, value); }
@@ -64,6 +66,19 @@ namespace InventoryApp.ViewModels
         {
             get { return _workgroup; }
             set { SetProperty(ref _workgroup, value); }
+        }
+
+        private List<CodeValueLookup> _searchOperatorList;
+        public List<CodeValueLookup> SearchOperatorList
+        {
+            get { return _searchOperatorList; }
+            set { SetProperty(ref _searchOperatorList, value); }
+        }
+        private CodeValueLookup _searchOperator;
+        public CodeValueLookup SearchOperator
+        {
+            get { return _searchOperator; }
+            set { SetProperty(ref _searchOperator, value); }
         }
 
         private string _listId;
@@ -135,14 +150,11 @@ namespace InventoryApp.ViewModels
             _pageDialogService = pageDialogService;
             _restClient = new RestClient();
 
-            _listFilters = CodeValueFactory.GetSearchInventoryFilters();
-            //_listWorkGroups = CodeValueFactory.GetSearchInventoryActivities();
-            //_locationList = CodeValueFactory.GetSearchInventoryLocations();
-
             FindCommand = new DelegateCommand(OnFindCommandExecuted);
             ScanCommand = new DelegateCommand(OnScanCommandExecuted);
 
             ListWorkGroupChangedCommand = new DelegateCommand(OnListWorkGroupChangedCommandExecuted);
+            FilterListChangedCommand = new DelegateCommand(OnFilterListChangedCommand);
 
             SearchCommand = new DelegateCommand(OnSearchCommandExecuted);
             IsMultiline = false;
@@ -152,6 +164,42 @@ namespace InventoryApp.ViewModels
 
             _uniqueList = new ObservableCollection<string>();
             MaxResults = 200;
+        }
+        public DelegateCommand FilterListChangedCommand { get; }
+        private async void OnFilterListChangedCommand()
+        {
+            try
+            {
+                if (Filter == null) return;
+
+                var baseSearchOperatorList = new List<CodeValueLookup>() {
+                        new CodeValueLookup { value_member="equals", display_member="Equals"},
+                        new CodeValueLookup { value_member="contains", display_member="Contains"},
+                        new CodeValueLookup { value_member="startswith", display_member="Start with"},
+                        new CodeValueLookup { value_member="endswith", display_member="Ends with"},
+                        new CodeValueLookup { value_member="lessthan", display_member="Less than"},
+                        new CodeValueLookup { value_member="morethan", display_member="More than"}
+                        };
+
+                if (!string.IsNullOrEmpty(Filter.filter_operators))
+                {
+                    var tempOperators = Filter.filter_operators.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    SearchOperatorList = baseSearchOperatorList.Where(o => tempOperators.Contains(o.value_member)).ToList();
+                    if (SearchOperatorList != null && SearchOperatorList.Count > 0)
+                    {
+                        SearchOperator = SearchOperatorList[0];
+                    }
+                }
+                else
+                {
+                    SearchOperatorList = baseSearchOperatorList;
+                    SearchOperator = SearchOperatorList[0];
+                }
+            }
+            catch (Exception ex)
+            {
+                await _pageDialogService.DisplayAlertAsync("Error", ex.Message, "OK");
+            }
         }
 
         public DelegateCommand ListWorkGroupChangedCommand { get; }
@@ -240,7 +288,7 @@ namespace InventoryApp.ViewModels
             //searchText = string.Join(",", lines.Distinct().ToArray());
 
             Settings.SearchText = SearchText;
-            Settings.Filter = Filter;
+            //Settings.Filter = Filter;
 
             string ggInventoryIdList = string.Empty;
             string LotIdList = string.Empty;
@@ -250,7 +298,103 @@ namespace InventoryApp.ViewModels
 
                 string query = string.Empty;
                 List<AccessionThumbnail> preResult;
-                switch (Filter)
+
+                if (string.IsNullOrEmpty(searchText))
+                    throw new Exception("Search text is empty");
+                if (Workgroup == null)
+                    throw new Exception("Workgroup is empty");
+                if (Filter == null)
+                    throw new Exception("Filter is empty");
+                if (SearchOperator == null)
+                    throw new Exception("Search operator is empty");
+                if (string.IsNullOrEmpty(Filter.filter_type))
+                    throw new Exception("Filter type is empty./nReview dataview in AdminTool");
+                if (string.IsNullOrEmpty(Filter.filter_is_pre_query))
+                    throw new Exception("Filter is_pre_query is empty./nReview dataview in AdminTool");
+
+                string querySearchOperator = string.Empty;
+                switch (SearchOperator.value_member)
+                {
+                    case "equals":
+                        querySearchOperator = " = '{0}'";
+                        break;
+                    case "contains":
+                        querySearchOperator = " like '%{0}%'";
+                        break;
+                    case "startwith":
+                        querySearchOperator = " like '{0}%'";
+                        break;
+                    case "endswith":
+                        querySearchOperator = " like '%{0}'";
+                        break;
+                    case "lessthan":
+                        querySearchOperator = " < {0}";
+                        break;
+                    case "morethan":
+                        querySearchOperator = " > {0}";
+                        break;
+                    default:
+                        throw new Exception("Search operator not supported");
+                }
+
+                switch (Filter.filter_type)
+                {
+                    case "dataview":
+                        if (string.IsNullOrEmpty(Filter.filter_source))
+                            throw new Exception("Filter source is empty./nReview dataview in AdminTool");
+
+                        List<int> preResultIds = await _restClient.SearchLookup("get_mob_accession_number_filter", SearchOperator.value_member, searchText);
+                        if (preResultIds != null && preResultIds.Count > 0)
+                        {
+                            searchText = string.Join(",", preResultIds);
+                            query = "@inventory.accession_id IN ({0})";
+                        }
+                        else
+                        {
+                            await _pageDialogService.DisplayAlertAsync("Error", Filter.filter_name + " not found", "OK");
+                            return;
+                        }
+                        break;
+                    case "query":
+                        if (string.IsNullOrEmpty(Filter.filter_query))
+                            throw new Exception("Filter query is empty./nReview dataview in AdminTool");
+
+                        if (Filter.filter_is_pre_query.Equals("Y"))
+                        {
+                            if (string.IsNullOrEmpty(Filter.filter_pre_query_table)) 
+                                throw new Exception("Filter pre result table_name is empty./nReview dataview in AdminTool");
+
+                            if (Filter.filter_pre_query_table.Equals("accession"))
+                            {
+                                query = string.Format(Filter.filter_query + querySearchOperator, searchText);
+                                preResult = await _restClient.SearchAccession(query, "", Filter.filter_pre_query_table);
+                                if (preResult != null && preResult.Count > 0)
+                                {
+                                    searchText = string.Join(",", preResult.Select(x => x.accession_id.ToString()).ToList());
+                                    query = "@inventory.accession_id IN ({0})";
+                                }
+                                else
+                                {
+                                    await _pageDialogService.DisplayAlertAsync("Error", Filter.filter_name + " not found", "OK");
+                                    return;
+                                }
+                            }
+                            else
+                                throw new Exception("Filter pre_result_table_name not supported./nReview dataview in AdminTool");
+                        }
+                        else 
+                        {
+                            query =  Filter.filter_query + querySearchOperator;
+                        }
+                        break;
+                    case "lookup":
+                        throw new Exception("Filter type not supported");
+                        break;
+                    default:
+                        throw new Exception("Filter type not supported");
+                }
+
+                /*switch (Filter.filter_name)
                 {
                     case "Accession Number":
                         SearchText = SearchText.Replace("CIP ", "");
@@ -368,6 +512,7 @@ namespace InventoryApp.ViewModels
                         query = "@order_request.local_number = '%{0}%'";
                         break;
                 }
+                */
                 if (!string.IsNullOrEmpty(Location1))
                 {
                     query += string.Format(" and @inventory.storage_location_part1 = '{0}'", Location1);
@@ -388,6 +533,7 @@ namespace InventoryApp.ViewModels
                     result = await _restClient.Search(string.Format(query), "", "inventory");
                 }
 
+                Settings.Filter = Filter.filter_name;
                 if (result != null)
                 {
                     if (!Filter.Equals("Inventory Id / Lot Id") || IsMultiline)
@@ -420,6 +566,59 @@ namespace InventoryApp.ViewModels
         {
             try
             {
+                //Load Search Operator List
+                /*if (SearchOperatorList == null)
+                {
+                    SearchOperatorList = new List<CodeValueLookup>() { 
+                        new CodeValueLookup { value_member="equals", display_member="Equals"},
+                        new CodeValueLookup { value_member="contains", display_member="Contains"},
+                        new CodeValueLookup { value_member="startwith", display_member="Start with"},
+                        new CodeValueLookup { value_member="endswith", display_member="Ends with"},
+                        new CodeValueLookup { value_member="lessthan", display_member="Less than"},
+                        new CodeValueLookup { value_member="morethan", display_member="More than"}
+                    };
+                }*/
+
+                //Load SearchFilters
+                if (ListFilters == null) 
+                {
+                    ListFilters = await _restClient.GetSearchFilterList();
+                }
+                if (ListFilters != null && Filter == null) 
+                {
+                    Filter = ListFilters.FirstOrDefault(f => Settings.Filter.Equals(f.filter_name));
+                    if (Filter == null)
+                    {
+                        Settings.Filter = string.Empty;
+                    }
+                    else
+                    {
+                        var baseSearchOperatorList = new List<CodeValueLookup>() {
+                        new CodeValueLookup { value_member="equals", display_member="Equals"},
+                        new CodeValueLookup { value_member="contains", display_member="Contains"},
+                        new CodeValueLookup { value_member="startswith", display_member="Start with"},
+                        new CodeValueLookup { value_member="endswith", display_member="Ends with"},
+                        new CodeValueLookup { value_member="lessthan", display_member="Less than"},
+                        new CodeValueLookup { value_member="morethan", display_member="More than"}
+                        };
+
+                        if (!string.IsNullOrEmpty(Filter.filter_operators))
+                        {
+                            var tempOperators = Filter.filter_operators.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                            SearchOperatorList = baseSearchOperatorList.Where(o => tempOperators.Contains(o.value_member)).ToList();
+                            if (SearchOperatorList != null && SearchOperatorList.Count > 0)
+                            {
+                                SearchOperator = SearchOperatorList[0];
+                            }
+                        }
+                        else
+                        {
+                            SearchOperatorList = baseSearchOperatorList;
+                            SearchOperator = SearchOperatorList[0];
+                        }
+                    }
+                }
+
                 //Load workgroups
                 if (ListWorkgroup == null)
                 {
@@ -432,19 +631,6 @@ namespace InventoryApp.ViewModels
                     ListLocation1 = await _restClient.GetAllLocation1List();
                     Location1 = Settings.Location1;
                 }
-
-                if (parameters.ContainsKey("title"))
-                {
-                    Title = (string)parameters["title"];
-                }
-                else if (parameters.ContainsKey("result"))
-                {
-                    //ZXing.Result result = (ZXing.Result)parameters["result"];
-                    //SearchText = result.Text;
-                }
-
-                if (string.IsNullOrEmpty(Filter))
-                    Filter = Settings.Filter;
 
                 if (string.IsNullOrEmpty(SearchText))
                     SearchText = Settings.SearchText;

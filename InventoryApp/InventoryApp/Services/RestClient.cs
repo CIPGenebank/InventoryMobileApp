@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -59,6 +60,31 @@ namespace InventoryApp.Services
             return resp;
         }
 
+        public async Task<List<int>> SearchLookup(string dataview, string searchOperator, string searchText)
+        {
+            List<int> result = new List<int>();
+
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+
+            string URL = string.Format(GetDataEndPoint, Settings.Server, dataview, ":operator=" + searchOperator + ";:searchtext=" + searchText);
+            var response = await _httpClient.GetAsync(URL);
+
+            string resultContent = response.Content.ReadAsStringAsync().Result;
+            if (response != null && response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                foreach (var item in Newtonsoft.Json.Linq.JArray.Parse(resultContent))
+                {
+                    result.Add((int)item["value_member"]);
+                }
+            }
+            else
+            {
+                throw new Exception(resultContent);
+            }
+
+            return result;
+        }
         public async Task<List<InventoryThumbnail>> Search(string query, string dataview, string resolver = "accession")
         {
             List<InventoryThumbnail> result = null;
@@ -386,7 +412,28 @@ namespace InventoryApp.Services
                 return result;
             }
 
-        //
+        public async Task<List<SearchFilter>> GetSearchFilterList()
+        {
+            List<SearchFilter> result = new List<SearchFilter>();
+
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+
+            string URL = string.Format(GetDataEndPoint, Settings.Server, "get_mob_search_inventories_filters", "");
+            var response = await _httpClient.GetAsync(URL);
+
+            string resultContent = response.Content.ReadAsStringAsync().Result;
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                result = JsonConvert.DeserializeObject<List<SearchFilter>>(resultContent);
+            }
+            else
+            {
+                throw new Exception(resultContent);
+            }
+
+            return result;
+        }
         public async Task<List<Lookup>> GetMethodLookupList()
         {
             List<Lookup> result = new List<Lookup>();
