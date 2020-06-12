@@ -57,7 +57,7 @@
 
             <Grid VerticalOptions="Start">
                 <Label Grid.Column="0" Text="Max results" VerticalTextAlignment="Center"/>
-                <Entry Grid.Column="1" Text="{Binding MaxResults}" IsEnabled="False"/>
+                <Entry Grid.Column="1" Text="{Binding MaxResults}" Keyboard="Numeric"/>
             </Grid>
             
             <ListView ItemsSource="{Binding UniqueList}" SelectedItem="{Binding SelectedItem}" VerticalOptions="FillAndExpand" IsVisible="{Binding IsMultiline}">

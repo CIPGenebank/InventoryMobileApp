@@ -136,8 +136,8 @@ namespace InventoryApp.ViewModels
         //            return false;
         //    }
         //}
-        private int _maxResults;
-        public int MaxResults
+        private string _maxResults;
+        public string MaxResults
         {
             get { return _maxResults; }
             set { SetProperty(ref _maxResults, value); }
@@ -163,7 +163,7 @@ namespace InventoryApp.ViewModels
             ItemTappedCommand = new DelegateCommand(OnItemTappedCommandExecuted);
 
             _uniqueList = new ObservableCollection<string>();
-            MaxResults = 200;
+            MaxResults = "100";
         }
         public DelegateCommand FilterListChangedCommand { get; }
         private async void OnFilterListChangedCommand()
@@ -175,7 +175,7 @@ namespace InventoryApp.ViewModels
                 var baseSearchOperatorList = new List<CodeValueLookup>() {
                         new CodeValueLookup { value_member="equals", display_member="Equals"},
                         new CodeValueLookup { value_member="contains", display_member="Contains"},
-                        new CodeValueLookup { value_member="startswith", display_member="Start with"},
+                        new CodeValueLookup { value_member="startswith", display_member="Starts with"},
                         new CodeValueLookup { value_member="endswith", display_member="Ends with"},
                         new CodeValueLookup { value_member="lessthan", display_member="Less than"},
                         new CodeValueLookup { value_member="morethan", display_member="More than"}
@@ -312,6 +312,13 @@ namespace InventoryApp.ViewModels
                 if (string.IsNullOrEmpty(Filter.filter_is_pre_query))
                     throw new Exception("Filter is_pre_query is empty./nReview dataview in AdminTool");
 
+
+                int limit = 0;
+                if (!int.TryParse(MaxResults, out limit)) 
+                {
+                    MaxResults = "0";
+                }
+                
                 string querySearchOperator = string.Empty;
                 switch (SearchOperator.value_member)
                 {
@@ -321,7 +328,7 @@ namespace InventoryApp.ViewModels
                     case "contains":
                         querySearchOperator = " like '%{0}%'";
                         break;
-                    case "startwith":
+                    case "startswith":
                         querySearchOperator = " like '{0}%'";
                         break;
                     case "endswith":
@@ -337,13 +344,14 @@ namespace InventoryApp.ViewModels
                         throw new Exception("Search operator not supported");
                 }
 
+                List<int> preResultIds = null;
                 switch (Filter.filter_type)
                 {
                     case "dataview":
                         if (string.IsNullOrEmpty(Filter.filter_source))
                             throw new Exception("Filter source is empty./nReview dataview in AdminTool");
 
-                        List<int> preResultIds = await _restClient.SearchLookup("get_mob_accession_number_filter", SearchOperator.value_member, searchText);
+                        preResultIds = await _restClient.SearchLookup("get_mob_accession_number_filter", SearchOperator.value_member, searchText);
                         if (preResultIds != null && preResultIds.Count > 0)
                         {
                             searchText = string.Join(",", preResultIds);
@@ -364,23 +372,18 @@ namespace InventoryApp.ViewModels
                             if (string.IsNullOrEmpty(Filter.filter_pre_query_table)) 
                                 throw new Exception("Filter pre result table_name is empty./nReview dataview in AdminTool");
 
-                            if (Filter.filter_pre_query_table.Equals("accession"))
+                            query = string.Format(Filter.filter_query + querySearchOperator, searchText);
+                            preResultIds = await _restClient.SearchKeys(query, Filter.filter_pre_query_table);
+                            if (preResultIds != null && preResultIds.Count > 0)
                             {
-                                query = string.Format(Filter.filter_query + querySearchOperator, searchText);
-                                preResult = await _restClient.SearchAccession(query, "", Filter.filter_pre_query_table);
-                                if (preResult != null && preResult.Count > 0)
-                                {
-                                    searchText = string.Join(",", preResult.Select(x => x.accession_id.ToString()).ToList());
-                                    query = "@inventory.accession_id IN ({0})";
-                                }
-                                else
-                                {
-                                    await _pageDialogService.DisplayAlertAsync("Error", Filter.filter_name + " not found", "OK");
-                                    return;
-                                }
+                                searchText = string.Join(",", preResultIds);
+                                query = "@inventory.accession_id IN ({0})";
                             }
                             else
-                                throw new Exception("Filter pre_result_table_name not supported./nReview dataview in AdminTool");
+                            {
+                                await _pageDialogService.DisplayAlertAsync("Error", Filter.filter_name + " not found", "OK");
+                                return;
+                            }
                         }
                         else 
                         {
@@ -526,11 +529,11 @@ namespace InventoryApp.ViewModels
                 List<InventoryThumbnail> result;
                 if (!string.IsNullOrEmpty(searchText))
                 {
-                    result = await _restClient.Search(string.Format(query, searchText), "", "inventory");
+                    result = await _restClient.Search(string.Format(query, searchText), "", "inventory", limit);
                 }
                 else
                 {
-                    result = await _restClient.Search(string.Format(query), "", "inventory");
+                    result = await _restClient.Search(string.Format(query), "", "inventory", limit);
                 }
 
                 Settings.Filter = Filter.filter_name;
@@ -566,19 +569,6 @@ namespace InventoryApp.ViewModels
         {
             try
             {
-                //Load Search Operator List
-                /*if (SearchOperatorList == null)
-                {
-                    SearchOperatorList = new List<CodeValueLookup>() { 
-                        new CodeValueLookup { value_member="equals", display_member="Equals"},
-                        new CodeValueLookup { value_member="contains", display_member="Contains"},
-                        new CodeValueLookup { value_member="startwith", display_member="Start with"},
-                        new CodeValueLookup { value_member="endswith", display_member="Ends with"},
-                        new CodeValueLookup { value_member="lessthan", display_member="Less than"},
-                        new CodeValueLookup { value_member="morethan", display_member="More than"}
-                    };
-                }*/
-
                 //Load SearchFilters
                 if (ListFilters == null) 
                 {
@@ -596,7 +586,7 @@ namespace InventoryApp.ViewModels
                         var baseSearchOperatorList = new List<CodeValueLookup>() {
                         new CodeValueLookup { value_member="equals", display_member="Equals"},
                         new CodeValueLookup { value_member="contains", display_member="Contains"},
-                        new CodeValueLookup { value_member="startswith", display_member="Start with"},
+                        new CodeValueLookup { value_member="startswith", display_member="Starts with"},
                         new CodeValueLookup { value_member="endswith", display_member="Ends with"},
                         new CodeValueLookup { value_member="lessthan", display_member="Less than"},
                         new CodeValueLookup { value_member="morethan", display_member="More than"}

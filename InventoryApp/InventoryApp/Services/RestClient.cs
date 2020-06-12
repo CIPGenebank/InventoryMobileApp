@@ -21,6 +21,7 @@ namespace InventoryApp.Services
         // Android Emulator 10.0.2.2
         private const string LoginEndPoint = "http://{0}/GringlobalService/WCFService.svc/login";
         private const string SearchEndPoint = "http://{0}/GringlobalService/WCFService.svc/search/{1}";
+        private const string SearchKeysEndPoint = "http://{0}/GringlobalService/WCFService.svc/searchkeys/{1}";
 
         private const string InventoryEndPoint = "http://{0}/GringlobalService/WCFService.svc/rest/inventory/{1}";
         private const string InventoryCreateEndPoint = "http://{0}/GringlobalService/WCFService.svc/rest/inventory";
@@ -60,14 +61,14 @@ namespace InventoryApp.Services
             return resp;
         }
 
-        public async Task<List<int>> SearchLookup(string dataview, string searchOperator, string searchText)
+        public async Task<List<int>> SearchLookup(string dataview, string searchOperator, string searchText, int limit = 0)
         {
             List<int> result = new List<int>();
 
             _httpClient.DefaultRequestHeaders.Clear();
             _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
 
-            string URL = string.Format(GetDataEndPoint, Settings.Server, dataview, ":operator=" + searchOperator + ";:searchtext=" + searchText);
+            string URL = string.Format(GetDataEndPoint, Settings.Server, dataview, ":operator=" + searchOperator + ";:searchtext=" + searchText) + "&limit=" + limit;
             var response = await _httpClient.GetAsync(URL);
 
             string resultContent = response.Content.ReadAsStringAsync().Result;
@@ -85,7 +86,7 @@ namespace InventoryApp.Services
 
             return result;
         }
-        public async Task<List<InventoryThumbnail>> Search(string query, string dataview, string resolver = "accession")
+        public async Task<List<InventoryThumbnail>> Search(string query, string dataview, string resolver = "accession", int limit = 0)
         {
             List<InventoryThumbnail> result = null;
 
@@ -97,7 +98,7 @@ namespace InventoryApp.Services
             _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
 
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-            string URL = string.Format(SearchEndPoint, Settings.Server, resolver) + "?dataview=get_mob_inventory";
+            string URL = string.Format(SearchEndPoint, Settings.Server, resolver) + "?dataview=get_mob_inventory" + "&limit=" + limit;
             var response = await _httpClient.PostAsync(URL, content);
 
             string resultContent = response.Content.ReadAsStringAsync().Result;
@@ -117,8 +118,38 @@ namespace InventoryApp.Services
 
             return result;
         }
+        public async Task<List<int>> SearchKeys(string query, string resolver, int limit = 0)
+        {
+            List<int> result;
+
+            var data = JsonConvert.SerializeObject(query);
+
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+
+            StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+            string URL = string.Format(SearchKeysEndPoint, Settings.Server, resolver) + "?dataview=get_mob_inventory" + "&limit=" + limit;
+            var response = await _httpClient.PostAsync(URL, content);
+
+            string resultContent = response.Content.ReadAsStringAsync().Result;
+
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                result = JsonConvert.DeserializeObject<List<int>>(resultContent);
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+            {
+                result = null;
+            }
+            else
+            {
+                throw new Exception(resultContent);
+            }
+
+            return result;
+        }
         /*conventir en una funcion generica*/
-            public async Task<List<AccessionThumbnail>> SearchAccession(string query, string dataview, string resolver = "accession")
+        public async Task<List<AccessionThumbnail>> SearchAccession(string query, string dataview, string resolver = "accession")
             {
                 List<AccessionThumbnail> result = null;
 

@@ -210,8 +210,11 @@ namespace InventoryApp.ViewModels
             {
                 if (_inventoryList[i].IsSelected) _inventoryList.RemoveAt(i);
             }
+
+            if (IsAllSelected)
+                IsAllSelected = false;
+            
             SelectedRowsCount = 0;
-            //AccessionCount = InventoryList.Select(i => i.Item.accession_id).Distinct().Count();
             AccessionCount = InventoryList.Select(i => i.Item.AccessionNumber).Distinct().Count();
         }
         private void OnSelectAllCommandExecuted()

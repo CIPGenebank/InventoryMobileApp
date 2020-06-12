@@ -109,6 +109,8 @@ namespace InventoryApp.Models
         public int owned { get; set; }
         */
 
+        public string plant_name1 { get; set; }
+        public string plant_name2 { get; set; }
         public string acc_name_col { get; set; }
         public string acc_name_cul { get; set; }
         public string taxonomy_species_code { get; set; }
