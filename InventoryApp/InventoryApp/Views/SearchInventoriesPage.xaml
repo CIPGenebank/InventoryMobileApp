@@ -16,17 +16,20 @@
             <SearchBar Placeholder="Type search text" Text="{Binding SearchText, Mode=TwoWay}" IsVisible="{Binding IsNotMultiline}"
                        SearchCommandParameter="{Binding SearchText}" SearchCommand="{Binding SearchCommand}" x:Name="searchBarText" />
 
-            <Editor Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding ListId}"  HeightRequest="60" BackgroundColor="WhiteSmoke" 
+            <Editor Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding SearchTextList}"  HeightRequest="120"
                     IsVisible="{Binding IsMultiline}" VerticalOptions="Start" x:Name="editorList" >
                 <Editor.Behaviors>
                     <prism:EventToCommandBehavior EventName="TextChanged" Command="{Binding TextChangedCommand}" />
                 </Editor.Behaviors>
             </Editor>
-            <StackLayout Orientation="Horizontal" IsVisible="{Binding IsInventoryIdFilterSelected}">
-                <Switch IsToggled="{Binding IsMultiline}" ></Switch>
-                <Label Text="By List"></Label>
+            <StackLayout Orientation="Horizontal" >
+                <StackLayout.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding IsMultilineChangedCommand}"/>
+                </StackLayout.GestureRecognizers>
+                <CheckBox IsChecked="{Binding IsMultiline}" InputTransparent="True"/>
+                <Label Text="Search by list" VerticalOptions="Center" />
             </StackLayout>
-            <Label TextColor="Red" Text="{Binding Count, StringFormat='Count: {0}'}" IsVisible="{Binding IsMultiline}"></Label>
+            <!--<Label TextColor="Red" Text="{Binding Count, StringFormat='Count: {0}'}" IsVisible="{Binding IsMultiline}"></Label>-->
 
             <Grid >
                 <Label Grid.Column="0" Text="Search operator" VerticalTextAlignment="Center"/>
@@ -60,11 +63,11 @@
                 <Entry Grid.Column="1" Text="{Binding MaxResults}" Keyboard="Numeric"/>
             </Grid>
             
-            <ListView ItemsSource="{Binding UniqueList}" SelectedItem="{Binding SelectedItem}" VerticalOptions="FillAndExpand" IsVisible="{Binding IsMultiline}">
+            <!--<ListView ItemsSource="{Binding UniqueList}" SelectedItem="{Binding SelectedItem}" VerticalOptions="FillAndExpand" IsVisible="{Binding IsMultiline}">
                 <ListView.Behaviors>
                     <prism:EventToCommandBehavior EventName="ItemTapped" Command="{Binding ItemTappedCommand}" />
                 </ListView.Behaviors>
-            </ListView>
+            </ListView>-->
 
         </StackLayout>
     </ContentPage.Content>
