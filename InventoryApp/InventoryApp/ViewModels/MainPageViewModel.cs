@@ -34,7 +34,7 @@ namespace InventoryApp.ViewModels
         public MainPageViewModel(INavigationService navigationService, IPageDialogService pageDialogService)
             : base(navigationService)
         {
-            _menuList = new List<MenuItem> { new MenuItem { Text = "Welcome", Path = "NavigationPage/WelcomePage"} ,
+            _menuList = new List<MenuItem> { new MenuItem { Text = "Home", Path = "NavigationPage/WelcomePage"} ,
                 new MenuItem { Text = "Inventory list", Path="NavigationPage/InventoriesPage" },
                 //new MenuItem { Text = "Inventories(previous)", Path = "NavigationPage/PreviousInventoriesPage"},
                 /*new MenuItem { Text = "Dataviews", Path = "NavigationPage/WelcomePage"},*/

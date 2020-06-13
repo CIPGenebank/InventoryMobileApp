@@ -366,6 +366,10 @@ namespace InventoryApp.ViewModels
                 {
                     MaxResults = "0";
                 }
+                if (limit > 2000)
+                {
+                    throw new Exception("Max results cannot be greater than 2000");
+                }
 
                 string querySearchOperator = string.Empty;
                 switch (SearchOperator.value_member)

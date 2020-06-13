@@ -73,7 +73,7 @@ namespace InventoryApp.ViewModels
         public InventoriesPageViewModel(INavigationService navigationService, IPageDialogService pageDialogService, IEventAggregator eventAggregator)
             : base(navigationService, pageDialogService)
         {
-            Title = "Inventories";
+            Title = "Inventory list";
 
             //_inventoryCollection = new ObservableCollection<InventoryThumbnail>(InventoryFactory.GetInventories());
             _inventoryList = new ObservableCollection<WrappedSelection<InventoryThumbnail>>() ;

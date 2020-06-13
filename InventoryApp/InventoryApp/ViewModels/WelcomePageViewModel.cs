@@ -51,7 +51,7 @@ namespace InventoryApp.ViewModels
         {
             _restClient = new RestClient();
 
-            Title = "Welcome";
+            Title = "Home";
 
             NavigateCommand = new DelegateCommand<string>(OnNavigateCommandExecuted);
             LogoutCommand = new DelegateCommand(OnLogoutCommandExecuted);
@@ -71,7 +71,17 @@ namespace InventoryApp.ViewModels
         public DelegateCommand<string> NavigateCommand { get; }
         private async void OnNavigateCommandExecuted(string path)
         {
-            await NavigationService.NavigateAsync(path, animated: true);
+            try
+            {
+                if (Workgroup == null)
+                    throw new Exception("Workgroup is empty");
+
+                await NavigationService.NavigateAsync(path, animated: true);
+            }
+            catch (Exception e)
+            {
+                await PageDialogService.DisplayAlertAsync("Error", e.Message, "OK");
+            }
         }
 
         public DelegateCommand ListWorkGroupChangedCommand { get; }
