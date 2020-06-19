@@ -11,6 +11,7 @@
     <ContentPage.Resources>
         <ResourceDictionary>
             <converter:InverseBooleanConverter x:Key="inverseBoolean" />
+            <converter:CharToBooleanConverter x:Key="charToBoolean" />
             <DataTemplate x:Key="textTemplate">
                 <ViewCell>
                     <StackLayout>
@@ -69,7 +70,7 @@
                 <ViewCell>
                     <StackLayout Orientation="Horizontal">
                         <Label Text="{Binding Caption,Mode=OneWay}" HorizontalOptions="FillAndExpand" LineBreakMode="TailTruncation"/>
-                        <CheckBox IsChecked="{Binding Value, Mode=TwoWay}" HorizontalOptions="End"/>
+                        <CheckBox IsChecked="{Binding Value, Converter={StaticResource charToBoolean}}" HorizontalOptions="End"/>
                     </StackLayout>
                 </ViewCell>
             </DataTemplate>

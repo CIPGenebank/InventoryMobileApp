@@ -171,7 +171,7 @@ namespace InventoryApp.ViewModels
                         }   
                     }
                 }
-
+                
                 string result = null;
                 List<InventoryThumbnail> newInventoryList = null;
                 if (_isNewInventory)
@@ -314,6 +314,10 @@ namespace InventoryApp.ViewModels
                         if (att != null)
                         {
                             att.Value = prop.GetValue(NewInventory, null);
+                            if (att.ControlType.Equals("CHECKBOX"))
+                            {
+                                att.Value = "N";
+                            }
                         }
                     }
                     var attLocation1 = _inventoryAttributeArray.FirstOrDefault(att => att.Name.Equals("storage_location_part1"));

@@ -9,27 +9,22 @@ namespace InventoryApp.Models
     {
         [JsonProperty("printer_id")]
         public int PrinterId { get; set; }
+        
         [JsonProperty("printer_name")]
         public string PrinterName { get; set; }
-        [JsonProperty("printer_path")]
-        public string PrinterPath { get; set; }
+        
+        [JsonProperty("printer_uri")]
+        public string PrinterUri { get; set; }
+        
         [JsonProperty("printer_resolution")]
         public string PrinterResolution { get; set; }
-        [JsonProperty("printer_method")]
-        public string PrinterMethod { get; set; }
 
-        /*
-        public DateTime created_date { get; set; }
-        public int created_by { get; set; }
-        public DateTime modified_date { get; set; }
-        public int modified_by { get; set; }
-        public DateTime owned_date { get; set; }
-        public int owned_by { get; set; }
-        */
+        [JsonProperty("printer_connection_type")]
+        public string PrinterConnectionType { get; set; }
 
         public override string ToString()
         {
-            return PrinterId + "\n" + PrinterName + "\n" + PrinterPath + "\n" + PrinterResolution + "\n" + PrinterMethod;
+            return PrinterId + "\n" + PrinterName + "\n" + PrinterUri + "\n" + PrinterResolution + "\n" + PrinterConnectionType;
         }
     }
 
@@ -43,49 +38,49 @@ namespace InventoryApp.Models
                 {
                     PrinterId = 59,
                     PrinterName = "Genebank Dev",
-                    PrinterPath = @"\\cip0977\GenebankDev_ZM400.200dpi",
+                    PrinterUri = @"\\cip0977\GenebankDev_ZM400.200dpi",
                     PrinterResolution = "L",
-                    PrinterMethod = "Shared"
+                    PrinterConnectionType = "Shared"
                 },
                 new Printer
                 {
                     PrinterId = 54,
                     PrinterName = @"Papa silvestre - Grupo de Violeta",
-                    PrinterPath = @"172.25.19.7",
+                    PrinterUri = @"172.25.19.7",
                     PrinterResolution = "L",
-                    PrinterMethod = "IP"
+                    PrinterConnectionType = "IP"
                 },
                 new Printer
                 {
                     PrinterId = 40,
                     PrinterName = @"\\w7p-genb002\ZebraGWP",
-                    PrinterPath = @"\\w7p-genb002\ZebraGWP",
+                    PrinterUri = @"\\w7p-genb002\ZebraGWP",
                     PrinterResolution = "L",
-                    PrinterMethod = "Shared"
+                    PrinterConnectionType = "Shared"
                 },
                 new Printer
                 {
                     PrinterId = 43,
                     PrinterName = "Impresora de RTAs en invernadero",
-                    PrinterPath = @"\\cip0903\ZebraLab9",
+                    PrinterUri = @"\\cip0903\ZebraLab9",
                     PrinterResolution = "L",
-                    PrinterMethod = "Shared"
+                    PrinterConnectionType = "Shared"
                 },
                 new Printer
                 {
                     PrinterId = 59,
                     PrinterName = "Banco de ADN",
-                    PrinterPath = @"\\w7p-rrobles\BancoDeADN",
+                    PrinterUri = @"\\w7p-rrobles\BancoDeADN",
                     PrinterResolution = "H",
-                    PrinterMethod = "Shared"
+                    PrinterConnectionType = "Shared"
                 },
                 new Printer
                 {
                     PrinterId = 59,
                     PrinterName = "Papa silvestre - Grupo de Violeta",
-                    PrinterPath = @"172.25.19.7",
+                    PrinterUri = @"172.25.19.7",
                     PrinterResolution = "L",
-                    PrinterMethod = "IP"
+                    PrinterConnectionType = "IP"
                 }
             };
 

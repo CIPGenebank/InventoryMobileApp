@@ -30,7 +30,7 @@ namespace InventoryApp.Services
 
         private const string GetDataEndPoint = "http://{0}/GringlobalService/WCFService.svc/getdata/{1}?parameters={2}";
 
-        private const string PrinterEndPoint = "http://{0}/GringlobalService/WCFService.svc/printer/{1}";
+        private const string PrinterEndPoint = "http://{0}/GringlobalService/WCFService.svc/print?printURI={1}&printConnectionType={2}";
 
         private const string RestUrlRUD = "http://{0}/GringlobalService/WCFService.svc/rest/{1}/{2}";
 
@@ -240,7 +240,7 @@ namespace InventoryApp.Services
                 _httpClient.DefaultRequestHeaders.Clear();
                 _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
 
-                string URL = string.Format(GetDataEndPoint, Settings.Server, "get_workgroup_by_cooperator", System.Net.WebUtility.UrlEncode(":cooperatorid=" + cooperatorId));
+                string URL = string.Format(GetDataEndPoint, Settings.Server, "get_mob_workgroup_by_cooperator", System.Net.WebUtility.UrlEncode(":cooperatorid=" + cooperatorId));
                 var response = await _httpClient.GetAsync(URL);
 
                 string resultContent = response.Content.ReadAsStringAsync().Result;
@@ -420,28 +420,28 @@ namespace InventoryApp.Services
         }
 
         public async Task<string> Print(int printerId, string label)
+        {
+            string result = string.Empty;
+
+            //var data = JsonConvert.SerializeObject(label);
+
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+            StringContent content = new StringContent("\"" + label + "\"", Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync(string.Format(PrinterEndPoint, Settings.Server, printerId), content);
+            string resultContent = response.Content.ReadAsStringAsync().Result;
+
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                string result = string.Empty;
-
-                //var data = JsonConvert.SerializeObject(label);
-
-                _httpClient.DefaultRequestHeaders.Clear();
-                _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
-                StringContent content = new StringContent("\"" + label + "\"", Encoding.UTF8, "application/json");
-
-                var response = await _httpClient.PostAsync(string.Format(PrinterEndPoint, Settings.Server, printerId), content);
-                string resultContent = response.Content.ReadAsStringAsync().Result;
-
-                if (response.StatusCode == System.Net.HttpStatusCode.OK)
-                {
-                    result = resultContent;
-                }
-                else
-                {
-                    throw new Exception(resultContent);
-                }
-                return result;
+                result = resultContent;
             }
+            else
+            {
+                throw new Exception(resultContent);
+            }
+            return result;
+        }
 
         public async Task<List<SearchFilter>> GetSearchFilterList()
         {
@@ -599,13 +599,12 @@ namespace InventoryApp.Services
 
         public async Task<List<ILookup>> GetCodeValueByGroupName(string groupName)
         {
-            //get_code_value_by_groupname
             List<ILookup> result = new List<ILookup>();
 
             _httpClient.DefaultRequestHeaders.Clear();
             _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
 
-            string URL = string.Format(GetDataEndPoint, Settings.Server, "get_code_value_by_groupname", System.Net.WebUtility.UrlEncode(":groupname=" + groupName));
+            string URL = string.Format(GetDataEndPoint, Settings.Server, "get_mob_code_value_by_groupname", System.Net.WebUtility.UrlEncode(":groupname=" + groupName));
             var response = await _httpClient.GetAsync(URL);
 
             string resultContent = response.Content.ReadAsStringAsync().Result;
@@ -621,6 +620,110 @@ namespace InventoryApp.Services
                 throw new Exception(resultContent);
             }
 
+            return result;
+        }
+
+        public async Task<List<Printer>> GetPrinterList()
+        {
+            List<Printer> result = new List<Printer>();
+
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+
+            string URL = string.Format(GetDataEndPoint, Settings.Server, "get_mob_printer", "");
+            var response = await _httpClient.GetAsync(URL);
+
+            string resultContent = response.Content.ReadAsStringAsync().Result;
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                result = JsonConvert.DeserializeObject<List<Printer>>(resultContent);
+            }
+            else
+            {
+                throw new Exception(resultContent);
+            }
+
+            return result;
+        }
+
+        public async Task<List<LabelTemplate>> GetLabelTemplateList() 
+        {
+            List<LabelTemplate> result = new List<LabelTemplate>();
+
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+
+            string URL = string.Format(GetDataEndPoint, Settings.Server, "get_mob_app_user_gui_setting", 
+                string.Format(":cooperatorid={0};:appname=GRINGlobalClientCuratorTool;:resourcename=LabelTemplateList", Settings.CooperatorId));
+            var response = await _httpClient.GetAsync(URL);
+
+            string resultContent = response.Content.ReadAsStringAsync().Result;
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                var appUserSettingsList = JsonConvert.DeserializeObject<List<AppUserSetting>>(resultContent);
+                if (appUserSettingsList != null) 
+                {
+                    foreach (var appUserSetting in appUserSettingsList)
+                    {
+                        var labelTemplate = JsonConvert.DeserializeObject<LabelTemplate>(appUserSetting.resource_value);
+                        result.Add(labelTemplate);
+                    }
+                }
+            }
+            else
+            {
+                throw new Exception(resultContent);
+            }
+
+            return result;
+        }
+
+        public async Task<Newtonsoft.Json.Linq.JArray> GetDataview(string dataviewName, string parameters)
+        {
+            Newtonsoft.Json.Linq.JArray result = new Newtonsoft.Json.Linq.JArray();
+
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+            if (!string.IsNullOrEmpty(Settings.Token) && !string.IsNullOrEmpty(Settings.Server))
+            {
+                string URL = string.Format(GetDataEndPoint, Settings.Server, dataviewName, parameters);
+                var response = await _httpClient.GetAsync(URL);
+
+                string resultContent = response.Content.ReadAsStringAsync().Result;
+                if (response != null && response.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    result = Newtonsoft.Json.Linq.JArray.Parse(resultContent);
+                }
+                else
+                {
+                    throw new Exception(resultContent);
+                }
+            }
+            return result;
+        }
+        
+        public async Task<string> Print(string printerURI, string printerConnectionType, string labelZPL)
+        {
+            string result = string.Empty;
+
+            var data = JsonConvert.SerializeObject(labelZPL);
+
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+            StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+
+            string URL = string.Format(PrinterEndPoint, Settings.Server, printerURI, printerConnectionType);
+            var response = await _httpClient.PostAsync(URL, content);
+            string resultContent = response.Content.ReadAsStringAsync().Result;
+
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                result = resultContent;
+            }
+            else
+            {
+                throw new Exception(resultContent);
+            }
             return result;
         }
     }

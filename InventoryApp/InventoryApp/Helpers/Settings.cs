@@ -89,13 +89,12 @@ namespace InventoryApp.Helpers
             set { Preferences.Set("SearchAccession_Filter", value); }
         }
 
-        #region PrinterPage
-        public static int PrinterIndex
+        public static string Printer
         {
-            get { return Preferences.Get("PrinterIndex", -1); }
-            set { Preferences.Set("PrinterIndex", value); }
+            get { return Preferences.Get("printer_key",  StringDefault); }
+            set { Preferences.Set("printer_key", value); }
         }
-        #endregion
+        
     }
 
 }

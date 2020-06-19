@@ -30,7 +30,6 @@ namespace InventoryApp.Interfaces
         Task<string> UpdateInventoryViabilityDataAsync(InventoryViabilityData item);
         #endregion
 
-        Task<string> GetNewInventoryID();
         Task<string> UpdateInventoryAsync(Inventory item);
 
         #region Utils

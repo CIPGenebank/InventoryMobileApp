@@ -1,6 +1,8 @@
-﻿using InventoryApp.Helpers;
+﻿using ImTools;
+using InventoryApp.Helpers;
 using InventoryApp.Models;
 using InventoryApp.Services;
+using Newtonsoft.Json;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Navigation;
@@ -8,30 +10,61 @@ using Prism.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace InventoryApp.ViewModels
 {
     public class PrintingPageViewModel : ViewModelBase
     {
-        private Printer _selectedPrinter;
-        public Printer SelectedPrinter
+        private Printer _printer;
+        public Printer Printer
         {
-            get { return _selectedPrinter; }
-            set { SetProperty(ref _selectedPrinter, value); }
+            get { return _printer; }
+            set { SetProperty(ref _printer, value); }
         }
 
-        private int _copies;
-        public int Copies
+        private int _rowsPerRecord;
+        public int RowsPerRecord
         {
-            get { return _copies; }
-            set { SetProperty(ref _copies, value); }
+            get { return _rowsPerRecord; }
+            set { SetProperty(ref _rowsPerRecord, value); }
         }
-        private string _labelDesign;
-        public string LabelDesign
+
+        private LabelTemplate _labelTemplate;
+        public LabelTemplate LabelTemplate
         {
-            get { return _labelDesign; }
-            set { SetProperty(ref _labelDesign, value); }
+            get { return _labelTemplate; }
+            set { SetProperty(ref _labelTemplate, value); }
+        }
+
+        private List<Printer> _printerList;
+        public List<Printer> PrinterList
+        {
+            get { return _printerList; }
+            set { SetProperty(ref _printerList, value); }
+        }
+
+        private List<LabelTemplate> _labelTemplateList;
+        public List<LabelTemplate> LabelTemplateList
+        {
+            get { return _labelTemplateList; }
+            set { SetProperty(ref _labelTemplateList, value); }
+        }
+
+        private string _printingLog;
+        public string PrintingLog
+        {
+            get { return _printingLog; }
+            set { SetProperty(ref _printingLog, value); }
+        }
+
+        private bool _isLogVisible;
+        public bool IsLogVisible
+        {
+            get { return _isLogVisible; }
+            set { SetProperty(ref _isLogVisible, value); }
         }
 
         private string _orderBy;
@@ -47,6 +80,9 @@ namespace InventoryApp.ViewModels
         IPageDialogService _pageDialogService { get; }
         private readonly RestClient _restClient;
         private List<InventoryThumbnail> _inventoryList;
+        private int _labelIndex;
+        private int _endRecordIndex;
+        private List<string> _labelVariables = new List<string>();
 
         public PrintingPageViewModel(INavigationService navigationService, IPageDialogService pageDialogService)
             : base(navigationService)
@@ -56,22 +92,61 @@ namespace InventoryApp.ViewModels
 
             Title = "Printing";
 
-            LabelDesignList = CodeValueFactory.GetLabelDesignList();
-
-            Copies = 1;
-            LabelDesign = "Seed Label";
+            RowsPerRecord = 1;
+            IsLogVisible = false;
 
             CancelCommand = new DelegateCommand(OnCancelCommandExecuted);
             PrintCommand = new DelegateCommand(OnPrintCommandExecuted);
-
+            LabelTemplatetChangedCommand = new DelegateCommand(OnLabelTemplatetChangedCommand);
         }
 
+        public DelegateCommand LabelTemplatetChangedCommand { get; }
+        private async void OnLabelTemplatetChangedCommand()
+        {
+            try
+            {
+                if (LabelTemplate != null)
+                {
+                    PrintingLog = JsonConvert.SerializeObject(LabelTemplate, Formatting.Indented);
+
+                    _labelVariables.Clear();
+
+                    Regex regex = new Regex("##" + "(.)*" + "##");
+                    var matches = regex.Matches(LabelTemplate.Zpl);
+                    foreach (var match in matches)
+                    {
+                        _labelVariables.Add(match.ToString()); //match.ToString().Replace(startMark,"").Replace(endMark,"");
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                await _pageDialogService.DisplayAlertAsync("Error", e.Message, "OK");
+            }
+        }
         private async void OnPrintCommandExecuted()
         {
             try
             {
-                Settings.PrinterIndex = PrinterIndex;
+                if (Printer == null)
+                    throw new Exception("Printer is empty");
+                if (LabelTemplate == null)
+                    throw new Exception("Label template is empty");
+                if (_inventoryList == null || _inventoryList.Count == 0)
+                    throw new Exception("Printing inventory list is empty");
 
+                Settings.Printer = Printer.PrinterName;
+
+                var idList = _inventoryList.Select(x => x.inventory_id).ToList();
+                var dataview = await _restClient.GetDataview(LabelTemplate.Dataview, ":accessionid;:accessioninvgroupid;:inventorymaintpolicyid;:orderrequestid;:inventoryid=" + string.Join(",", idList));
+
+                _labelIndex = 0;
+                //_startRecordIndex = 0;
+                _endRecordIndex = dataview.Count - 1;
+
+                string zpl = GenerateZPL(dataview);
+                PrintingLog = "Printer URI:\n" + Printer.PrinterUri +"\n\n" + zpl;
+                /*
                 switch (OrderBy)
                 {
                     case "Accession Number":
@@ -92,57 +167,13 @@ namespace InventoryApp.ViewModels
                     default:
                         break;
                 }
+                */
+                
+                await _restClient.Print(Printer.PrinterUri, Printer.PrinterConnectionType, zpl);
 
-                var template = @"^LH{0},20 ^FO40,10  ^BXN,8,200 ^FD{1}^FS ^FO10,5   ^ADR,18 ^FD{1}^FS ^FO200,5  ^A0R,31 ^FD{2}^FS ^FO175,10 ^AER,28 ^FD{3}^FS ^LH{0},110 ^FO100,10 ^ADR,18 ^FD{4}^FS ^FO70,10  ^ADR,18 ^FD{5}^FS ^FO40,10  ^ADR,18 ^FD{6}^FS ^FO40,85  ^ADR,18 ^FD{7}^FS";
+                await _pageDialogService.DisplayAlertAsync("Printing Page", "Successfully printed", "OK");
+                //await NavigationService.GoBackAsync();
 
-                if (PrinterIndex > -1)
-                {
-                    Printer printer = PrinterList[PrinterIndex];
-
-                    int xPosition = 20;
-                    StringBuilder sb = new StringBuilder();
-                    for (int i = 0; i < _inventoryList.Count * Copies; i++)
-                    {
-                        switch (i % 3)
-                        {
-                            case 0:
-                                sb.Append("^XA");
-                                xPosition = 20;
-                                break;
-                            case 1:
-                                xPosition = 285;
-                                break;
-                            case 2:
-                                xPosition = 550;
-                                break;
-                        }
-                        var inventory = _inventoryList[i / Copies];
-
-                        var inventoryId = inventory.inventory_number_part2;
-                        var accessionNumber = inventory.AccessionNumber;
-                        var collectorNumber = inventory.acc_name_col;
-                        var cultivarName = inventory.acc_name_cul;
-                        var typeCrossName = inventory.pollination_method_code;
-                        var year = "2017";
-                        var taxonomySpeciesCode = inventory.taxonomy_species_code;
-
-                        sb.Append(string.Format(template, xPosition, inventoryId, accessionNumber, collectorNumber, cultivarName, typeCrossName, year, taxonomySpeciesCode));
-
-                        if (i % 3 == 2 || i == _inventoryList.Count * Copies - 1)
-                        {
-                            sb.Append("^XZ");
-                        }
-                    }
-
-                    await _restClient.Print(printer.PrinterId, sb.ToString());
-
-                    await _pageDialogService.DisplayAlertAsync("Printing Page", "Successfully printed", "OK");
-                    await NavigationService.GoBackAsync();
-                }
-                else
-                {
-                    await _pageDialogService.DisplayAlertAsync("Error", "Select a printer", "OK");
-                }
             }
             catch (Exception e)
             {
@@ -156,43 +187,24 @@ namespace InventoryApp.ViewModels
         }
 
 
-        #region UI
-
-        private List<Printer> _printerList;
-        public List<Printer> PrinterList
-        {
-            get { return _printerList; }
-            set { SetProperty(ref _printerList, value); }
-        }
-
-        private List<string> _labelDesignList;
-        public List<string> LabelDesignList
-        {
-            get { return _labelDesignList; }
-            set { SetProperty(ref _labelDesignList, value); }
-        }
-        private int _printerIndex;
-        public int PrinterIndex
-        {
-            get { return _printerIndex; }
-            set { SetProperty(ref _printerIndex, value); }
-        }
-        #endregion
-
         public override async void OnNavigatedTo(INavigationParameters parameters)
         {
             try
             {
                 if (PrinterList == null)
                 {
-                    PrinterList = PrinterFactory.GetPrinterList();
+                    PrinterList = await _restClient.GetPrinterList();
                 }
-                if (Settings.PrinterIndex > -1 && Settings.PrinterIndex < PrinterList.Count)
+                if (Printer == null)
                 {
-                    SelectedPrinter = PrinterList[Settings.PrinterIndex];
+                    Printer = PrinterList.FirstOrDefault(p => Settings.Printer.Equals(p.PrinterName));
+                    if (Printer == null)
+                        Settings.Printer = string.Empty;
                 }
-                else
-                    PrinterIndex = -1;
+                if (LabelTemplateList == null)
+                {
+                    LabelTemplateList = await _restClient.GetLabelTemplateList();
+                }
 
                 if (parameters.ContainsKey("inventoryList"))
                 {
@@ -205,5 +217,97 @@ namespace InventoryApp.ViewModels
             }
         }
 
+        private string GenerateZPL(Newtonsoft.Json.Linq.JArray dataview)
+        {
+            string zpl = string.Empty;
+
+            int printerDPI = LabelTemplate.Density;
+            float labelWidth = (float)LabelTemplate.Width * printerDPI;
+            float labelHeight = (float)LabelTemplate.Height * printerDPI;
+
+            float marginLeft = (float)LabelTemplate.MarginLeft * printerDPI;
+            float marginTop = (float)LabelTemplate.MarginTop * printerDPI;
+            float horizontalGap = (float)LabelTemplate.HorizontalGap * printerDPI;
+            float verticalGap = (float)LabelTemplate.VerticalGap * printerDPI;
+
+            int labelsPerRecord = (int)RowsPerRecord;
+
+            int columnsPerPage = (int)LabelTemplate.HorizontalCount;
+            int rowsPerPage = 0;
+
+            float paperHeight = (float)LabelTemplate.PaperHeight * printerDPI;
+
+            if (labelHeight > paperHeight)
+            {
+                rowsPerPage = 1;
+            }
+            else if (2 * labelHeight + verticalGap > paperHeight) // 1 row
+            {
+                rowsPerPage = 1;
+            }
+            else //more than 1 row
+            {
+                rowsPerPage = 1 + (int)((paperHeight - labelHeight) / (labelHeight + verticalGap));
+            }
+
+            // Generate zpl
+            string templateContent = LabelTemplate.Zpl.Replace("^XA", "").Replace("^XZ", "").Replace("\r\n\r\n", "\r\n").Trim();
+            int zplX = 0, zplY = 0;
+            int recordIndex = (_labelIndex / labelsPerRecord);
+
+            while (recordIndex <= _endRecordIndex)
+            {
+                zpl += "^XA\n";
+                for (int iRow = 0; iRow < rowsPerPage; iRow++)
+                {
+                    zplY = (int)(marginTop + iRow * (labelHeight + verticalGap));
+                    for (int iCol = 0; iCol < columnsPerPage; iCol++)
+                    {
+                        zplX = (int)(marginLeft + iCol * (labelWidth + horizontalGap));
+                        if (recordIndex <= _endRecordIndex)
+                        {
+                            zpl += $"^LH{zplX},{zplY}\n";
+                            string label = ReplaceVariables(templateContent, dataview[recordIndex]);
+                            zpl += label + "\n";
+
+                            _labelIndex++;
+                            recordIndex = (_labelIndex / labelsPerRecord);
+                        }
+                        else
+                            break;
+                    }
+                    if (recordIndex > _endRecordIndex)
+                        break;
+                }
+                zpl += "^XZ";
+            }
+
+            return zpl;
+        }
+
+        private string ReplaceVariables(string template, Newtonsoft.Json.Linq.JToken dgrCurrent)
+        {
+            string label = template;
+            string startMark = @"##";
+            string endMark = @"##";
+            foreach (var variable in _labelVariables)
+            {
+                var variableName = variable.Replace(startMark, "").Replace(endMark, "");
+                if (null != dgrCurrent[variableName])
+                {
+                    string formattedVlur = dgrCurrent[variableName].ToString();
+                    label = label.Replace(variable, formattedVlur.Replace("~", @"\7E").Replace("^", @"\5E")
+                        .Replace("á", @"\A0")
+                        .Replace("é", @"\82")
+                        .Replace("í", @"\A1")
+                        .Replace("ó", @"\A2")
+                        .Replace("ú", @"\A3")
+                        .Replace("ñ", @"\A4")
+                        .Replace("Ñ", @"\A5")
+                        .Replace("ü", @"\81"));
+                }
+            }
+            return label;
+        }
     }
 }

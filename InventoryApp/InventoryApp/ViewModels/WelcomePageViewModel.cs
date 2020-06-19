@@ -14,6 +14,7 @@ namespace InventoryApp.ViewModels
     public class WelcomePageViewModel : ViewModelBaseZ
     {
         private readonly RestClient _restClient;
+        private Dictionary<string, string> _appResource;
 
         private List<CooperatorGroup> _listWorkgroup;
         public List<CooperatorGroup> ListWorkgroup
@@ -47,6 +48,13 @@ namespace InventoryApp.ViewModels
             set { SetProperty(ref _cooperatorGroupIndex, value); }
         }
 
+        private string _labelWorkgroup;
+        public string LabelWorkgroup
+        {
+            get { return _labelWorkgroup; }
+            set { SetProperty(ref _labelWorkgroup, value); }
+        }
+
         public WelcomePageViewModel(INavigationService navigationService, IPageDialogService pageDialogService) : base(navigationService, pageDialogService)
         {
             _restClient = new RestClient();
@@ -59,6 +67,7 @@ namespace InventoryApp.ViewModels
             ListWorkGroupChangedCommand = new DelegateCommand(OnListWorkGroupChangedCommand);
             ListLocationChangedCommand = new DelegateCommand(OnListLocationChangedCommand);
 
+            LabelWorkgroup = "Workgroup";
         }
 
         public DelegateCommand LogoutCommand { get; }
@@ -133,6 +142,15 @@ namespace InventoryApp.ViewModels
                 {
                     ListLocation1 = await _restClient.GetAllLocation1List();
                     Location1 = Settings.Location1;
+                }
+
+                if (_appResource == null)
+                {
+                    _appResource = await _restClient.GetAppResources("WelcomePage", Settings.Lang);
+
+                    
+                    if (_appResource.ContainsKey("LabelWorkgroup")) LabelWorkgroup = _appResource["LabelWorkgroup"];
+                    
                 }
             }
             catch (Exception ex)

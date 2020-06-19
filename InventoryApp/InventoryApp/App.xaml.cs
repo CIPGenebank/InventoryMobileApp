@@ -49,7 +49,6 @@ namespace InventoryApp
             containerRegistry.RegisterForNavigation<ViabilityTestDataPage, ViabilityTestDataPageViewModel>();
             containerRegistry.RegisterForNavigation<ChangeLocationPage, ChangeLocationPageViewModel>();
             containerRegistry.RegisterForNavigation<MovementPage, MovementPageViewModel>();
-            containerRegistry.RegisterForNavigation<NewInventoryPage, NewInventoryPageViewModel>();
             containerRegistry.RegisterForNavigation<PrintingPage, PrintingPageViewModel>();
             containerRegistry.RegisterForNavigation<ScanReaderPage, ScanReaderPageViewModel>();
             containerRegistry.RegisterForNavigation<SearchAccessionPage, SearchAccessionPageViewModel>();

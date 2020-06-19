@@ -262,30 +262,6 @@ namespace InventoryApp.Helpers
             return result;
         }
 
-
-        public async Task<string> GetNewInventoryID()
-        {
-            string result = string.Empty;
-
-            var response = await _httpClient.GetAsync(string.Format(GetDataURL, Settings.Server, "wcf_new_inventory_id"));
-
-
-            string resultContent = response.Content.ReadAsStringAsync().Result;
-
-            if (response.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                var jResult = JsonConvert.DeserializeObject<JObject[]>(resultContent);
-                JObject first = jResult.FirstOrDefault();
-                result = first.GetValue("new_id").ToString();
-            }
-            else
-            {
-                throw new Exception(JsonConvert.DeserializeObject<string>(resultContent));
-            }
-
-            return result;
-        }
-
         public async Task<string> UpdateInventoryAsync(Inventory item)
         {
             string result = string.Empty;
