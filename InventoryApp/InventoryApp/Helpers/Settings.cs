@@ -7,94 +7,84 @@ namespace InventoryApp.Helpers
 {
     public static class Settings
     {
-        private static readonly string StringDefault = string.Empty;
+        private static readonly string StringDefaultValue = string.Empty;
 
-        public static string WorkgroupName
-        {
-            get { return Preferences.Get("workgroup_name_key", StringDefault); }
-            set { Preferences.Set("workgroup_name_key", value); }
-        }
         public static string ServerList
         {
-            get { return Preferences.Get("server_list_key", StringDefault); }
+            get { return Preferences.Get("server_list_key", StringDefaultValue); }
             set { Preferences.Set("server_list_key", value); }
         }
-        public static int Lang
+        public static string Server
+        {
+            get { return Preferences.Get("server_key", StringDefaultValue); }
+            set { Preferences.Set("server_key", value); }
+        }
+        public static int LangId
         {
             get { return Preferences.Get("lang_id_key", -1); }
             set { Preferences.Set("lang_id_key", value); }
         }
         public static string Username
         {
-            get { return Preferences. Get("user_name_key", StringDefault); }
+            get { return Preferences.Get("user_name_key", StringDefaultValue); }
             set { Preferences.Set("user_name_key", value); }
         }
-
-        public static int CooperatorId
+        public static int UserCooperatorId
         {
-            get { return Preferences.Get("cooperator_id_key", -1); }
-            set { Preferences.Set("cooperator_id_key", value); }
+            get { return Preferences.Get("user_cooperator_id_key", -1); }
+            set { Preferences.Set("user_cooperator_id_key", value); }
         }
-
-        public static string Token
+        public static string UserToken
         {
-            get { return Preferences.Get("token_key", StringDefault); }
+            get { return Preferences.Get("token_key", StringDefaultValue); }
             set { Preferences.Set("token_key", value); }
         }
 
-        public static int CooperatorGroupIndex
+        public static string WorkgroupName
         {
-            get { return Preferences.Get("CooperatorGroupIndex", -1); }
-            set { Preferences.Set("CooperatorGroupIndex", value); }
+            get { return Preferences.Get("workgroup_name_key", StringDefaultValue); }
+            set { Preferences.Set("workgroup_name_key", value); }
         }
-
+        public static string WorkgroupInvMaintPolicies
+        {
+            get { return Preferences.Get("workgroup_inv_maint_policies_key", StringDefaultValue); }
+            set { Preferences.Set("workgroup_inv_maint_policies_key", value); }
+        }
+        
         public static string Location1
         {
-            get { return Preferences.Get("Location1", StringDefault); }
+            get { return Preferences.Get("Location1", StringDefaultValue); }
             set { Preferences.Set("Location1", value); }
-        }
-
-        public static string Server
-        {
-            get { return Preferences.Get("server_key", StringDefault); }
-            set { Preferences.Set("server_key", value); }
-        }
-        public static int WorkgroupCooperatorId
-        {
-            get { return Preferences.Get("WorkgroupCooperatorId", -1); }
-            set { Preferences.Set("WorkgroupCooperatorId", value); }
         }
 
         public static string Filter
         {
-            get { return Preferences.Get("Filter", StringDefault); }
+            get { return Preferences.Get("Filter", StringDefaultValue); }
             set { Preferences.Set("Filter", value); }
         }
         public static string SearchText
         {
-            get { return Preferences.Get("SearchText", StringDefault); }
+            get { return Preferences.Get("SearchText", StringDefaultValue); }
             set { Preferences.Set("SearchText", value); }
         }
 
-
-
         public static string SearchAccessionSearchText
         {
-            get { return Preferences.Get("SearchAccession_SearchText", StringDefault); }
+            get { return Preferences.Get("SearchAccession_SearchText", StringDefaultValue); }
             set { Preferences.Set("SearchAccession_SearchText", value); }
         }
         public static string SearchAccessionFilter
         {
-            get { return Preferences.Get("SearchAccession_Filter", StringDefault); }
+            get { return Preferences.Get("SearchAccession_Filter", StringDefaultValue); }
             set { Preferences.Set("SearchAccession_Filter", value); }
         }
 
         public static string Printer
         {
-            get { return Preferences.Get("printer_key",  StringDefault); }
+            get { return Preferences.Get("printer_key", StringDefaultValue); }
             set { Preferences.Set("printer_key", value); }
         }
-        
+
     }
 
 }

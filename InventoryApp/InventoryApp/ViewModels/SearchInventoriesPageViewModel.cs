@@ -642,11 +642,11 @@ namespace InventoryApp.ViewModels
                 {
                     query += string.Format(" and @inventory.storage_location_part1 = '{0}'", Location1);
                 }
-                /* Support user in multiples workgroups
-                if (Workgroup != null && Workgroup.group_owned_by.HasValue)
+                // Support user in multiples workgroups
+                if (Workgroup != null && !string.IsNullOrEmpty(Workgroup.inv_maint_policy_ids))
                 {
-                    query += string.Format(" and @inventory.owned_by = {0}", Workgroup.group_owned_by.Value);
-                }*/
+                    query += string.Format(" and @inventory.inventory_maint_policy_id in ({0})", Workgroup.inv_maint_policy_ids);
+                }
                 query += " and @inventory.form_type_code <> '**'";
 
                 List<InventoryThumbnail> result;
@@ -742,7 +742,7 @@ namespace InventoryApp.ViewModels
                 //Load workgroups
                 if (ListWorkgroup == null)
                 {
-                    ListWorkgroup = await _restClient.GetWorkGroups(Settings.CooperatorId);
+                    ListWorkgroup = await _restClient.GetWorkGroups(Settings.UserCooperatorId);
                     Workgroup = ListWorkgroup.FirstOrDefault(g => g.group_name.Equals(Settings.WorkgroupName));
                 }
                 //Load Location 1

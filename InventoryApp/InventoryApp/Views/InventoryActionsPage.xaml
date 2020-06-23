@@ -22,14 +22,16 @@
                                 </Grid.ColumnDefinitions>
 
                                 <Label Grid.Row="0" Grid.Column="1"  Text="{Binding inventory_id}" FontAttributes="Bold" />
-                                <Label Grid.Row="0" Grid.Column="2"  Text="{Binding action_name_code}" LineBreakMode="TailTruncation" />
-                                <Label Grid.Row="0" Grid.Column="3"  Text="{Binding quantity, StringFormat='{0:F0}'}" />
+                                <Label Grid.Row="0" Grid.Column="2"  Text="" LineBreakMode="TailTruncation" />
+                                <Label Grid.Row="0" Grid.Column="3"  Text="" />
 
-                                <Label Grid.Row="1" Grid.Column="1"  Text="{Binding action_date}" LineBreakMode="TailTruncation" />
-                                <Label Grid.Row="1" Grid.Column="2"  Text="{Binding method_id}" LineBreakMode="TailTruncation" />
-                                <Label Grid.Row="1" Grid.Column="3"  Text="{Binding quantity_unit_code}" LineBreakMode="TailTruncation" />
+                                <Label Grid.Row="1" Grid.Column="1"  Text="{Binding action_name_code}" LineBreakMode="TailTruncation" />
+                                <Label Grid.Row="1" Grid.Column="2"  Text="{Binding method_name}" LineBreakMode="TailTruncation" />
+                                <Label Grid.Row="1" Grid.Column="3"  Text="{Binding quantity, StringFormat='{0:F0}'}" LineBreakMode="TailTruncation" />
 
-                                <Label Grid.Row="2" Grid.Column="1"  Grid.ColumnSpan="3" Text="{Binding note}" LineBreakMode="TailTruncation"/>
+                                <Label Grid.Row="2" Grid.Column="1"  Grid.ColumnSpan="1" Text="{Binding action_date}" LineBreakMode="TailTruncation"/>
+                                <Label Grid.Row="2" Grid.Column="2"  Text="{Binding cooperator_name}" LineBreakMode="TailTruncation"/>
+                                <Label Grid.Row="2" Grid.Column="3"  Text="{Binding quantity_unit_code}" LineBreakMode="TailTruncation"/>
                             </Grid>
                         </StackLayout>
                     </ViewCell>

@@ -24,7 +24,8 @@ namespace InventoryApp.ViewModels
         IDialogService DialogService { get; }
         private readonly RestClient _restClient;
         private Dictionary<string, string> _appResource;
-
+        
+        #region Properties
         private string _username = string.Empty;
         public string UserName
         {
@@ -65,8 +66,9 @@ namespace InventoryApp.ViewModels
             get { return _serverList; }
             set { SetProperty(ref _serverList, value); }
         }
+        #endregion
 
-        #region lang
+        #region LangProperties
         private string _labelUsername;
         public string LabelUsername
         {
@@ -132,7 +134,8 @@ namespace InventoryApp.ViewModels
 
             _username = Settings.Username;
             _server = Settings.Server;
-            Settings.Token = string.Empty;
+            Settings.UserToken = string.Empty;
+            //_password = "password";
         }
 
         public DelegateCommand AddServerCommand { get; }
@@ -177,12 +180,12 @@ namespace InventoryApp.ViewModels
         private async void OnLangChangedCommandAsync() {
             try
             {
-                if (int.Parse(Lang.value_member) != Settings.Lang)
+                if (int.Parse(Lang.value_member) != Settings.LangId)
                 {
-                    Settings.Lang = int.Parse(Lang.value_member);
+                    Settings.LangId = int.Parse(Lang.value_member);
 
                     _appResource = null;
-                    _appResource = await _restClient.GetAppResources("LoginPage", Settings.Lang);
+                    _appResource = await _restClient.GetAppResources("LoginPage", Settings.LangId);
 
                     LabelUsername = GetLangLabel(nameof(LabelUsername));
                     LabelPassword = GetLangLabel(nameof(LabelPassword));
@@ -218,8 +221,8 @@ namespace InventoryApp.ViewModels
                     if (!string.IsNullOrEmpty(token.Token))
                     {
                         Settings.Username = UserName;
-                        Settings.Token = token.Token;
-                        Settings.CooperatorId = token.CooperatorId.GetValueOrDefault(-1);
+                        Settings.UserToken = token.Token;
+                        Settings.UserCooperatorId = token.CooperatorId.GetValueOrDefault(-1);
                         Settings.Server = Server;
 
                         await NavigationService.NavigateAsync("/MainPage/NavigationPage/WelcomePage");
@@ -265,18 +268,18 @@ namespace InventoryApp.ViewModels
                 }
                 if (Lang == null)
                 {
-                    if (Settings.Lang > 0)
-                        Lang = _langList.FirstOrDefault(l => l.value_member.Equals(Settings.Lang.ToString()));
+                    if (Settings.LangId > 0)
+                        Lang = _langList.FirstOrDefault(l => l.value_member.Equals(Settings.LangId.ToString()));
                     else
                     {
                         Lang = LangList[0];
-                        Settings.Lang = Lang.sys_lang_id;
+                        Settings.LangId = Lang.sys_lang_id;
                     }
                 }
 
                 if (_appResource == null)
                 {
-                    _appResource = await _restClient.GetAppResources("LoginPage", Settings.Lang);
+                    _appResource = await _restClient.GetAppResources("LoginPage", Settings.LangId);
                     
                     LabelUsername = GetLangLabel(nameof(LabelUsername));
                     LabelPassword = GetLangLabel(nameof(LabelPassword));
@@ -298,7 +301,7 @@ namespace InventoryApp.ViewModels
             if (_appResource == null || _appResource.Count == 0)
             {
                 _appResource = new Dictionary<string, string>();
-                if (Settings.Lang == 1)
+                if (Settings.LangId == 1)
                 {
                     _appResource.Add(nameof(LabelUsername), "Username");
                     _appResource.Add(nameof(LabelPassword), "Password");

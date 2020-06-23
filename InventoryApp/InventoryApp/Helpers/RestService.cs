@@ -29,7 +29,7 @@ namespace InventoryApp.Helpers
             _httpClient = new HttpClient();
             _httpClient.DefaultRequestHeaders.Clear();
             _httpClient.MaxResponseContentBufferSize = 256000;
-            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Settings.Token);
+            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Settings.UserToken);
 
             //_client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             //_client.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("utf-8"));
@@ -267,7 +267,7 @@ namespace InventoryApp.Helpers
             string result = string.Empty;
 
             _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.UserToken));
 
             var data = JsonConvert.SerializeObject(JsonConvert.SerializeObject(item));
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
@@ -292,7 +292,7 @@ namespace InventoryApp.Helpers
             List<CodeValueLookup> result = null;
 
             _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.UserToken));
 
             string URL = @"http://{0}/GringlobalService/WCFService.svc/getdata/{1}?parameters={2}";
             URL = string.Format(URL, Settings.Server, "mob_code_value_lookup", ":createddate;:modifieddate");

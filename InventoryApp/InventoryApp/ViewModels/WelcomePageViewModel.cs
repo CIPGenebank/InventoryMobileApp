@@ -16,6 +16,7 @@ namespace InventoryApp.ViewModels
         private readonly RestClient _restClient;
         private Dictionary<string, string> _appResource;
 
+        #region Properties
         private List<CooperatorGroup> _listWorkgroup;
         public List<CooperatorGroup> ListWorkgroup
         {
@@ -47,13 +48,16 @@ namespace InventoryApp.ViewModels
             get { return _cooperatorGroupIndex; }
             set { SetProperty(ref _cooperatorGroupIndex, value); }
         }
+        #endregion
 
+        #region LangProperties
         private string _labelWorkgroup;
         public string LabelWorkgroup
         {
             get { return _labelWorkgroup; }
             set { SetProperty(ref _labelWorkgroup, value); }
         }
+        #endregion
 
         public WelcomePageViewModel(INavigationService navigationService, IPageDialogService pageDialogService) : base(navigationService, pageDialogService)
         {
@@ -73,7 +77,7 @@ namespace InventoryApp.ViewModels
         public DelegateCommand LogoutCommand { get; }
         private async void OnLogoutCommandExecuted()
         {
-            Settings.Token = string.Empty;
+            Settings.UserToken = string.Empty;
             await NavigationService.NavigateAsync("/LoginPage");
         }
 
@@ -127,15 +131,15 @@ namespace InventoryApp.ViewModels
                 //Load workgroups
                 if (ListWorkgroup == null)
                 {
-                    ListWorkgroup = await _restClient.GetWorkGroups(Settings.CooperatorId);
+                    ListWorkgroup = await _restClient.GetWorkGroups(Settings.UserCooperatorId);
                     Workgroup = ListWorkgroup.FirstOrDefault(g => g.group_name.Equals(Settings.WorkgroupName));
                     if (Workgroup == null)
                     {
                         Settings.WorkgroupName = string.Empty;
-                        Settings.WorkgroupCooperatorId = -1;
+                        Settings.WorkgroupInvMaintPolicies = string.Empty;
                     }
                     else
-                        Settings.WorkgroupCooperatorId = Workgroup.group_owned_by.HasValue ? Workgroup.group_owned_by.Value : -1;
+                        Settings.WorkgroupInvMaintPolicies = Workgroup.inv_maint_policy_ids;
                 }
                 //Load Location 1
                 if (ListLocation1 == null)
@@ -146,7 +150,7 @@ namespace InventoryApp.ViewModels
 
                 if (_appResource == null)
                 {
-                    _appResource = await _restClient.GetAppResources("WelcomePage", Settings.Lang);
+                    _appResource = await _restClient.GetAppResources("WelcomePage", Settings.LangId);
 
                     
                     if (_appResource.ContainsKey("LabelWorkgroup")) LabelWorkgroup = _appResource["LabelWorkgroup"];

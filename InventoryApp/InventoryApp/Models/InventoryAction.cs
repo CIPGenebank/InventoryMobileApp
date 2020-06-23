@@ -22,5 +22,8 @@ namespace InventoryApp.Models
         public int? modified_by { get; set; }
         public DateTime owned_date { get; set; }
         public int owned { get; set; }
+
+        public string cooperator_name { get; set; }
+        public string method_name { get; set; }
     }
 }

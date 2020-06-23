@@ -6,6 +6,7 @@ using InventoryApp.Models.Database;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -65,7 +66,7 @@ namespace InventoryApp.Services
             List<int> result = new List<int>();
 
             _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.UserToken));
 
             string URL = string.Format(GetDataEndPoint, Settings.Server, dataview, ":operator=" + searchOperator + ";:searchtext=" + searchText) + "&limit=" + limit;
             var response = await _httpClient.GetAsync(URL);
@@ -94,7 +95,7 @@ namespace InventoryApp.Services
             _httpClient.DefaultRequestHeaders.Clear();
             //_httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             //_httpClient.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("utf-8"));
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.UserToken));
 
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
             string URL = string.Format(SearchEndPoint, Settings.Server, resolver) + "?dataview=get_mob_inventory_thumbnail" + "&limit=" + limit;
@@ -124,7 +125,7 @@ namespace InventoryApp.Services
             var data = JsonConvert.SerializeObject(query);
 
             _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.UserToken));
 
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
             string URL = string.Format(SearchKeysEndPoint, Settings.Server, resolver) + "?limit=" + limit;
@@ -156,7 +157,7 @@ namespace InventoryApp.Services
             var data = JsonConvert.SerializeObject(query);
 
             _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.UserToken));
 
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
             string URL = string.Format(SearchEndPoint, Settings.Server, resolver) + "?dataview=get_mob_accession_thumbnail";
@@ -186,7 +187,7 @@ namespace InventoryApp.Services
 
             var data = JsonConvert.SerializeObject(JsonConvert.SerializeObject(invAction));
             _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.UserToken));
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
             var response = await _httpClient.PostAsync(string.Format(InventoryActionEndPoint, Settings.Server), content);
 
@@ -201,7 +202,7 @@ namespace InventoryApp.Services
 
             var data = JsonConvert.SerializeObject(JsonConvert.SerializeObject(inventory));
             _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.UserToken));
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
             var response = await _httpClient.PostAsync(string.Format(InventoryCreateEndPoint, Settings.Server), content);
 
@@ -224,7 +225,7 @@ namespace InventoryApp.Services
             Inventory result = null;
 
             _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.UserToken));
 
             var response = await _httpClient.GetAsync(string.Format(InventoryEndPoint, Settings.Server, inventoryId));
 
@@ -238,7 +239,7 @@ namespace InventoryApp.Services
             List<CooperatorGroup> result = new List<CooperatorGroup>();
 
             _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.UserToken));
 
             string URL = string.Format(GetDataEndPoint, Settings.Server, "get_mob_workgroup_by_cooperator", System.Net.WebUtility.UrlEncode(":cooperatorid=" + cooperatorId));
             var response = await _httpClient.GetAsync(URL);
@@ -247,6 +248,19 @@ namespace InventoryApp.Services
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 result = JsonConvert.DeserializeObject<List<CooperatorGroup>>(resultContent);
+                foreach (var workgroup in result)
+                {
+                    if (!string.IsNullOrEmpty(workgroup.group_tag))
+                    {
+                        var tagValues = workgroup.group_tag.Split(new char[] { ';' }, StringSplitOptions.None);
+                        if (tagValues.Length > 1)
+                            workgroup.inv_maint_policy_ids = tagValues[1];
+                        if (tagValues.Length > 2)
+                            workgroup.inventory_dataview = tagValues[2];
+                        if (tagValues.Length > 3)
+                            workgroup.inventory_thumbnail_dataview = tagValues[3];
+                    }
+                }
             }
             else
             {
@@ -261,7 +275,7 @@ namespace InventoryApp.Services
             List<Location> result = new List<Location>();
 
             _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.UserToken));
 
             //System.Net.WebUtility.UrlEncode(":inventorymaintpolicyid=" + inventoryMaintPolicyId)
             string URL = string.Format(GetDataEndPoint, Settings.Server, "get_mob_locations_by_workgroup", "");
@@ -285,7 +299,7 @@ namespace InventoryApp.Services
             List<string> result = new List<string>();
 
             _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.UserToken));
 
             //System.Net.WebUtility.UrlEncode(":inventorymaintpolicyid=" + inventoryMaintPolicyId)
             string URL = string.Format(GetDataEndPoint, Settings.Server, "get_mob_inventory_storage_location_part1", "");
@@ -313,7 +327,7 @@ namespace InventoryApp.Services
             List<string> result = new List<string>();
 
             _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.UserToken));
 
             //System.Net.WebUtility.UrlEncode(":inventorymaintpolicyid=" + inventoryMaintPolicyId)
             string URL = string.Format(GetDataEndPoint, Settings.Server, "get_mob_inventory_storage_location_part2", "");
@@ -341,8 +355,8 @@ namespace InventoryApp.Services
             Dictionary<string, string> result = new Dictionary<string, string>();
 
             _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
-            if (!string.IsNullOrEmpty(Settings.Token) && !string.IsNullOrEmpty(Settings.Server))
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.UserToken));
+            if (!string.IsNullOrEmpty(Settings.UserToken) && !string.IsNullOrEmpty(Settings.Server))
             {
                 string URL = string.Format(GetDataEndPoint, Settings.Server, "get_mob_app_resource_lookup_by_form_name", ":formname=" + formName + ";:syslangid=" + sysLangId);
                 var response = await _httpClient.GetAsync(URL);
@@ -371,7 +385,7 @@ namespace InventoryApp.Services
             System.Diagnostics.Debug.WriteLine(JsonConvert.SerializeObject(inventory, Formatting.Indented));
 
             _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.UserToken));
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
             var response = await _httpClient.PutAsync(string.Format(InventoryEndPoint, Settings.Server, inventory.inventory_id), content);
             string resultContent = response.Content.ReadAsStringAsync().Result;
@@ -392,7 +406,7 @@ namespace InventoryApp.Services
             string result = string.Empty;
 
             _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.UserToken));
 
             var data = JsonConvert.SerializeObject(JsonConvert.SerializeObject(inventory));
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
@@ -424,7 +438,7 @@ namespace InventoryApp.Services
             List<SearchFilter> result = new List<SearchFilter>();
 
             _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.UserToken));
 
             string URL = string.Format(GetDataEndPoint, Settings.Server, "get_mob_search_inventories_filters", "");
             var response = await _httpClient.GetAsync(URL);
@@ -446,7 +460,7 @@ namespace InventoryApp.Services
             List<Lookup> result = new List<Lookup>();
 
             _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.UserToken));
 
             string URL = string.Format(GetDataEndPoint, Settings.Server, "get_mob_method_lookup", "");
             var response = await _httpClient.GetAsync(URL);
@@ -469,7 +483,7 @@ namespace InventoryApp.Services
             List<ILookup> result = new List<ILookup>();
 
             _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.UserToken));
 
             string URL = string.Format(GetDataEndPoint, Settings.Server, "get_mob_accession_lookup_by_accession_number", System.Net.WebUtility.UrlEncode(":accessionnumber=" + accessionNumber));
             var response = await _httpClient.GetAsync(URL);
@@ -495,7 +509,7 @@ namespace InventoryApp.Services
             List<ILookup> result = new List<ILookup>();
 
             _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.UserToken));
 
             string URL = string.Format(GetDataEndPoint, Settings.Server, "get_mob_inventory_maint_policy_lookup_by_maintenance_name", System.Net.WebUtility.UrlEncode(":maintenancename=" + maintenanceName));
             var response = await _httpClient.GetAsync(URL);
@@ -520,7 +534,7 @@ namespace InventoryApp.Services
         {
             string result = string.Empty;
             _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.UserToken));
 
             string URL = string.Format(GetDataEndPoint, Settings.Server, "get_mob_code_value_display_member", System.Net.WebUtility.UrlEncode(":groupname=" + groupName + ";:value=" + value));
             var response = await _httpClient.GetAsync(URL);
@@ -549,7 +563,7 @@ namespace InventoryApp.Services
             string result = null;
 
             _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.UserToken));
 
             string URL = string.Format(GetDataEndPoint, Settings.Server, "get_mob_" + lookupName + "_by_value_member", System.Net.WebUtility.UrlEncode(":valuemember=" + valueMember));
             var response = await _httpClient.GetAsync(URL);
@@ -578,7 +592,7 @@ namespace InventoryApp.Services
             List<ILookup> result = new List<ILookup>();
 
             _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.UserToken));
 
             string URL = string.Format(GetDataEndPoint, Settings.Server, "get_mob_code_value_by_groupname", System.Net.WebUtility.UrlEncode(":groupname=" + groupName));
             var response = await _httpClient.GetAsync(URL);
@@ -604,7 +618,7 @@ namespace InventoryApp.Services
             List<Printer> result = new List<Printer>();
 
             _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.UserToken));
 
             string URL = string.Format(GetDataEndPoint, Settings.Server, "get_mob_printer", "");
             var response = await _httpClient.GetAsync(URL);
@@ -627,10 +641,10 @@ namespace InventoryApp.Services
             List<LabelTemplate> result = new List<LabelTemplate>();
 
             _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.UserToken));
 
             string URL = string.Format(GetDataEndPoint, Settings.Server, "get_mob_app_user_gui_setting",
-                string.Format(":cooperatorid={0};:appname=GRINGlobalClientCuratorTool;:resourcename=LabelTemplateList", Settings.CooperatorId));
+                string.Format(":cooperatorid={0};:appname=GRINGlobalClientCuratorTool;:resourcename=LabelTemplateList", Settings.UserCooperatorId));
             var response = await _httpClient.GetAsync(URL);
 
             string resultContent = response.Content.ReadAsStringAsync().Result;
@@ -659,8 +673,8 @@ namespace InventoryApp.Services
             Newtonsoft.Json.Linq.JArray result = new Newtonsoft.Json.Linq.JArray();
 
             _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
-            if (!string.IsNullOrEmpty(Settings.Token) && !string.IsNullOrEmpty(Settings.Server))
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.UserToken));
+            if (!string.IsNullOrEmpty(Settings.UserToken) && !string.IsNullOrEmpty(Settings.Server))
             {
                 string URL = string.Format(GetDataEndPoint, Settings.Server, dataviewName, parameters);
                 var response = await _httpClient.GetAsync(URL);
@@ -685,7 +699,7 @@ namespace InventoryApp.Services
             var data = JsonConvert.SerializeObject(labelZPL);
 
             _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.UserToken));
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
 
             string URL = string.Format(PrintEndPoint, Settings.Server, printerURI, printerConnectionType);
@@ -708,7 +722,7 @@ namespace InventoryApp.Services
             List<InventoryAction> result = new List<InventoryAction>();
 
             _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.UserToken));
 
             string URL = string.Format(GetDataEndPoint, Settings.Server, "get_mob_inventory_action", System.Net.WebUtility.UrlEncode(":inventoryid=" + inventoryIds));
             var response = await _httpClient.GetAsync(URL);

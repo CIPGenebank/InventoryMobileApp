@@ -240,7 +240,7 @@ namespace InventoryApp.ViewModels
             {
                 if (_location == null)
                 {
-                    _location = await _restClient.GetLocations(Settings.CooperatorGroupIndex.ToString());
+                    _location = await _restClient.GetLocations(Settings.WorkgroupInvMaintPolicies);
                 }
 
                 if (ListLocation1 == null)

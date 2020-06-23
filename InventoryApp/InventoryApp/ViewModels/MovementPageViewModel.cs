@@ -1,4 +1,5 @@
-﻿using InventoryApp.Models;
+﻿using InventoryApp.Helpers;
+using InventoryApp.Models;
 using InventoryApp.Services;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -126,6 +127,7 @@ namespace InventoryApp.ViewModels
                         quantity_unit_code = QuantityUnitCode,
                         action_date = ActionDate,
                         method_id = MethodList[MethodIndex].value_member,
+                        cooperator_id = Settings.UserCooperatorId,
                         note = Note
                     };
                     await _restClient.CreateInventoryAction(ia);
