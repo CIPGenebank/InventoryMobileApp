@@ -29,8 +29,7 @@ namespace InventoryApp.Services
         private const string InventoryActionEndPoint = "http://{0}/GringlobalService/WCFService.svc/rest/inventory_action";
 
         private const string GetDataEndPoint = "http://{0}/GringlobalService/WCFService.svc/getdata/{1}?parameters={2}";
-
-        private const string PrinterEndPoint = "http://{0}/GringlobalService/WCFService.svc/print?printURI={1}&printConnectionType={2}";
+        private const string PrintEndPoint = "http://{0}/GringlobalService/WCFService.svc/print?printURI={1}&printConnectionType={2}";
 
         private const string RestUrlRUD = "http://{0}/GringlobalService/WCFService.svc/rest/{1}/{2}";
 
@@ -47,7 +46,7 @@ namespace InventoryApp.Services
             var data = JsonConvert.SerializeObject(new Credential { Username = username, Password = password });
             var content = new StringContent(data, Encoding.UTF8, "application/json");
 
-            var response = await _httpClient.PostAsync(string.Format(LoginEndPoint, server/*Settings.Server*/), content);
+            var response = await _httpClient.PostAsync(string.Format(LoginEndPoint, server), content);
 
             string resultContent = response.Content.ReadAsStringAsync().Result;
 
@@ -98,7 +97,7 @@ namespace InventoryApp.Services
             _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
 
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-            string URL = string.Format(SearchEndPoint, Settings.Server, resolver) + "?dataview=get_mob_inventory" + "&limit=" + limit;
+            string URL = string.Format(SearchEndPoint, Settings.Server, resolver) + "?dataview=get_mob_inventory_thumbnail" + "&limit=" + limit;
             var response = await _httpClient.PostAsync(URL, content);
 
             string resultContent = response.Content.ReadAsStringAsync().Result;
@@ -128,7 +127,7 @@ namespace InventoryApp.Services
             _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
 
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-            string URL = string.Format(SearchKeysEndPoint, Settings.Server, resolver) + "?dataview=get_mob_inventory" + "&limit=" + limit;
+            string URL = string.Format(SearchKeysEndPoint, Settings.Server, resolver) + "?limit=" + limit;
             var response = await _httpClient.PostAsync(URL, content);
 
             string resultContent = response.Content.ReadAsStringAsync().Result;
@@ -148,137 +147,138 @@ namespace InventoryApp.Services
 
             return result;
         }
+        
         /*conventir en una funcion generica*/
         public async Task<List<AccessionThumbnail>> SearchAccession(string query, string dataview, string resolver = "accession")
-            {
-                List<AccessionThumbnail> result = null;
+        {
+            List<AccessionThumbnail> result = null;
 
-                var data = JsonConvert.SerializeObject(query);
+            var data = JsonConvert.SerializeObject(query);
 
-                _httpClient.DefaultRequestHeaders.Clear();
-                _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
 
-                StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-            string URL = string.Format(SearchEndPoint, Settings.Server, resolver) + "?dataview=get_accession_thumbnail";
+            StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+            string URL = string.Format(SearchEndPoint, Settings.Server, resolver) + "?dataview=get_mob_accession_thumbnail";
             var response = await _httpClient.PostAsync(URL, content);
 
-                string resultContent = response.Content.ReadAsStringAsync().Result;
+            string resultContent = response.Content.ReadAsStringAsync().Result;
 
-                if (response.StatusCode == System.Net.HttpStatusCode.OK)
-                {
-                    result = JsonConvert.DeserializeObject<List<AccessionThumbnail>>(resultContent);
-                }
-                else if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
-                {
-                    result = null;
-                }
-                else
-                {
-                    throw new Exception(resultContent);
-                }
-
-                return result;
-            }
-
-            public async Task<string> CreateInventoryAction(InventoryAction invAction)
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                string result = string.Empty;
-
-                var data = JsonConvert.SerializeObject(JsonConvert.SerializeObject(invAction));
-                _httpClient.DefaultRequestHeaders.Clear();
-                _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
-                StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-                var response = await _httpClient.PostAsync(string.Format(InventoryActionEndPoint, Settings.Server), content);
-
-                string resultContent = response.Content.ReadAsStringAsync().Result;
-                result = resultContent;
-                return result;
+                result = JsonConvert.DeserializeObject<List<AccessionThumbnail>>(resultContent);
             }
-            
-            public async Task<string> CreateInventory(Inventory inventory)
+            else if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
             {
-                string result = string.Empty;
-
-                var data = JsonConvert.SerializeObject(JsonConvert.SerializeObject(inventory));
-                _httpClient.DefaultRequestHeaders.Clear();
-                _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
-                StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-                var response = await _httpClient.PostAsync(string.Format(InventoryCreateEndPoint, Settings.Server), content);
-
-                string resultContent = response.Content.ReadAsStringAsync().Result;
-
-                if (response.StatusCode == System.Net.HttpStatusCode.OK)
-                {
-                    result = JsonConvert.DeserializeObject<string>(resultContent);
-                }
-                else
-                {
-                    throw new Exception(resultContent);
-                }
-
-                return result;
+                result = null;
             }
-            
-            public async Task<Inventory> ReadInventory(int inventoryId)
+            else
             {
-                Inventory result = null;
-
-                _httpClient.DefaultRequestHeaders.Clear();
-                _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
-
-                var response = await _httpClient.GetAsync(string.Format(InventoryEndPoint, Settings.Server, inventoryId));
-
-                string resultContent = response.Content.ReadAsStringAsync().Result;
-                result = JsonConvert.DeserializeObject<Inventory>(resultContent);
-                return result;
+                throw new Exception(resultContent);
             }
-            
-            public async Task<List<CooperatorGroup>> GetWorkGroups(int cooperatorId)
+
+            return result;
+        }
+
+        public async Task<string> CreateInventoryAction(InventoryAction invAction)
+        {
+            string result = string.Empty;
+
+            var data = JsonConvert.SerializeObject(JsonConvert.SerializeObject(invAction));
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+            StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(string.Format(InventoryActionEndPoint, Settings.Server), content);
+
+            string resultContent = response.Content.ReadAsStringAsync().Result;
+            result = resultContent;
+            return result;
+        }
+
+        public async Task<string> CreateInventory(Inventory inventory)
+        {
+            string result = string.Empty;
+
+            var data = JsonConvert.SerializeObject(JsonConvert.SerializeObject(inventory));
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+            StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(string.Format(InventoryCreateEndPoint, Settings.Server), content);
+
+            string resultContent = response.Content.ReadAsStringAsync().Result;
+
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                List<CooperatorGroup> result = new List<CooperatorGroup>();
-
-                _httpClient.DefaultRequestHeaders.Clear();
-                _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
-
-                string URL = string.Format(GetDataEndPoint, Settings.Server, "get_mob_workgroup_by_cooperator", System.Net.WebUtility.UrlEncode(":cooperatorid=" + cooperatorId));
-                var response = await _httpClient.GetAsync(URL);
-
-                string resultContent = response.Content.ReadAsStringAsync().Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.OK)
-                {
-                    result = JsonConvert.DeserializeObject<List<CooperatorGroup>>(resultContent);
-                }
-                else
-                {
-                    throw new Exception(resultContent);
-                }
-
-                return result;
+                result = JsonConvert.DeserializeObject<string>(resultContent);
             }
-            
-            public async Task<List<Location>> GetLocations(string inventoryMaintPolicyId)
+            else
             {
-                List<Location> result = new List<Location>();
-
-                _httpClient.DefaultRequestHeaders.Clear();
-                _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
-
-                //System.Net.WebUtility.UrlEncode(":inventorymaintpolicyid=" + inventoryMaintPolicyId)
-                string URL = string.Format(GetDataEndPoint, Settings.Server, "get_locations_by_workgroup", "");
-                var response = await _httpClient.GetAsync(URL);
-
-                string resultContent = response.Content.ReadAsStringAsync().Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.OK)
-                {
-                    result = JsonConvert.DeserializeObject<List<Location>>(resultContent);
-                }
-                else
-                {
-                    throw new Exception(resultContent);
-                }
-
-                return result;
+                throw new Exception(resultContent);
             }
+
+            return result;
+        }
+
+        public async Task<Inventory> ReadInventory(int inventoryId)
+        {
+            Inventory result = null;
+
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+
+            var response = await _httpClient.GetAsync(string.Format(InventoryEndPoint, Settings.Server, inventoryId));
+
+            string resultContent = response.Content.ReadAsStringAsync().Result;
+            result = JsonConvert.DeserializeObject<Inventory>(resultContent);
+            return result;
+        }
+
+        public async Task<List<CooperatorGroup>> GetWorkGroups(int cooperatorId)
+        {
+            List<CooperatorGroup> result = new List<CooperatorGroup>();
+
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+
+            string URL = string.Format(GetDataEndPoint, Settings.Server, "get_mob_workgroup_by_cooperator", System.Net.WebUtility.UrlEncode(":cooperatorid=" + cooperatorId));
+            var response = await _httpClient.GetAsync(URL);
+
+            string resultContent = response.Content.ReadAsStringAsync().Result;
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                result = JsonConvert.DeserializeObject<List<CooperatorGroup>>(resultContent);
+            }
+            else
+            {
+                throw new Exception(resultContent);
+            }
+
+            return result;
+        }
+
+        public async Task<List<Location>> GetLocations(string inventoryMaintPolicyId)
+        {
+            List<Location> result = new List<Location>();
+
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+
+            //System.Net.WebUtility.UrlEncode(":inventorymaintpolicyid=" + inventoryMaintPolicyId)
+            string URL = string.Format(GetDataEndPoint, Settings.Server, "get_mob_locations_by_workgroup", "");
+            var response = await _httpClient.GetAsync(URL);
+
+            string resultContent = response.Content.ReadAsStringAsync().Result;
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                result = JsonConvert.DeserializeObject<List<Location>>(resultContent);
+            }
+            else
+            {
+                throw new Exception(resultContent);
+            }
+
+            return result;
+        }
 
         public async Task<List<string>> GetAllLocation1List()
         {
@@ -288,7 +288,7 @@ namespace InventoryApp.Services
             _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
 
             //System.Net.WebUtility.UrlEncode(":inventorymaintpolicyid=" + inventoryMaintPolicyId)
-            string URL = string.Format(GetDataEndPoint, Settings.Server, "get_inventory_storage_location_part1", "");
+            string URL = string.Format(GetDataEndPoint, Settings.Server, "get_mob_inventory_storage_location_part1", "");
             var response = await _httpClient.GetAsync(URL);
 
             string resultContent = response.Content.ReadAsStringAsync().Result;
@@ -298,7 +298,7 @@ namespace InventoryApp.Services
                 foreach (var item in Newtonsoft.Json.Linq.JArray.Parse(resultContent))
                 {
                     result.Add(item["storage_location_part1"].ToString());
-                } 
+                }
                 //result = JsonConvert.DeserializeObject<List<Location>>(resultContent); storage_location_part1
             }
             else
@@ -316,7 +316,7 @@ namespace InventoryApp.Services
             _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
 
             //System.Net.WebUtility.UrlEncode(":inventorymaintpolicyid=" + inventoryMaintPolicyId)
-            string URL = string.Format(GetDataEndPoint, Settings.Server, "get_inventory_storage_location_part2", "");
+            string URL = string.Format(GetDataEndPoint, Settings.Server, "get_mob_inventory_storage_location_part2", "");
             var response = await _httpClient.GetAsync(URL);
 
             string resultContent = response.Content.ReadAsStringAsync().Result;
@@ -364,28 +364,28 @@ namespace InventoryApp.Services
         }
 
         public async Task<string> UpdateInventory(InventoryThumbnail inventory)
+        {
+            string result = string.Empty;
+
+            var data = JsonConvert.SerializeObject(JsonConvert.SerializeObject(inventory));
+            System.Diagnostics.Debug.WriteLine(JsonConvert.SerializeObject(inventory, Formatting.Indented));
+
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+            StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PutAsync(string.Format(InventoryEndPoint, Settings.Server, inventory.inventory_id), content);
+            string resultContent = response.Content.ReadAsStringAsync().Result;
+
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                string result = string.Empty;
-
-                var data = JsonConvert.SerializeObject(JsonConvert.SerializeObject(inventory));
-                System.Diagnostics.Debug.WriteLine(JsonConvert.SerializeObject(inventory, Formatting.Indented));
-
-                _httpClient.DefaultRequestHeaders.Clear();
-                _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
-                StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-                var response = await _httpClient.PutAsync(string.Format(InventoryEndPoint, Settings.Server, inventory.inventory_id), content);
-                string resultContent = response.Content.ReadAsStringAsync().Result;
-
-                if (response.StatusCode == System.Net.HttpStatusCode.OK)
-                {
-                    result = resultContent;
-                }
-                else
-                {
-                    throw new Exception(resultContent);
-                }
-                return result;
+                result = resultContent;
             }
+            else
+            {
+                throw new Exception(resultContent);
+            }
+            return result;
+        }
 
         public async Task<string> UpdateInventory(Inventory inventory)
         {
@@ -416,30 +416,6 @@ namespace InventoryApp.Services
                 }
             }
 
-            return result;
-        }
-
-        public async Task<string> Print(int printerId, string label)
-        {
-            string result = string.Empty;
-
-            //var data = JsonConvert.SerializeObject(label);
-
-            _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
-            StringContent content = new StringContent("\"" + label + "\"", Encoding.UTF8, "application/json");
-
-            var response = await _httpClient.PostAsync(string.Format(PrinterEndPoint, Settings.Server, printerId), content);
-            string resultContent = response.Content.ReadAsStringAsync().Result;
-
-            if (response.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                result = resultContent;
-            }
-            else
-            {
-                throw new Exception(resultContent);
-            }
             return result;
         }
 
@@ -495,7 +471,7 @@ namespace InventoryApp.Services
             _httpClient.DefaultRequestHeaders.Clear();
             _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
 
-            string URL = string.Format(GetDataEndPoint, Settings.Server, "get_accession_lookup_by_accession_number", System.Net.WebUtility.UrlEncode(":accessionnumber=" + accessionNumber));
+            string URL = string.Format(GetDataEndPoint, Settings.Server, "get_mob_accession_lookup_by_accession_number", System.Net.WebUtility.UrlEncode(":accessionnumber=" + accessionNumber));
             var response = await _httpClient.GetAsync(URL);
 
             string resultContent = response.Content.ReadAsStringAsync().Result;
@@ -521,7 +497,7 @@ namespace InventoryApp.Services
             _httpClient.DefaultRequestHeaders.Clear();
             _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
 
-            string URL = string.Format(GetDataEndPoint, Settings.Server, "get_inventory_maint_policy_lookup_by_maintenance_name", System.Net.WebUtility.UrlEncode(":maintenancename=" + maintenanceName));
+            string URL = string.Format(GetDataEndPoint, Settings.Server, "get_mob_inventory_maint_policy_lookup_by_maintenance_name", System.Net.WebUtility.UrlEncode(":maintenancename=" + maintenanceName));
             var response = await _httpClient.GetAsync(URL);
 
             string resultContent = response.Content.ReadAsStringAsync().Result;
@@ -546,7 +522,7 @@ namespace InventoryApp.Services
             _httpClient.DefaultRequestHeaders.Clear();
             _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
 
-            string URL = string.Format(GetDataEndPoint, Settings.Server, "get_code_value_display_member", System.Net.WebUtility.UrlEncode(":groupname=" + groupName + ";:value=" + value));
+            string URL = string.Format(GetDataEndPoint, Settings.Server, "get_mob_code_value_display_member", System.Net.WebUtility.UrlEncode(":groupname=" + groupName + ";:value=" + value));
             var response = await _httpClient.GetAsync(URL);
 
             string resultContent = response.Content.ReadAsStringAsync().Result;
@@ -575,7 +551,7 @@ namespace InventoryApp.Services
             _httpClient.DefaultRequestHeaders.Clear();
             _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
 
-            string URL = string.Format(GetDataEndPoint, Settings.Server, "get_" + lookupName + "_by_value_member", System.Net.WebUtility.UrlEncode(":valuemember=" + valueMember));
+            string URL = string.Format(GetDataEndPoint, Settings.Server, "get_mob_" + lookupName + "_by_value_member", System.Net.WebUtility.UrlEncode(":valuemember=" + valueMember));
             var response = await _httpClient.GetAsync(URL);
 
             string resultContent = response.Content.ReadAsStringAsync().Result;
@@ -646,14 +622,14 @@ namespace InventoryApp.Services
             return result;
         }
 
-        public async Task<List<LabelTemplate>> GetLabelTemplateList() 
+        public async Task<List<LabelTemplate>> GetLabelTemplateList()
         {
             List<LabelTemplate> result = new List<LabelTemplate>();
 
             _httpClient.DefaultRequestHeaders.Clear();
             _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
 
-            string URL = string.Format(GetDataEndPoint, Settings.Server, "get_mob_app_user_gui_setting", 
+            string URL = string.Format(GetDataEndPoint, Settings.Server, "get_mob_app_user_gui_setting",
                 string.Format(":cooperatorid={0};:appname=GRINGlobalClientCuratorTool;:resourcename=LabelTemplateList", Settings.CooperatorId));
             var response = await _httpClient.GetAsync(URL);
 
@@ -661,7 +637,7 @@ namespace InventoryApp.Services
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 var appUserSettingsList = JsonConvert.DeserializeObject<List<AppUserSetting>>(resultContent);
-                if (appUserSettingsList != null) 
+                if (appUserSettingsList != null)
                 {
                     foreach (var appUserSetting in appUserSettingsList)
                     {
@@ -701,7 +677,7 @@ namespace InventoryApp.Services
             }
             return result;
         }
-        
+
         public async Task<string> Print(string printerURI, string printerConnectionType, string labelZPL)
         {
             string result = string.Empty;
@@ -712,7 +688,7 @@ namespace InventoryApp.Services
             _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
 
-            string URL = string.Format(PrinterEndPoint, Settings.Server, printerURI, printerConnectionType);
+            string URL = string.Format(PrintEndPoint, Settings.Server, printerURI, printerConnectionType);
             var response = await _httpClient.PostAsync(URL, content);
             string resultContent = response.Content.ReadAsStringAsync().Result;
 
@@ -724,6 +700,29 @@ namespace InventoryApp.Services
             {
                 throw new Exception(resultContent);
             }
+            return result;
+        }
+
+        public async Task<List<InventoryAction>> GetInvitroActionList(string inventoryIds)
+        {
+            List<InventoryAction> result = new List<InventoryAction>();
+
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.Token));
+
+            string URL = string.Format(GetDataEndPoint, Settings.Server, "get_mob_inventory_action", System.Net.WebUtility.UrlEncode(":inventoryid=" + inventoryIds));
+            var response = await _httpClient.GetAsync(URL);
+
+            string resultContent = response.Content.ReadAsStringAsync().Result;
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                result = JsonConvert.DeserializeObject<List<InventoryAction>>(resultContent);
+            }
+            else
+            {
+                throw new Exception(resultContent);
+            }
+
             return result;
         }
     }

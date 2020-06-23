@@ -133,7 +133,6 @@ namespace InventoryApp.ViewModels
             _username = Settings.Username;
             _server = Settings.Server;
             Settings.Token = string.Empty;
-            _password = "qwertyuiop";
         }
 
         public DelegateCommand AddServerCommand { get; }

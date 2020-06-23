@@ -187,7 +187,7 @@ namespace InventoryApp.ViewModels
             }
 
             var list = string.Join(",", _inventoryList.Select(i => i.inventory_id));
-            _inventoryList = await _restClient.Search("@inventory.inventory_id in (" + list + ")", "get_mob_inventory", "inventory");
+            _inventoryList = await _restClient.Search("@inventory.inventory_id in (" + list + ")", "get_mob_inventory_thumbnail", "inventory");
             
             var navigationParams = new NavigationParameters();
             navigationParams.Add("InventoryThumbnailList", _inventoryList);

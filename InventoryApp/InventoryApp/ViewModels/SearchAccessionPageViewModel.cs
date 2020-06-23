@@ -91,7 +91,7 @@ namespace InventoryApp.ViewModels
                         query = string.Format("@accession.accession_id = '{0}'", _searchText);
                         break;
                 }
-                AccessionThumbnailList = await _restClient.SearchAccession(query, "get_accession_thumbnail", "accession");
+                AccessionThumbnailList = await _restClient.SearchAccession(query, "get_mob_accession_thumbnail", "accession");
 
                 if (AccessionThumbnailList == null || AccessionThumbnailList.Count == 0)
                 {

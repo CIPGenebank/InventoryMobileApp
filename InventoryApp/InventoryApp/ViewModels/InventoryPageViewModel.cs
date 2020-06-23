@@ -178,13 +178,13 @@ namespace InventoryApp.ViewModels
                 {
                     result = await _restClient.CreateInventory(NewInventory);
                     await PageDialogService.DisplayAlertAsync("Saved Inventory Id", result, "OK");
-                    newInventoryList = await _restClient.Search("@inventory.inventory_id = " + result, "get_mob_inventory", "inventory");
+                    newInventoryList = await _restClient.Search("@inventory.inventory_id = " + result, "get_mob_inventory_thumbnail", "inventory");
                 }
                 else
                 {
                     result = await _restClient.UpdateInventory(NewInventory);
                     await PageDialogService.DisplayAlertAsync("Message", "Successfully saved", "OK");
-                    newInventoryList = await _restClient.Search("@inventory.inventory_id = " + NewInventory.inventory_id, "get_mob_inventory", "inventory");
+                    newInventoryList = await _restClient.Search("@inventory.inventory_id = " + NewInventory.inventory_id, "get_mob_inventory_thumbnail", "inventory");
                 }
                 InventoryThumbnail newInventory = newInventoryList[0];
 

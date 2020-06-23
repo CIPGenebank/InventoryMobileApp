@@ -9,6 +9,7 @@ using Prism.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
 using Xamarin.Forms;
 
@@ -97,7 +98,7 @@ namespace InventoryApp.ViewModels
             //UpdateAttributeBatchCommand = new DelegateCommand(OnUpdateAttributeBatchCommandExecuted);
 
             ChangeLocationCommand = new DelegateCommand(OnChangeLocationCommandExecuted);
-
+            ViewInventoryActionsCommand = new DelegateCommand(OnViewInventoryActionsCommand);
             //ItemToggledCommand = new DelegateCommand(OnItemToggledCommandCommandExecuted);
 
             SelectItemCommand = new DelegateCommand<Object>(OnSelectItemCommand);
@@ -160,7 +161,15 @@ namespace InventoryApp.ViewModels
         {
             await NavigationService.NavigateAsync("SearchInventoriesPage");
         }
-
+        
+        public DelegateCommand ViewInventoryActionsCommand { get; }
+        private async void OnViewInventoryActionsCommand()
+        {
+            var navigationParams = new NavigationParameters();
+            var selection = GetSelection();
+            navigationParams.Add("InventoryThumbnailList", selection);
+            await NavigationService.NavigateAsync("InventoryActionsPage", navigationParams, useModalNavigation: false, animated: true);
+        }
         public DelegateCommand<Object> ItemTappedCommand { get; }
         public DelegateCommand AllCommand { get; }
         public DelegateCommand NoneCommand { get; }

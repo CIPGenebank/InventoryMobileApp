@@ -27,7 +27,7 @@
         <ToolbarItem Text="Print" Command="{Binding PrintCommand}" Icon="print.png" Order="Secondary"/>
         <ToolbarItem Text="Increase / Discount" Command="{Binding RegisterTransactionCommand}" Order="Secondary"/>
         <ToolbarItem Text="Change Location" Command="{Binding ChangeLocationCommand}" Order="Secondary"/>
-        <ToolbarItem Text="Update descriptor" Command="{Binding SaveListCommand}" Order="Secondary"/>
+        <ToolbarItem Text="View actions" Command="{Binding ViewInventoryActionsCommand}" Order="Secondary"/>
         <ToolbarItem Text="Save list" Command="{Binding SaveListCommand}" Order="Secondary"/>
         <ToolbarItem Text="Remove from list" Command="{Binding RemoveCommand}" Order="Secondary"/>
     </ContentPage.ToolbarItems>

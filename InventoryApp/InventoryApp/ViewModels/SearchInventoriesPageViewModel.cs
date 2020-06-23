@@ -481,8 +481,8 @@ namespace InventoryApp.ViewModels
 
                                         if (!string.IsNullOrEmpty(Location1))
                                             finalQuery += string.Format(" and @inventory.storage_location_part1 = '{0}'", Location1);
-                                        if (Workgroup != null && Workgroup.group_owned_by.HasValue)
-                                            finalQuery += string.Format(" and @inventory.owned_by = {0}", Workgroup.group_owned_by.Value);
+                                        /*if (Workgroup != null && Workgroup.group_owned_by.HasValue)
+                                            finalQuery += string.Format(" and @inventory.owned_by = {0}", Workgroup.group_owned_by.Value);*/
                                         finalQuery += " and @inventory.form_type_code <> '**'";
 
                                         var partialResultIds = await _restClient.SearchKeys(string.Format(finalQuery, searchText), "inventory", 0);
@@ -497,8 +497,8 @@ namespace InventoryApp.ViewModels
                             {
                                 if (!string.IsNullOrEmpty(Location1))
                                     query += string.Format(" and @inventory.storage_location_part1 = '{0}'", Location1);
-                                if (Workgroup != null && Workgroup.group_owned_by.HasValue)
-                                    query += string.Format(" and @inventory.owned_by = {0}", Workgroup.group_owned_by.Value);
+                                /*if (Workgroup != null && Workgroup.group_owned_by.HasValue)
+                                    query += string.Format(" and @inventory.owned_by = {0}", Workgroup.group_owned_by.Value);*/
                                 query += " and @inventory.form_type_code <> '**'";
 
                                 foreach (var text in searchTextArray)
@@ -642,10 +642,11 @@ namespace InventoryApp.ViewModels
                 {
                     query += string.Format(" and @inventory.storage_location_part1 = '{0}'", Location1);
                 }
+                /* Support user in multiples workgroups
                 if (Workgroup != null && Workgroup.group_owned_by.HasValue)
                 {
                     query += string.Format(" and @inventory.owned_by = {0}", Workgroup.group_owned_by.Value);
-                }
+                }*/
                 query += " and @inventory.form_type_code <> '**'";
 
                 List<InventoryThumbnail> result;

@@ -184,7 +184,7 @@ namespace InventoryApp.ViewModels
                 SelectedInventoryViability = null;
                 InventoryViabilityList = null;
 
-                List<InventoryThumbnail> inventoryThumbnailListResult = await _restService.SearchInventoryThumbnailAsync(query, "get_mob_inventory", "inventory");
+                List<InventoryThumbnail> inventoryThumbnailListResult = await _restService.SearchInventoryThumbnailAsync(query, "get_mob_inventory_thumbnail", "inventory");
                 if (inventoryThumbnailListResult == null || inventoryThumbnailListResult.Count == 0)
                 {
                     await _pageDialogService.DisplayAlertAsync("Error", "Inventory not found", "OK");
