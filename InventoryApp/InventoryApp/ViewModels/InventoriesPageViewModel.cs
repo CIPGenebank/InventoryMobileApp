@@ -70,6 +70,13 @@ namespace InventoryApp.ViewModels
             get { return _selectedRowsCount; }
             set { SetProperty(ref _selectedRowsCount, value); }
         }
+
+        private decimal _totalQuantity;
+        public decimal TotalQuantity
+        {
+            get { return _totalQuantity; }
+            set { SetProperty(ref _totalQuantity, value); }
+        }
         #endregion
         public InventoriesPageViewModel(INavigationService navigationService, IPageDialogService pageDialogService, IEventAggregator eventAggregator)
             : base(navigationService, pageDialogService)
@@ -100,11 +107,13 @@ namespace InventoryApp.ViewModels
             ChangeLocationCommand = new DelegateCommand(OnChangeLocationCommandExecuted);
             ViewInventoryActionsCommand = new DelegateCommand(OnViewInventoryActionsCommand);
             //ItemToggledCommand = new DelegateCommand(OnItemToggledCommandCommandExecuted);
+            SaveListCommand = new DelegateCommand(OnSaveListCommand);
 
             SelectItemCommand = new DelegateCommand<Object>(OnSelectItemCommand);
 
             SelectedRowsCount = InventoryList.Count(i => i.IsSelected == true);
             AccessionCount = InventoryList.Select(i => i.Item.accession_id).Distinct().Count();
+            //TotalQuantity = _inventoryList.Sum(i => i.Item.quantity_on_hand);
 
             eventAggregator.GetEvent<AddInventoryToListEvent>().Subscribe(OnAddItemToList);
         }
@@ -123,7 +132,18 @@ namespace InventoryApp.ViewModels
             }
         }
         #endregion
-
+        public DelegateCommand SaveListCommand { get; }
+        private async void OnSaveListCommand()
+        {
+            try
+            {
+                await PageDialogService.DisplayAlertAsync("Message", "Under Construction", "OK");
+            }
+            catch (Exception ex)
+            {
+                await PageDialogService.DisplayAlertAsync("Error", ex.Message, "OK");
+            }
+        }
         public DelegateCommand NewCommand { get; }
         private async void OnNewCommandExecuted()
         {

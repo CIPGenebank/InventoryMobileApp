@@ -24,12 +24,13 @@
         <ToolbarItem Text="Scan" Command="{Binding ScanCommand}" Icon="scan.png"/>
         <ToolbarItem Text="Search" Command="{Binding SearchCommand}" Icon="search.png"/>
 
-        <ToolbarItem Text="Print" Command="{Binding PrintCommand}" Icon="print.png" Order="Secondary"/>
+        
         <ToolbarItem Text="Increase / Discount" Command="{Binding RegisterTransactionCommand}" Order="Secondary"/>
         <ToolbarItem Text="Change Location" Command="{Binding ChangeLocationCommand}" Order="Secondary"/>
+        <ToolbarItem Text="Print" Command="{Binding PrintCommand}" Icon="print.png" Order="Secondary"/>
         <ToolbarItem Text="View actions" Command="{Binding ViewInventoryActionsCommand}" Order="Secondary"/>
-        <ToolbarItem Text="Save list" Command="{Binding SaveListCommand}" Order="Secondary"/>
         <ToolbarItem Text="Remove from list" Command="{Binding RemoveCommand}" Order="Secondary"/>
+        <ToolbarItem Text="Save list" Command="{Binding SaveListCommand}" Order="Secondary"/>
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
@@ -51,10 +52,10 @@
                     <CheckBox  IsChecked="{Binding IsAllSelected}" HorizontalOptions="CenterAndExpand"  VerticalOptions="CenterAndExpand"/>
                 </StackLayout>
 
-                <Label Grid.Column="1" Grid.Row="0" Text=" Acc. number" FontAttributes="Bold" TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}"/>
-                <Label Grid.Column="1" Grid.Row="1" Text=" Acc. name" FontAttributes="Bold" LineBreakMode="TailTruncation" TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}"/>
+                <Label Grid.Column="1" Grid.Row="0" Text=" AcceNumb" FontAttributes="Bold" TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}"/>
+                <Label Grid.Column="1" Grid.Row="1" Text=" AcceName" FontAttributes="Bold" LineBreakMode="TailTruncation" TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}"/>
                 <Label Grid.Column="2" Grid.Row="0" Text=" Inventory number" FontAttributes="Bold" LineBreakMode="TailTruncation" TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}"/>
-                <Label Grid.Column="2" Grid.Row="1" Text=" Col number" FontAttributes="Bold" LineBreakMode="TailTruncation" TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}"/>
+                <Label Grid.Column="2" Grid.Row="1" Text=" CollNumb" FontAttributes="Bold" LineBreakMode="TailTruncation" TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}"/>
                 <Label Grid.Column="3" Grid.Row="0" Text=" Quantity" FontAttributes="Bold" LineBreakMode="TailTruncation" TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}"/>
                 <Label Grid.Column="3" Grid.Row="1" Text=" Unit" FontAttributes="Bold" LineBreakMode="TailTruncation" TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}"/>
 
@@ -115,9 +116,10 @@
             </ListView>
 
             <StackLayout Orientation="Horizontal" BackgroundColor="Gray" HeightRequest="32">
-                <Label Text="{Binding InventoryList.Count, StringFormat=' Inventories : {0}'}" TextColor="White" VerticalOptions="Center"/>
-                <Label Text="{Binding AccessionCount, StringFormat='Accessions : {0}'}" TextColor="White" VerticalOptions="Center"/>
-                <Label Text="{Binding SelectedRowsCount, StringFormat='Selected inventories : {0}'}" TextColor="White" VerticalOptions="Center"/>
+                <Label Text="{Binding InventoryList.Count, StringFormat=' Inv : {0}'}" TextColor="White" VerticalOptions="Center"/>
+                <Label Text="{Binding AccessionCount, StringFormat='Acc : {0}'}" TextColor="White" VerticalOptions="Center"/>
+                <Label Text="{Binding SelectedRowsCount, StringFormat='Selected Inv : {0}'}" TextColor="White" VerticalOptions="Center"/>
+                <Label Text="{Binding TotalQuantity, StringFormat='Total Qty : {0}'}" TextColor="White" VerticalOptions="Center"/>
             </StackLayout>
         </StackLayout>
     </ContentPage.Content>

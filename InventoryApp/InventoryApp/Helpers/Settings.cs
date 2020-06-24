@@ -50,7 +50,12 @@ namespace InventoryApp.Helpers
             get { return Preferences.Get("workgroup_inv_maint_policies_key", StringDefaultValue); }
             set { Preferences.Set("workgroup_inv_maint_policies_key", value); }
         }
-        
+        public static string WorkgroupInventoryDataview
+        {
+            get { return Preferences.Get("workgroup_inventory_dataview_key", "table_mob_inventory"); }
+            set { Preferences.Set("workgroup_inventory_dataview_key", value); }
+        }
+
         public static string Location1
         {
             get { return Preferences.Get("Location1", StringDefaultValue); }

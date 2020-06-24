@@ -38,7 +38,7 @@ namespace InventoryApp.ViewModels
                 new MenuItem { Text = "Inventory list", Path="NavigationPage/InventoriesPage" },
                 //new MenuItem { Text = "Inventories(previous)", Path = "NavigationPage/PreviousInventoriesPage"},
                 /*new MenuItem { Text = "Dataviews", Path = "NavigationPage/WelcomePage"},*/
-                new MenuItem { Text = "Viability Tests", Path = "NavigationPage/ViabilityTestsPage" },
+                new MenuItem { Text = "Viability Test", Path = "NavigationPage/ViabilityTestsPage" },
                 new MenuItem { Text = "Settings", Path = "NavigationPage/SettingsPage" },
                 new MenuItem { Text = "About", Path = "NavigationPage/About" }
             };

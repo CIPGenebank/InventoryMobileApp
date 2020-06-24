@@ -79,8 +79,8 @@ namespace InventoryApp.ViewModels
 
             new EntityAttribute{ Caption = "Is Auto Deducted?", Name = "is_auto_deducted", Type =  typeof(string), Value='N', ControlType="CHECKBOX", IsRequired = false},
 
-            new EntityAttribute{ Caption = "Pathogen Status", Name = "pathogen_status_code", Type =  typeof(string), Value=null, ControlType="DROPDOWN", ControlSource="PATHOGEN_STATUS" }
-            
+            new EntityAttribute{ Caption = "Pathogen Status", Name = "pathogen_status_code", Type =  typeof(string), Value=null, ControlType="DROPDOWN", ControlSource="PATHOGEN_STATUS" },
+            new EntityAttribute{ Caption = "Note", Name = "note", Type =  typeof(string), Value=string.Empty, ControlType="STRING"}
         };
 
         public InventoryPageViewModel(INavigationService navigationService, IPageDialogService pageDialogService, IRestService restService)

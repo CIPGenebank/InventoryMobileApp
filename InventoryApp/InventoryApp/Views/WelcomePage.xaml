@@ -31,7 +31,7 @@
                     Command="{Binding NavigateCommand}" CommandParameter="InventoriesPage"/>
                 <Button Grid.Row="0" Grid.Column="1" BackgroundColor="Green" TextColor="White" Text="Register new inventory" 
                     Command="{Binding NavigateCommand}" CommandParameter="InventoriesPage/InventoryPage"/>
-                <Button Grid.Row="1" Grid.Column="0" BackgroundColor="Olive" TextColor="White" Text="Search inventories"
+                <Button Grid.Row="1" Grid.Column="0" BackgroundColor="Olive" TextColor="White" Text="Search inventory"
                     Command="{Binding NavigateCommand}" CommandParameter="InventoriesPage/SearchInventoriesPage"/>
                 <Button Grid.Row="1" Grid.Column="1" BackgroundColor="Orange" TextColor="White" Text="Viability Test"
                     Command="{Binding NavigateCommand}" CommandParameter="ViabilityTestsPage"/>
