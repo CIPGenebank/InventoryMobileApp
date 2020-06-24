@@ -8,12 +8,12 @@ namespace InventoryApp.Interfaces
 {
     public interface IDataStoreService
     {
-        Task<List<ILookup>> GetCodeValueList(string groupName);
+        List<ILookup> GetCodeValueList(string groupName);
 
-        Task<bool> SyncCodeValueLookup();
+        bool SyncCodeValueLookup();
 
-        Task<List<ILookup>> GetAccessionLookupList(string accessionNumber);
-        Task<bool> SyncAccessionLookup();
+        List<ILookup> GetAccessionLookupList(string accessionNumber);
+        bool SyncAccessionLookup();
         
     }
 }

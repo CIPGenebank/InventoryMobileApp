@@ -23,7 +23,7 @@ namespace InventoryApp.ViewModels
 
         private List<SearchFilter> _defaultSearchFilterList;
 
-        private ObservableCollection<InventoryThumbnail> _inventories;
+        //private ObservableCollection<InventoryThumbnail> _inventories;
         private readonly RestClient _restClient;
 
         #region Properties
@@ -512,9 +512,9 @@ namespace InventoryApp.ViewModels
                             }
                         }
                         break;
-                    case "lookup":
+                    /*case "lookup":
                         throw new Exception("Filter type not supported");
-                        break;
+                        break;*/
                     default:
                         throw new Exception("Filter type not supported");
                 }

@@ -82,11 +82,11 @@ namespace InventoryApp.Helpers
             return result;
         }
 
-        public async Task DeleteInventoryViabilityAsync(string id)
+        public Task DeleteInventoryViabilityAsync(string id)
         {
             throw new NotImplementedException();
         }
-        public async Task SaveInventoryViabilityAsync(InventoryViability item, bool isNewItem)
+        public Task SaveInventoryViability(InventoryViability item, bool isNewItem)
         {
             throw new NotImplementedException();
         }
@@ -334,7 +334,7 @@ namespace InventoryApp.Helpers
         }
 
         public T Entity { get; set; }
-
+        /*
         public async Task<T> CreateAsync(Tkey id)
         {
             return Entity;
@@ -354,5 +354,6 @@ namespace InventoryApp.Helpers
         {
             return Entity;
         }
+        */
     }
 }

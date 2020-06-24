@@ -125,7 +125,7 @@ namespace InventoryApp.ViewModels
             SearchCommand = new DelegateCommand(OnSearchCommandExecuted);
             EvaluateCommand = new DelegateCommand(OnEvaluateCommandExecuted);
             EditCommand = new DelegateCommand(OnEditCommandExecuted);
-            ItemTappedCommand = new DelegateCommand(OnItemTappedCommandExecuted);
+            //ItemTappedCommand = new DelegateCommand(OnItemTappedCommandExecuted);
         }
 
         public DelegateCommand NewCommand { get; }
@@ -238,12 +238,13 @@ namespace InventoryApp.ViewModels
                 await _pageDialogService.DisplayAlertAsync("Error", e.Message, "OK");
             }
         }
-
+        /*
         public DelegateCommand ItemTappedCommand { get; }
         private async void OnItemTappedCommandExecuted()
         {
 
         }
+        */
         public override async void OnNavigatedTo(INavigationParameters parameters)
         {
             try

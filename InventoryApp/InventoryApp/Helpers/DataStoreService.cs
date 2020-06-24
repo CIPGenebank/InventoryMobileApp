@@ -19,7 +19,7 @@ namespace InventoryApp.Helpers
             _restService = restService;
         }
 
-        public async Task<List<ILookup>> GetAccessionLookupList(string accessionNumber)
+        public List<ILookup> GetAccessionLookupList(string accessionNumber)
         {
             List<ILookup> result = new List<ILookup>();
             foreach (var item in _accessionLookupList.FindAll(x => x.DisplayMember.Contains(accessionNumber)))
@@ -30,7 +30,7 @@ namespace InventoryApp.Helpers
             return result;
         }
 
-        public async Task<List<ILookup>> GetCodeValueList(string groupName)
+        public List<ILookup> GetCodeValueList(string groupName)
         {
             List<ILookup> result = new List<ILookup>();
 
@@ -46,7 +46,7 @@ namespace InventoryApp.Helpers
             return result;
         }
 
-        public async Task<bool> SyncAccessionLookup()
+        public bool SyncAccessionLookup()
         {
             if (_accessionLookupList == null)
             {
@@ -56,7 +56,7 @@ namespace InventoryApp.Helpers
             return true;
         }
 
-        public async Task<bool> SyncCodeValueLookup()
+        public bool SyncCodeValueLookup()
         {
             if (_codeValueLookupList == null)
             {

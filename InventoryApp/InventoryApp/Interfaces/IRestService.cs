@@ -12,7 +12,7 @@ namespace InventoryApp.Interfaces
         #region InventoryViability
 
         Task<List<InventoryViability>> RefreshInventoryViabilityAsync();
-        Task SaveInventoryViabilityAsync(InventoryViability item, bool isNewItem);
+        Task SaveInventoryViability(InventoryViability item, bool isNewItem);
         Task DeleteInventoryViabilityAsync(string id);
 
         Task<string> CreateInventoryViabilityAsync(InventoryViability item);

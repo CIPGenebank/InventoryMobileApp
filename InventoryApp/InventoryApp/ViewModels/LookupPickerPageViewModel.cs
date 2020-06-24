@@ -41,8 +41,8 @@ namespace InventoryApp.ViewModels
             : base(navigationService, pageDialogService)
         {
             _dataStoreService = dataStoreService;
-            _dataStoreService.SyncCodeValueLookup();
-            _dataStoreService.SyncAccessionLookup();
+            //_dataStoreService.SyncCodeValueLookup();
+            //_dataStoreService.SyncAccessionLookup();
             _restClient = new RestClient();
 
             SearchTextCommand = new DelegateCommand(OnSearchTextCommandExecuted);
