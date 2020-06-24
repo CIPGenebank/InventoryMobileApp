@@ -25,5 +25,7 @@ namespace InventoryApp.Models
 
         public string cooperator_name { get; set; }
         public string method_name { get; set; }
+
+        public string inventory_number { get; set; }
     }
 }
