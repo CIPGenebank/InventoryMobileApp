@@ -103,7 +103,12 @@ namespace InventoryApp.ViewModels
             try
             {
                 if (Workgroup != null)
+                {
                     Settings.WorkgroupName = Workgroup.group_name;
+                    Settings.WorkgroupInvMaintPolicies = Workgroup.inv_maint_policy_ids;
+                    Settings.WorkgroupInventoryDataview = Workgroup.inventory_dataview;
+                    Settings.WorkgroupInventoryThumbnailDataview = Workgroup.inventory_thumbnail_dataview;
+                }
             }
             catch (Exception e)
             {
@@ -136,10 +141,16 @@ namespace InventoryApp.ViewModels
                     if (Workgroup == null)
                     {
                         Settings.WorkgroupName = string.Empty;
-                        Settings.WorkgroupInvMaintPolicies = string.Empty;
+                        Settings.WorkgroupInvMaintPolicies = null;
+                        Settings.WorkgroupInventoryDataview = null;
+                        Settings.WorkgroupInventoryThumbnailDataview = null;
                     }
                     else
+                    {
                         Settings.WorkgroupInvMaintPolicies = Workgroup.inv_maint_policy_ids;
+                        Settings.WorkgroupInventoryDataview = Workgroup.inventory_dataview;
+                        Settings.WorkgroupInventoryThumbnailDataview = Workgroup.inventory_thumbnail_dataview;
+                    }
                 }
                 //Load Location 1
                 if (ListLocation1 == null)

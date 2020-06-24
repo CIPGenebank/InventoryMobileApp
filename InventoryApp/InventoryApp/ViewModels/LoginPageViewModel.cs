@@ -106,6 +106,12 @@ namespace InventoryApp.ViewModels
             get { return _buttonLogIn; }
             set { SetProperty(ref _buttonLogIn, value); }
         }
+        private string _buttonChangePassword;
+        public string ButtonChangePassword
+        {
+            get { return _buttonChangePassword; }
+            set { SetProperty(ref _buttonChangePassword, value); }
+        }
         #endregion
 
         public LoginPageViewModel(INavigationService navigationService, IPageDialogService pageDialogService, IDialogService dialogService)
@@ -123,6 +129,7 @@ namespace InventoryApp.ViewModels
             ServerChangedCommand = new DelegateCommand(OnServerChangedCommandExecuted);
             LangChangedCommand = new DelegateCommand(OnLangChangedCommandAsync);
             AddServerCommand = new DelegateCommand(OnAddServerCommand);
+            ChangePasswordCommand = new DelegateCommand(OnChangePasswordCommand);
 
             if (string.IsNullOrEmpty(Settings.ServerList))
             {
@@ -193,6 +200,7 @@ namespace InventoryApp.ViewModels
                     LabelLang = GetLangLabel(nameof(LabelLang));
                     LabelVersion = string.Format(GetLangLabel(nameof(LabelVersion)), VersionTracking.CurrentVersion);
                     ButtonLogIn = GetLangLabel(nameof(ButtonLogIn));
+                    ButtonChangePassword = GetLangLabel(nameof(ButtonChangePassword));
                 }
             }
             catch (Exception ex)
@@ -247,6 +255,18 @@ namespace InventoryApp.ViewModels
             }
         }
 
+        public DelegateCommand ChangePasswordCommand { get; }
+        private async void OnChangePasswordCommand()
+        {
+            try
+            {
+                await PageDialogService.DisplayAlertAsync("Message", "Under construction", "OK");
+            }
+            catch (Exception ex)
+            {
+                await PageDialogService.DisplayAlertAsync("System Error", ex.Message, "OK");
+            }
+        }
         public override async void OnNavigatedTo(INavigationParameters parameters)
         {
             base.OnNavigatedTo(parameters);
@@ -287,6 +307,7 @@ namespace InventoryApp.ViewModels
                     LabelLang = GetLangLabel(nameof(LabelLang));
                     LabelVersion = string.Format(GetLangLabel(nameof(LabelVersion)), VersionTracking.CurrentVersion);
                     ButtonLogIn = GetLangLabel(nameof(ButtonLogIn));
+                    ButtonChangePassword = GetLangLabel(nameof(ButtonChangePassword));
                 }
             }
             catch (Exception ex)
@@ -309,6 +330,7 @@ namespace InventoryApp.ViewModels
                     _appResource.Add(nameof(LabelLang), "Lang");
                     _appResource.Add(nameof(LabelVersion), "Version {0}");
                     _appResource.Add(nameof(ButtonLogIn), "Log In");
+                    _appResource.Add(nameof(ButtonChangePassword), "Change password");
                 }
                 else
                 {
@@ -318,6 +340,7 @@ namespace InventoryApp.ViewModels
                     _appResource.Add(nameof(LabelLang), "Idioma");
                     _appResource.Add(nameof(LabelVersion), "Versión {0}");
                     _appResource.Add(nameof(ButtonLogIn), "Ingresar");
+                    _appResource.Add(nameof(ButtonChangePassword), "Cambiar contraseña");
                 }
             }
             if (_appResource.ContainsKey(key))

@@ -739,6 +739,33 @@ namespace InventoryApp.Services
 
             return result;
         }
+
+        public async Task<List<DataviewColumn>> GetDataviewAtributeList(string dataviewname)
+        {
+            List<DataviewColumn> result = new List<DataviewColumn>();
+
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", string.Format("Bearer {0}", Settings.UserToken));
+
+            string URL = string.Format(GetDataEndPoint, Settings.Server, "get_mob_dataview_schema", System.Net.WebUtility.UrlEncode(":dataviewname=" + dataviewname));
+            var response = await _httpClient.GetAsync(URL);
+
+            string resultContent = response.Content.ReadAsStringAsync().Result;
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                result = JsonConvert.DeserializeObject<List<DataviewColumn>>(resultContent);
+                if(result.Count == 0)
+                {
+                    throw new Exception(string.Format("dataview '{0}' is not defined", dataviewname));
+                }
+            }
+            else
+            {
+                throw new Exception(resultContent);
+            }
+
+            return result;
+        }
     }
 
     class Credential

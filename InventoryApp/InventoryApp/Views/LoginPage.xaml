@@ -140,10 +140,14 @@
 
                         <Button  Grid.ColumnSpan="2" Text="{Binding ButtonLogIn, Mode=OneWay}" Command="{Binding LoginCommand}" BackgroundColor="#76B82A" TextColor="White" CornerRadius="8" Margin="0,16,0,0">
                             <Button.HeightRequest>
-                                <OnPlatform x:TypeArguments="x:Double" Android="54" WinPhone="48" />
+                                <OnPlatform x:TypeArguments="x:Double" Android="54" WinPhone="36" />
                             </Button.HeightRequest>
                         </Button>
-                        
+                        <Button  Grid.ColumnSpan="2" Text="{Binding ButtonChangePassword, Mode=OneWay}" Command="{Binding ChangePasswordCommand}" CornerRadius="8" Margin="0,8,0,0">
+                            <Button.HeightRequest>
+                                <OnPlatform x:TypeArguments="x:Double" Android="54" WinPhone="36" />
+                            </Button.HeightRequest>
+                        </Button>
                         <!--<Grid >
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition >

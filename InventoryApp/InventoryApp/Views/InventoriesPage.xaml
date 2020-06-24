@@ -52,16 +52,50 @@
                     <CheckBox  IsChecked="{Binding IsAllSelected}" HorizontalOptions="CenterAndExpand"  VerticalOptions="CenterAndExpand"/>
                 </StackLayout>
 
-                <Label Grid.Column="1" Grid.Row="0" Text=" AcceNumb" FontAttributes="Bold" TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}"/>
-                <Label Grid.Column="1" Grid.Row="1" Text=" AcceName" FontAttributes="Bold" LineBreakMode="TailTruncation" TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}"/>
-                <Label Grid.Column="2" Grid.Row="0" Text=" Inventory number" FontAttributes="Bold" LineBreakMode="TailTruncation" TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}"/>
-                <Label Grid.Column="2" Grid.Row="1" Text=" CollNumb" FontAttributes="Bold" LineBreakMode="TailTruncation" TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}"/>
-                <Label Grid.Column="3" Grid.Row="0" Text=" Quantity" FontAttributes="Bold" LineBreakMode="TailTruncation" TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}"/>
-                <Label Grid.Column="3" Grid.Row="1" Text=" Unit" FontAttributes="Bold" LineBreakMode="TailTruncation" TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}"/>
+                <Label Grid.Row="0" Grid.Column="1" Text="{Binding Header1, StringFormat=' {0}'}" FontAttributes="Bold" TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}"/>
+                <Label Grid.Row="0" Grid.Column="2" Text="{Binding Header2, StringFormat=' {0}'}" FontAttributes="Bold" LineBreakMode="TailTruncation" TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}"/>
+                <Label Grid.Row="0" Grid.Column="3" Text="{Binding Header3, StringFormat=' {0}'}" FontAttributes="Bold" LineBreakMode="TailTruncation" TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}"/>
+                <Label Grid.Row="1" Grid.Column="1" Text="{Binding Header4, StringFormat=' {0}'}" FontAttributes="Bold" LineBreakMode="TailTruncation" TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}"/>
+                <Label Grid.Row="1" Grid.Column="2" Text="{Binding Header5, StringFormat=' {0}'}" FontAttributes="Bold" LineBreakMode="TailTruncation" TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}"/>
+                <Label Grid.Row="1" Grid.Column="3" Text="{Binding Header6, StringFormat=' {0}'}" FontAttributes="Bold" LineBreakMode="TailTruncation" TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}"/>
 
-                <Label Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="3" Text=" Location" FontAttributes="Bold" LineBreakMode="TailTruncation" Margin="0,0,0,1"
+                <Label Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding Header7, StringFormat=' {0}'}" FontAttributes="Bold" LineBreakMode="TailTruncation" Margin="0,0,0,1"
                        TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}"/>
             </Grid>
+
+            <!--<StackLayout Orientation="Horizontal" Spacing="0" BackgroundColor="{StaticResource AccentColor}">
+                <StackLayout HorizontalOptions="Fill"  Padding="0" WidthRequest="50" BackgroundColor="{StaticResource GridHeaderBackgroundColor}" Margin="0,0,0,0">
+                    <StackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding BindingContext.SelectItemCommand, Source={x:Reference InventoryList}}" CommandParameter="{Binding .}"/>
+                    </StackLayout.GestureRecognizers>
+                    <CheckBox  IsChecked="{Binding IsAllSelected}" HorizontalOptions="CenterAndExpand"  VerticalOptions="CenterAndExpand"/>
+                </StackLayout>
+
+                <Grid HorizontalOptions="FillAndExpand" Padding="0" RowSpacing="1" ColumnSpacing="1"  >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition  Width="0" />
+                        <ColumnDefinition  Width="*" />
+                        <ColumnDefinition  Width="*" />
+                        <ColumnDefinition  Width="60" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20" />
+                        <RowDefinition Height="20" />
+                        <RowDefinition Height="20" />
+                    </Grid.RowDefinitions>
+
+                    <Label Grid.Row="0" Grid.Column="1"  Text="{Binding Header1}" FontAttributes="Bold" TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}"/>
+                    <Label Grid.Row="0" Grid.Column="2"  Text="{Binding Header2}" FontAttributes="Bold" TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}" LineBreakMode="TailTruncation" />
+                    <Label Grid.Row="0" Grid.Column="3"  Text="{Binding Header3}" FontAttributes="Bold" TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}"/>
+
+                    <Label Grid.Row="1" Grid.Column="1"  Text="{Binding Header4}" FontAttributes="Bold" TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}" LineBreakMode="TailTruncation" />
+                    <Label Grid.Row="1" Grid.Column="2"  Text="{Binding Header5}" FontAttributes="Bold" TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}" LineBreakMode="TailTruncation" />
+                    <Label Grid.Row="1" Grid.Column="3"  Text="{Binding Header6}" FontAttributes="Bold" TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}" LineBreakMode="TailTruncation" />
+
+                    <Label Grid.Row="2" Grid.Column="1"  Grid.ColumnSpan="3" 
+                           Text="{Binding Header7}" FontAttributes="Bold" TextColor="{StaticResource AccentColor}" BackgroundColor="{StaticResource GridHeaderBackgroundColor}" LineBreakMode="TailTruncation"/>
+                </Grid>
+            </StackLayout>-->
 
             <ListView ItemsSource="{Binding InventoryList}" SelectedItem="{Binding SelectedInventory}" HasUnevenRows="True" SelectionMode="None"
                       VerticalOptions="FillAndExpand" BackgroundColor="White" CachingStrategy="RecycleElementAndDataTemplate"

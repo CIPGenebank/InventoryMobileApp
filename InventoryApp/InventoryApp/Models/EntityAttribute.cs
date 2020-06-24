@@ -3,6 +3,7 @@ using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Xamarin.Forms;
 
 namespace InventoryApp.Models
 {
@@ -38,5 +39,23 @@ namespace InventoryApp.Models
             set { SetProperty(ref _IsPicker, value); }
         }
         public string SecondValue { get; set; }
+    }
+
+    public class DataviewColumn : BindableBase
+    {
+        public int sys_dataview_field_id { get; set; }
+        public int sys_dataview_id { get; set; }
+        public string field_name { get; set; }
+        public int? sys_table_field_id { get; set; }
+        public string is_readonly { get; set; }
+        public string is_primary_key { get; set; }
+        public int? sort_order { get; set; }
+        public string gui_hint { get; set; }
+        public string foreign_key_dataview_name{ get; set; }
+        public string group_name { get; set; }
+        public string is_visible { get; set; }
+        public string is_nullable { get; set; }
+        public string default_value { get; set; }
+        public string title { get; set; }
     }
 }

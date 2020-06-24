@@ -52,8 +52,16 @@ namespace InventoryApp.Helpers
         }
         public static string WorkgroupInventoryDataview
         {
-            get { return Preferences.Get("workgroup_inventory_dataview_key", "table_mob_inventory"); }
+            get {
+                string value = Preferences.Get("workgroup_inventory_dataview_key", "");
+                return !string.IsNullOrEmpty(value) ? value : "table_mob_inventory"; }
             set { Preferences.Set("workgroup_inventory_dataview_key", value); }
+        }
+        public static string WorkgroupInventoryThumbnailDataview
+        {
+            get { string value = Preferences.Get("workgroup_inventory_thumbnail_dataview_key", "");
+                return !string.IsNullOrEmpty(value) ? value : "get_mob_inventory_thumbnail"; }
+            set { Preferences.Set("workgroup_inventory_thumbnail_dataview_key", value); }
         }
 
         public static string Location1
