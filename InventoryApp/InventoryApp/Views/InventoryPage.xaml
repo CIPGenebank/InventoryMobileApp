@@ -38,7 +38,7 @@
             </DataTemplate>
             <DataTemplate x:Key="dropdownTemplate">
                 <ViewCell>
-                    <StackLayout>
+                    <!--<StackLayout>
                         <Label Text="{Binding Caption}" />
                         <StackLayout HorizontalOptions="FillAndExpand" BackgroundColor="BlanchedAlmond" HeightRequest="40">
                             <StackLayout.GestureRecognizers>
@@ -46,11 +46,11 @@
                             </StackLayout.GestureRecognizers>
                             <Entry IsReadOnly="True" Text="{Binding DisplayValue}" BackgroundColor="#eee" InputTransparent="True"/>
                         </StackLayout>
-                    </StackLayout>
-                    <!--<StackLayout>
-                        <Label Text="{Binding Caption}" />
-                        <Picker SelectedItem="{Binding Value, Mode=TwoWay}"/>
                     </StackLayout>-->
+                    <StackLayout>
+                        <Label Text="{Binding Caption}" />
+                        <Picker ItemsSource="{Binding CodeValueList}" SelectedItem="{Binding CodeValue}" ItemDisplayBinding="{Binding DisplayMember}"/>
+                    </StackLayout>
                 </ViewCell>
             </DataTemplate>
             <DataTemplate x:Key="lookupPickerTemplate">

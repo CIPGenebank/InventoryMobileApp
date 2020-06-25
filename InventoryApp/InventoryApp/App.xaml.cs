@@ -55,7 +55,6 @@ namespace InventoryApp
             containerRegistry.RegisterForNavigation<SearchInventoriesPage, SearchInventoriesPageViewModel>();
             containerRegistry.RegisterForNavigation<SettingsPage, SettingsPageViewModel>();
             containerRegistry.RegisterForNavigation<PreviousInventoriesPage, PreviousInventoriesPageViewModel>();
-            containerRegistry.RegisterForNavigation<InventoryActionList, InventoryActionListViewModel>();
             containerRegistry.RegisterForNavigation<InventoryActionsPage, InventoryActionsPageViewModel>();
         }
     }

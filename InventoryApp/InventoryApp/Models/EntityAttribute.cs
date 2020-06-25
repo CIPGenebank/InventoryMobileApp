@@ -1,4 +1,5 @@
 ﻿using DryIoc;
+using InventoryApp.Interfaces;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
@@ -39,6 +40,9 @@ namespace InventoryApp.Models
             set { SetProperty(ref _IsPicker, value); }
         }
         public string SecondValue { get; set; }
+
+        public List<ILookup> CodeValueList { get; set; }
+        public ILookup CodeValue { get; set; }
     }
 
     public class DataviewColumn : BindableBase
@@ -57,5 +61,6 @@ namespace InventoryApp.Models
         public string is_nullable { get; set; }
         public string default_value { get; set; }
         public string title { get; set; }
+        public string gui_filter { get; set; }
     }
 }

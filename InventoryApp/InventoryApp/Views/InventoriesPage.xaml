@@ -153,7 +153,7 @@
                 <Label Text="{Binding InventoryList.Count, StringFormat=' Inv : {0}'}" TextColor="White" VerticalOptions="Center"/>
                 <Label Text="{Binding AccessionCount, StringFormat='Acc : {0}'}" TextColor="White" VerticalOptions="Center"/>
                 <Label Text="{Binding SelectedRowsCount, StringFormat='Selected Inv : {0}'}" TextColor="White" VerticalOptions="Center"/>
-                <Label Text="{Binding TotalQuantity, StringFormat='Total Qty : {0}'}" TextColor="White" VerticalOptions="Center"/>
+                <Label Text="{Binding TotalQuantity, StringFormat='Total Qty : {0:F2}'}" TextColor="White" VerticalOptions="Center"/>
             </StackLayout>
         </StackLayout>
     </ContentPage.Content>

@@ -1,4 +1,5 @@
 ﻿using ImTools;
+using InventoryApp.Helpers;
 using InventoryApp.Interfaces;
 using InventoryApp.Models;
 using InventoryApp.Models.Database;
@@ -26,6 +27,7 @@ namespace InventoryApp.ViewModels
 
         private IRestService _restService;
         private RestClient _restClient;
+        private List<DataviewColumn> _dataviewColumnList;
 
         private ObservableCollection<EntityAttribute> _inventoryAttributeList;
         public ObservableCollection<EntityAttribute> InventoryAtributeList
@@ -100,7 +102,7 @@ namespace InventoryApp.ViewModels
         {
             try
             {
-                foreach (var att in InventoryAtributeList)
+                /*foreach (var att in InventoryAtributeList)
                 {
                     if (att.IsRequired)
                     {
@@ -117,7 +119,7 @@ namespace InventoryApp.ViewModels
                             throw new Exception(string.Format("{0} is required", att.Caption));
                         }
                     }
-                }
+                }*/
                 foreach (var att in InventoryAtributeList)
                 {
                     if (!att.IsReadOnly)
@@ -137,6 +139,13 @@ namespace InventoryApp.ViewModels
                                     value = att.SecondValue; 
                                 }
                                 prop.SetValue(NewInventory, value);
+                            }
+                            else if (att.ControlType.Equals("DROPDOWN"))
+                            {
+                                if (att.CodeValueList != null && att.CodeValue != null)
+                                    prop.SetValue(NewInventory, (string)att.CodeValue.ValueMember);
+                                else
+                                    prop.SetValue(NewInventory, null);
                             }
                             else
                             {
@@ -222,6 +231,11 @@ namespace InventoryApp.ViewModels
         {
             try
             {
+                if (_dataviewColumnList == null)
+                {
+                    _dataviewColumnList = await _restClient.GetDataviewAtributeList(Settings.WorkgroupInventoryDataview);
+                }
+
                 InventoryThumbnail tempInventory;
 
                 if (parameters.ContainsKey("InventoryThumbnail"))
@@ -238,10 +252,29 @@ namespace InventoryApp.ViewModels
                         {
                             att.Value = prop.GetValue(NewInventory, null);
 
-                            if (att.ControlType.Equals("DROPDOWN") && att.Value != null)
+                            if (att.ControlType.Equals("DROPDOWN"))
                             {
-                                var displayName = await _restClient.GetCodeValueDisplayName(att.ControlSource, att.Value.ToString());
-                                att.DisplayValue = displayName;
+                                //var displayName = await _restClient.GetCodeValueDisplayName(att.ControlSource, att.Value.ToString());
+                                //att.DisplayValue = displayName;
+                                att.CodeValueList = await _restClient.GetCodeValueByGroupName(att.ControlSource);
+                                //Apply gui_filter
+                                if (_dataviewColumnList != null)
+                                {
+                                    var dvField = _dataviewColumnList.FirstOrDefault(f => f.field_name.Equals(att.Name));
+                                    if(dvField != null && !string.IsNullOrEmpty(dvField.gui_filter))
+                                    {
+                                        var filterList = dvField.gui_filter.Split(new char[] { ','}, StringSplitOptions.RemoveEmptyEntries);
+                                        for (int i = att.CodeValueList.Count - 1; i >= 0; i--)
+                                        {
+                                            if (!filterList.Any(x => x.Equals(att.CodeValueList[i].ValueMember)))
+                                            {
+                                                att.CodeValueList.RemoveAt(i);
+                                            }
+                                        }
+                                    }
+                                }
+                                if (att.CodeValueList != null && att.CodeValueList.Count > 0 && att.Value != null)
+                                    att.CodeValue = att.CodeValueList.FirstOrDefault(c => c.ValueMember.Equals((string)att.Value));
                             }
                             else if (att.ControlType.Equals("LOOKUPPICKER") && att.Value != null && (int)att.Value > 0)
                             {
@@ -267,8 +300,6 @@ namespace InventoryApp.ViewModels
                 {
                     _isNewInventory = false;
                     Inventory = (InventoryThumbnail)parameters["inventory"];
-                    /*AccessionNumber = tempInventory.AccessionNumber;
-                    AccessionName = tempInventory.acc_name_cul;*/
 
                     PropertyInfo[] props = typeof(InventoryThumbnail).GetProperties();
                     foreach (PropertyInfo prop in props)
@@ -314,7 +345,11 @@ namespace InventoryApp.ViewModels
                         if (att != null)
                         {
                             att.Value = prop.GetValue(NewInventory, null);
-                            if (att.ControlType.Equals("CHECKBOX"))
+                            if (att.ControlType.Equals("DROPDOWN"))
+                            {
+                                att.CodeValueList = await _restClient.GetCodeValueByGroupName(att.ControlSource);
+                            }
+                            else if (att.ControlType.Equals("CHECKBOX"))
                             {
                                 att.Value = "N";
                             }

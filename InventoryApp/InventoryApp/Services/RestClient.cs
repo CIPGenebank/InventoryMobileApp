@@ -763,7 +763,33 @@ namespace InventoryApp.Services
             {
                 throw new Exception(resultContent);
             }
-
+            /*********************************************/
+            URL = string.Format(GetDataEndPoint, Settings.Server, "get_mob_dataview_schema_extension", ""/*System.Net.WebUtility.UrlEncode(":dataviewname=" + dataviewname)*/);
+            response = await _httpClient.GetAsync(URL);
+            resultContent = response.Content.ReadAsStringAsync().Result;
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                var result2 = Newtonsoft.Json.Linq.JArray.Parse(resultContent);
+                if (result2.Count > 0) 
+                {
+                    foreach (var dvField in result)
+                    {
+                        if (dvField.gui_hint.Equals("SMALL_SINGLE_SELECT_CONTROL"))
+                        {
+                            var fieldExt = result2.FindFirst(x => x["dataview_name"].ToString().Equals(dataviewname) && x["dataview_field_name"].ToString().Equals(dvField.field_name));
+                            if (fieldExt != null)
+                            {
+                                dvField.gui_filter = (string) fieldExt["gui_filter"];
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                throw new Exception(resultContent);
+            }
+            /*********************************************/
             return result;
         }
     }

@@ -32,6 +32,8 @@
                                 <Label Grid.Row="2" Grid.Column="1"  Grid.ColumnSpan="1" Text="{Binding action_date}" LineBreakMode="TailTruncation"/>
                                 <Label Grid.Row="2" Grid.Column="2"  Text="{Binding cooperator_name}" LineBreakMode="TailTruncation"/>
                                 <Label Grid.Row="2" Grid.Column="3"  Text="{Binding quantity_unit_code}" LineBreakMode="TailTruncation"/>
+
+                                <Label Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding note}" LineBreakMode="TailTruncation"/>
                             </Grid>
                         </StackLayout>
                     </ViewCell>

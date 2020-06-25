@@ -33,6 +33,11 @@
                     <Label Text="Show printing log" HorizontalOptions="FillAndExpand" VerticalOptions="Center"/>
                     <CheckBox IsChecked="{Binding IsLogVisible}" HorizontalOptions="End"/>
                 </StackLayout>
+                
+                <StackLayout Orientation="Horizontal" Margin="0,0,0,10" >
+                    <Label Text="Create action?" HorizontalOptions="FillAndExpand" VerticalOptions="Center"/>
+                    <CheckBox IsChecked="{Binding CreateInventoryAction}" HorizontalOptions="End"/>
+                </StackLayout>
             </StackLayout>
             <Editor Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding PrintingLog}" IsVisible="{Binding IsLogVisible}"
                     VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"/>

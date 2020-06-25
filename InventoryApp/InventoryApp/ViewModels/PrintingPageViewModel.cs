@@ -74,6 +74,12 @@ namespace InventoryApp.ViewModels
             set { SetProperty(ref _orderBy, value); }
         }
 
+        private bool _createInventoryAction;
+        public bool CreateInventoryAction
+        {
+            get { return _createInventoryAction; }
+            set { SetProperty(ref _createInventoryAction, value); }
+        }
         public DelegateCommand CancelCommand { get; }
         public DelegateCommand PrintCommand { get; }
 
@@ -94,6 +100,7 @@ namespace InventoryApp.ViewModels
 
             RowsPerRecord = 1;
             IsLogVisible = false;
+            CreateInventoryAction = false;
 
             CancelCommand = new DelegateCommand(OnCancelCommandExecuted);
             PrintCommand = new DelegateCommand(OnPrintCommandExecuted);
